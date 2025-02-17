@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import type { Json } from "@/integrations/supabase/types";
 
 interface WorkoutPlan {
   id: string;
@@ -20,12 +21,20 @@ interface WorkoutPlan {
     }>;
   };
   created_at: string;
+  fitness_goal: "lose_weight" | "build_muscle" | "stay_fit";
+  workout_location: "home" | "gym";
+  intensity_level: "beginner" | "intermediate" | "advanced";
+  equipment: string[];
 }
 
 interface Profile {
   first_name: string;
   age: number;
   weight: number;
+  fitness_goal: "lose_weight" | "build_muscle" | "stay_fit";
+  workout_location: "home" | "gym";
+  intensity_level: "beginner" | "intermediate" | "advanced";
+  equipment: string[];
 }
 
 const Dashboard = () => {
@@ -50,7 +59,7 @@ const Dashboard = () => {
     // Check if profile is complete
     const { data: profileData, error: profileError } = await supabase
       .from("profiles")
-      .select("age, weight, first_name")
+      .select("*")
       .eq("id", session.user.id)
       .single();
 
@@ -70,13 +79,15 @@ const Dashboard = () => {
       .single();
 
     if (!planError && planData) {
-      setWorkoutPlan(planData);
+      setWorkoutPlan(planData as WorkoutPlan);
     }
 
     setLoading(false);
   };
 
   const generateNewPlan = async () => {
+    if (!profile) return;
+    
     setGeneratingPlan(true);
     const { data: { session } } = await supabase.auth.getSession();
 
@@ -86,47 +97,47 @@ const Dashboard = () => {
       return;
     }
 
-    // For now, generate a simple workout plan
-    const newPlan = {
-      workouts: Array.from({ length: 3 }, (_, i) => ({
-        day: i + 1,
-        exercises: [
-          {
-            name: "Push-ups",
-            sets: 3,
-            reps: 10,
-            rest: 60
+    try {
+      // Generate workout plan using AI
+      const { data: aiPlan, error: aiError } = await supabase.functions
+        .invoke('generate-workout', {
+          body: {
+            age: profile.age,
+            weight: profile.weight,
+            fitnessGoal: profile.fitness_goal,
+            workoutLocation: profile.workout_location,
+            equipment: profile.equipment,
+            intensityLevel: profile.intensity_level,
           },
-          {
-            name: "Squats",
-            sets: 3,
-            reps: 12,
-            rest: 60
-          }
-        ]
-      }))
-    };
+        });
 
-    const { data: plan, error } = await supabase
-      .from("workout_plans")
-      .update({ 
-        plan_data: newPlan,
-        created_at: new Date().toISOString()
-      })
-      .eq("user_id", session.user.id)
-      .eq("is_active", true)
-      .select()
-      .single();
+      if (aiError || !aiPlan) {
+        throw new Error(aiError || 'Failed to generate workout plan');
+      }
 
-    if (error) {
-      toast.error("Failed to generate workout plan");
+      // Update the workout plan in the database
+      const { data: plan, error: updateError } = await supabase
+        .from("workout_plans")
+        .update({ 
+          plan_data: aiPlan,
+          created_at: new Date().toISOString()
+        })
+        .eq("user_id", session.user.id)
+        .eq("is_active", true)
+        .select("*")
+        .single();
+
+      if (updateError) {
+        throw new Error('Failed to save workout plan');
+      }
+
+      setWorkoutPlan(plan as WorkoutPlan);
+      toast.success("New workout plan generated!");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to generate workout plan");
+    } finally {
       setGeneratingPlan(false);
-      return;
     }
-
-    setWorkoutPlan(plan);
-    setGeneratingPlan(false);
-    toast.success("New workout plan generated!");
   };
 
   if (loading) {
