@@ -13,6 +13,11 @@ serve(async (req) => {
   }
 
   try {
+    const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key is not configured')
+    }
+
     const { 
       age, 
       weight, 
@@ -61,14 +66,16 @@ serve(async (req) => {
       Don't include exercises that require unavailable equipment.
       Response must be a valid JSON string that matches the exact structure above.`
 
+    console.log('Sending request to OpenAI with prompt:', prompt)
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Authorization': `Bearer ${openAIApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4',
         messages: [
           { 
             role: 'system', 
@@ -79,13 +86,15 @@ serve(async (req) => {
             content: prompt 
           }
         ],
+        temperature: 0.7,
+        max_tokens: 1000,
       }),
     })
 
     if (!response.ok) {
       const errorData = await response.json()
       console.error('OpenAI API error:', errorData)
-      throw new Error('Failed to generate workout plan')
+      throw new Error(`OpenAI API error: ${JSON.stringify(errorData)}`)
     }
 
     const data = await response.json()
