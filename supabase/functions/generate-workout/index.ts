@@ -8,6 +8,7 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -15,7 +16,14 @@ serve(async (req) => {
   try {
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
     if (!openAIApiKey) {
-      throw new Error('OpenAI API key is not configured')
+      console.error('OpenAI API key is not configured')
+      return new Response(
+        JSON.stringify({ error: 'OpenAI API key is not configured' }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
     }
 
     const { 
@@ -27,7 +35,17 @@ serve(async (req) => {
       intensityLevel 
     } = await req.json()
 
-    console.log('Received request with params:', {
+    if (!age || !weight || !fitnessGoal || !workoutLocation || !equipment || !intensityLevel) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required parameters' }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
+    }
+
+    console.log('Processing request with parameters:', {
       age,
       weight,
       fitnessGoal,
@@ -66,8 +84,6 @@ serve(async (req) => {
       Don't include exercises that require unavailable equipment.
       Response must be a valid JSON string that matches the exact structure above.`
 
-    console.log('Sending request to OpenAI with prompt:', prompt)
-
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -79,7 +95,7 @@ serve(async (req) => {
         messages: [
           { 
             role: 'system', 
-            content: 'You are a professional fitness trainer who creates personalized workout plans. Respond only with valid JSON that matches the requested structure.' 
+            content: 'You are a professional fitness trainer. Respond only with valid JSON matching the specified structure.' 
           },
           { 
             role: 'user', 
@@ -94,45 +110,71 @@ serve(async (req) => {
     if (!response.ok) {
       const errorData = await response.json()
       console.error('OpenAI API error:', errorData)
-      throw new Error(`OpenAI API error: ${JSON.stringify(errorData)}`)
+      return new Response(
+        JSON.stringify({ error: 'Failed to generate workout plan', details: errorData }),
+        { 
+          status: 502,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
     }
 
     const data = await response.json()
-    console.log('OpenAI response:', data)
+    console.log('Received response from OpenAI:', data)
 
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      console.error('Unexpected OpenAI response structure:', data)
-      throw new Error('Invalid response from AI service')
+    if (!data.choices?.[0]?.message?.content) {
+      console.error('Invalid OpenAI response structure:', data)
+      return new Response(
+        JSON.stringify({ error: 'Invalid response from AI service' }),
+        { 
+          status: 502,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
     }
 
     let workoutPlan
     try {
       workoutPlan = JSON.parse(data.choices[0].message.content)
-    } catch (parseError) {
-      console.error('Failed to parse AI response as JSON:', data.choices[0].message.content)
-      throw new Error('AI generated an invalid workout plan format')
+    } catch (error) {
+      console.error('Failed to parse OpenAI response as JSON:', data.choices[0].message.content)
+      return new Response(
+        JSON.stringify({ error: 'Invalid workout plan format from AI' }),
+        { 
+          status: 502,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
     }
 
-    // Validate the workout plan structure
     if (!workoutPlan.workouts || !Array.isArray(workoutPlan.workouts)) {
       console.error('Invalid workout plan structure:', workoutPlan)
-      throw new Error('AI generated an invalid workout plan structure')
+      return new Response(
+        JSON.stringify({ error: 'Invalid workout plan structure from AI' }),
+        { 
+          status: 502,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      )
     }
 
     return new Response(
       JSON.stringify(workoutPlan),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { 
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      }
     )
   } catch (error) {
-    console.error('Error in generate-workout function:', error)
+    console.error('Unexpected error in generate-workout function:', error)
     return new Response(
       JSON.stringify({ 
-        error: error.message || 'An unexpected error occurred',
-        details: error.toString()
+        error: 'An unexpected error occurred',
+        details: error.message
       }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
-        status: 500 
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
     )
   }
