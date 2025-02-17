@@ -1,6 +1,8 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -62,14 +64,15 @@ const Onboarding = () => {
     // Create initial workout plan with properly typed values
     const { error: planError } = await supabase
       .from("workout_plans")
-      .insert([{
+      .insert({
+        user_id: session.user.id,
         fitness_goal: formData.fitness_goal as "lose_weight" | "build_muscle" | "stay_fit",
         workout_location: formData.workout_location,
         intensity_level: formData.intensity_level,
         equipment: formData.equipment,
         workout_frequency: 3,
         plan_data: {} as Json,
-      }]);
+      });
 
     if (planError) {
       toast.error("Error creating workout plan");
