@@ -22,6 +22,15 @@ serve(async (req) => {
       intensityLevel 
     } = await req.json()
 
+    console.log('Received request with params:', {
+      age,
+      weight,
+      fitnessGoal,
+      workoutLocation,
+      equipment,
+      intensityLevel
+    })
+
     const prompt = `Generate a detailed 3-day workout plan based on the following details:
       - Age: ${age} years
       - Weight: ${weight} kg
@@ -49,7 +58,8 @@ serve(async (req) => {
       
       Make sure each exercise is suitable for the person's goals and available equipment.
       Include proper rest periods between sets.
-      Don't include exercises that require unavailable equipment.`
+      Don't include exercises that require unavailable equipment.
+      Response must be a valid JSON string that matches the exact structure above.`
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -62,7 +72,7 @@ serve(async (req) => {
         messages: [
           { 
             role: 'system', 
-            content: 'You are a professional fitness trainer who creates personalized workout plans.' 
+            content: 'You are a professional fitness trainer who creates personalized workout plans. Respond only with valid JSON that matches the requested structure.' 
           },
           { 
             role: 'user', 
@@ -72,18 +82,49 @@ serve(async (req) => {
       }),
     })
 
+    if (!response.ok) {
+      const errorData = await response.json()
+      console.error('OpenAI API error:', errorData)
+      throw new Error('Failed to generate workout plan')
+    }
+
     const data = await response.json()
-    const workoutPlan = JSON.parse(data.choices[0].message.content)
+    console.log('OpenAI response:', data)
+
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Unexpected OpenAI response structure:', data)
+      throw new Error('Invalid response from AI service')
+    }
+
+    let workoutPlan
+    try {
+      workoutPlan = JSON.parse(data.choices[0].message.content)
+    } catch (parseError) {
+      console.error('Failed to parse AI response as JSON:', data.choices[0].message.content)
+      throw new Error('AI generated an invalid workout plan format')
+    }
+
+    // Validate the workout plan structure
+    if (!workoutPlan.workouts || !Array.isArray(workoutPlan.workouts)) {
+      console.error('Invalid workout plan structure:', workoutPlan)
+      throw new Error('AI generated an invalid workout plan structure')
+    }
 
     return new Response(
       JSON.stringify(workoutPlan),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Error in generate-workout function:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      JSON.stringify({ 
+        error: error.message || 'An unexpected error occurred',
+        details: error.toString()
+      }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
+        status: 500 
+      }
     )
   }
 })
