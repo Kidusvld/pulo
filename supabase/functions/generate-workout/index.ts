@@ -19,6 +19,8 @@ serve(async (req) => {
 
   try {
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
+    console.log('OpenAI API Key status:', openAIApiKey ? 'Present' : 'Missing')
+    
     if (!openAIApiKey) {
       console.error('Missing OpenAI API key in environment variables')
       return new Response(
@@ -61,6 +63,16 @@ serve(async (req) => {
       intensityLevel 
     } = requestBody
 
+    // Log the full request for debugging
+    console.log('Full request parameters:', JSON.stringify({
+      age,
+      weight,
+      fitnessGoal,
+      workoutLocation,
+      equipment,
+      intensityLevel
+    }, null, 2))
+
     // Validate required parameters
     if (!age || !weight || !fitnessGoal || !workoutLocation || !equipment || !intensityLevel) {
       const missingParams = []
@@ -84,15 +96,6 @@ serve(async (req) => {
         }
       )
     }
-
-    console.log('Processing request with parameters:', {
-      age,
-      weight,
-      fitnessGoal,
-      workoutLocation,
-      equipment: Array.isArray(equipment) ? equipment.join(', ') : equipment,
-      intensityLevel
-    })
 
     const prompt = `Generate a detailed 3-day workout plan based on the following details:
       - Age: ${age} years
@@ -120,6 +123,8 @@ serve(async (req) => {
       }`
 
     try {
+      console.log('Initiating OpenAI API request...')
+      
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -127,7 +132,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini', // Changed from gpt-4 to gpt-4o-mini
+          model: 'gpt-4o-mini',
           messages: [
             { 
               role: 'system', 
@@ -145,11 +150,7 @@ serve(async (req) => {
 
       if (!response.ok) {
         const errorData = await response.json()
-        console.error('OpenAI API error:', {
-          status: response.status,
-          statusText: response.statusText,
-          error: errorData
-        })
+        console.error('OpenAI API error details:', JSON.stringify(errorData, null, 2))
         return new Response(
           JSON.stringify({ 
             error: 'AI service error',
@@ -164,7 +165,7 @@ serve(async (req) => {
       }
 
       const data = await response.json()
-      console.log('Received response from OpenAI:', {
+      console.log('OpenAI API response received:', {
         status: 'success',
         hasChoices: Boolean(data.choices),
         firstChoice: Boolean(data.choices?.[0]),
