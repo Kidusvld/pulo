@@ -12,7 +12,7 @@ serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { 
-      status: 204, // Using 204 for OPTIONS requests
+      status: 204,
       headers: corsHeaders 
     })
   }
@@ -127,7 +127,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4',
+          model: 'gpt-4o-mini', // Changed from gpt-4 to gpt-4o-mini
           messages: [
             { 
               role: 'system', 
