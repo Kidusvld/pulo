@@ -56,10 +56,10 @@ const Dashboard = () => {
       return;
     }
 
-    // Check if profile is complete
+    // Check if profile is complete and get workout plan settings
     const { data: profileData, error: profileError } = await supabase
       .from("profiles")
-      .select("*")
+      .select("first_name, age, weight")
       .eq("id", session.user.id)
       .single();
 
@@ -68,9 +68,7 @@ const Dashboard = () => {
       return;
     }
 
-    setProfile(profileData);
-
-    // Fetch active workout plan
+    // Get active workout plan which contains the user's preferences
     const { data: planData, error: planError } = await supabase
       .from("workout_plans")
       .select("*")
@@ -78,10 +76,23 @@ const Dashboard = () => {
       .eq("is_active", true)
       .single();
 
-    if (!planError && planData) {
-      setWorkoutPlan(planData as WorkoutPlan);
+    if (planError || !planData) {
+      navigate("/onboarding");
+      return;
     }
 
+    // Combine profile data with workout preferences from the plan
+    setProfile({
+      first_name: profileData.first_name,
+      age: profileData.age,
+      weight: profileData.weight,
+      fitness_goal: planData.fitness_goal,
+      workout_location: planData.workout_location,
+      intensity_level: planData.intensity_level,
+      equipment: planData.equipment || []
+    });
+
+    setWorkoutPlan(planData as WorkoutPlan);
     setLoading(false);
   };
 
