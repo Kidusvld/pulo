@@ -9,7 +9,183 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          age: number | null
+          created_at: string
+          email: string | null
+          first_name: string | null
+          free_plan_generated: boolean | null
+          id: string
+          last_name: string | null
+          stripe_customer_id: string | null
+          subscription_end_date: string | null
+          subscription_status:
+            | Database["public"]["Enums"]["subscription_status"]
+            | null
+          updated_at: string
+          weight: number | null
+        }
+        Insert: {
+          age?: number | null
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          free_plan_generated?: boolean | null
+          id: string
+          last_name?: string | null
+          stripe_customer_id?: string | null
+          subscription_end_date?: string | null
+          subscription_status?:
+            | Database["public"]["Enums"]["subscription_status"]
+            | null
+          updated_at?: string
+          weight?: number | null
+        }
+        Update: {
+          age?: number | null
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          free_plan_generated?: boolean | null
+          id?: string
+          last_name?: string | null
+          stripe_customer_id?: string | null
+          subscription_end_date?: string | null
+          subscription_status?:
+            | Database["public"]["Enums"]["subscription_status"]
+            | null
+          updated_at?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
+      progress_tracking: {
+        Row: {
+          completed_exercises: Json | null
+          created_at: string
+          date: string | null
+          id: string
+          notes: string | null
+          user_id: string
+          weight: number | null
+        }
+        Insert: {
+          completed_exercises?: Json | null
+          created_at?: string
+          date?: string | null
+          id?: string
+          notes?: string | null
+          user_id: string
+          weight?: number | null
+        }
+        Update: {
+          completed_exercises?: Json | null
+          created_at?: string
+          date?: string | null
+          id?: string
+          notes?: string | null
+          user_id?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "progress_tracking_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_events: {
+        Row: {
+          created_at: string
+          event_data: Json
+          event_type: string
+          id: string
+          stripe_event_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_data: Json
+          event_type: string
+          id?: string
+          stripe_event_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json
+          event_type?: string
+          id?: string
+          stripe_event_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_plans: {
+        Row: {
+          adjustments: Json | null
+          created_at: string
+          equipment: string[] | null
+          feedback: string | null
+          fitness_goal: Database["public"]["Enums"]["fitness_goal"]
+          id: string
+          intensity_level: Database["public"]["Enums"]["intensity_level"]
+          is_active: boolean | null
+          plan_data: Json
+          user_id: string
+          workout_frequency: number
+          workout_location: Database["public"]["Enums"]["workout_location"]
+        }
+        Insert: {
+          adjustments?: Json | null
+          created_at?: string
+          equipment?: string[] | null
+          feedback?: string | null
+          fitness_goal: Database["public"]["Enums"]["fitness_goal"]
+          id?: string
+          intensity_level?: Database["public"]["Enums"]["intensity_level"]
+          is_active?: boolean | null
+          plan_data: Json
+          user_id: string
+          workout_frequency: number
+          workout_location?: Database["public"]["Enums"]["workout_location"]
+        }
+        Update: {
+          adjustments?: Json | null
+          created_at?: string
+          equipment?: string[] | null
+          feedback?: string | null
+          fitness_goal?: Database["public"]["Enums"]["fitness_goal"]
+          id?: string
+          intensity_level?: Database["public"]["Enums"]["intensity_level"]
+          is_active?: boolean | null
+          plan_data?: Json
+          user_id?: string
+          workout_frequency?: number
+          workout_location?: Database["public"]["Enums"]["workout_location"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_plans_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +194,10 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      fitness_goal: "lose_weight" | "build_muscle" | "stay_fit"
+      intensity_level: "beginner" | "intermediate" | "advanced"
+      subscription_status: "free" | "premium"
+      workout_location: "home" | "gym"
     }
     CompositeTypes: {
       [_ in never]: never
