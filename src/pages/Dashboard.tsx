@@ -77,9 +77,9 @@ const Dashboard = () => {
         .select("*")
         .eq("user_id", session.user.id)
         .eq("is_active", true)
-        .single();
+        .maybeSingle();
 
-      if (planError || !planData) {
+      if (planError) {
         navigate("/onboarding");
         return;
       }
@@ -88,13 +88,16 @@ const Dashboard = () => {
         first_name: profileData.first_name,
         age: profileData.age,
         weight: profileData.weight,
-        fitness_goal: planData.fitness_goal,
-        workout_location: planData.workout_location,
-        intensity_level: planData.intensity_level,
-        equipment: planData.equipment || []
+        fitness_goal: planData?.fitness_goal || "stay_fit",
+        workout_location: planData?.workout_location || "home",
+        intensity_level: planData?.intensity_level || "beginner",
+        equipment: planData?.equipment || []
       });
 
-      setWorkoutPlan(planData as WorkoutPlan);
+      if (planData) {
+        setWorkoutPlan(planData as WorkoutPlan);
+      }
+      
       setLoading(false);
     } catch (error) {
       console.error('Error loading profile:', error);
