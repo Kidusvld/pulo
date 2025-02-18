@@ -12,7 +12,7 @@ serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { 
-      status: 204,
+      status: 200, // Changed from 204 to 200
       headers: corsHeaders 
     })
   }
@@ -29,13 +29,12 @@ serve(async (req) => {
           status: 'error' 
         }),
         { 
-          status: 500,
+          status: 200, // Changed from 500 to 200
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       )
     }
 
-    // Parse request body with error handling
     let requestBody
     try {
       requestBody = await req.json()
@@ -48,7 +47,7 @@ serve(async (req) => {
           status: 'error'
         }),
         { 
-          status: 400,
+          status: 200, // Changed from 400 to 200
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       )
@@ -63,7 +62,6 @@ serve(async (req) => {
       intensityLevel 
     } = requestBody
 
-    // Log the full request for debugging
     console.log('Full request parameters:', JSON.stringify({
       age,
       weight,
@@ -73,7 +71,6 @@ serve(async (req) => {
       intensityLevel
     }, null, 2))
 
-    // Validate required parameters
     if (!age || !weight || !fitnessGoal || !workoutLocation || !equipment || !intensityLevel) {
       const missingParams = []
       if (!age) missingParams.push('age')
@@ -91,7 +88,7 @@ serve(async (req) => {
           status: 'error'
         }),
         { 
-          status: 400,
+          status: 200, // Changed from 400 to 200
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       )
@@ -158,9 +155,8 @@ serve(async (req) => {
             status: 'error'
           }),
           { 
-            status: 502,
+            status: 200, // Changed from 502 to 200
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
         )
       }
 
@@ -181,7 +177,7 @@ serve(async (req) => {
             status: 'error'
           }),
           { 
-            status: 502,
+            status: 200, // Changed from 502 to 200
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
           }
         )
@@ -202,7 +198,7 @@ serve(async (req) => {
             status: 'error'
           }),
           { 
-            status: 502,
+            status: 200, // Changed from 502 to 200
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
           }
         )
@@ -217,13 +213,12 @@ serve(async (req) => {
             status: 'error'
           }),
           { 
-            status: 502,
+            status: 200, // Changed from 502 to 200
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
           }
         )
       }
 
-      // Success response
       return new Response(
         JSON.stringify({ 
           ...workoutPlan,
@@ -247,7 +242,7 @@ serve(async (req) => {
           status: 'error'
         }),
         { 
-          status: 502,
+          status: 200, // Changed from 502 to 200
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       )
@@ -265,9 +260,9 @@ serve(async (req) => {
         status: 'error'
       }),
       { 
-        status: 500,
+        status: 200, // Changed from 500 to 200
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      }
+        }
     )
   }
 })
