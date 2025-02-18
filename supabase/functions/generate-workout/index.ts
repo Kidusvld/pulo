@@ -74,6 +74,15 @@ serve(async (req) => {
 
     const intensityParams = getIntensityMultipliers(intensityLevel);
 
+    // Shuffle array function
+    const shuffleArray = <T>(array: T[]): T[] => {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    };
+
     // Generate a 3-day workout plan
     const workouts = Array.from({ length: 3 }, (_, i) => {
       const exercisesCount = Math.floor(
@@ -83,10 +92,17 @@ serve(async (req) => {
       );
 
       const poolType = workoutLocation as 'home' | 'gym';
-      const exercisePool = [...exercises[poolType].cardio, ...exercises[poolType].strength, ...exercises[poolType].compound];
+      const exercisePool = [
+        ...exercises[poolType].cardio,
+        ...exercises[poolType].strength,
+        ...exercises[poolType].compound
+      ];
+
+      // Shuffle the pool and take unique exercises
+      const shuffledExercises = shuffleArray([...exercisePool]);
+      const selectedExercises = shuffledExercises.slice(0, exercisesCount);
       
-      const dayExercises = Array.from({ length: exercisesCount }, () => {
-        const name = exercisePool[Math.floor(Math.random() * exercisePool.length)];
+      const dayExercises = selectedExercises.map(name => {
         const sets = Math.floor(
           Math.random() * (intensityParams.sets.max - intensityParams.sets.min + 1) + 
           intensityParams.sets.min
