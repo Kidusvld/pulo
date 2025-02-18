@@ -12,7 +12,7 @@ serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { 
-      status: 200, // Changed from 204 to 200
+      status: 200,
       headers: corsHeaders 
     })
   }
@@ -29,7 +29,7 @@ serve(async (req) => {
           status: 'error' 
         }),
         { 
-          status: 200, // Changed from 500 to 200
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       )
@@ -47,7 +47,7 @@ serve(async (req) => {
           status: 'error'
         }),
         { 
-          status: 200, // Changed from 400 to 200
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       )
@@ -88,36 +88,11 @@ serve(async (req) => {
           status: 'error'
         }),
         { 
-          status: 200, // Changed from 400 to 200
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       )
     }
-
-    const prompt = `Generate a detailed 3-day workout plan based on the following details:
-      - Age: ${age} years
-      - Weight: ${weight} kg
-      - Goal: ${fitnessGoal}
-      - Location: ${workoutLocation}
-      - Equipment available: ${Array.isArray(equipment) ? equipment.join(', ') : equipment}
-      - Intensity: ${intensityLevel}
-      
-      Format the response as a JSON object with this structure:
-      {
-        "workouts": [
-          {
-            "day": number,
-            "exercises": [
-              {
-                "name": string,
-                "sets": number,
-                "reps": number,
-                "rest": number (in seconds)
-              }
-            ]
-          }
-        ]
-      }`
 
     try {
       console.log('Initiating OpenAI API request...')
@@ -133,11 +108,34 @@ serve(async (req) => {
           messages: [
             { 
               role: 'system', 
-              content: 'You are a professional fitness trainer. Generate only valid JSON matching the specified structure.' 
+              content: 'You are a professional fitness trainer. Your responses must be PURE JSON only, no markdown formatting, no explanations. Follow the exact structure requested.' 
             },
             { 
               role: 'user', 
-              content: prompt 
+              content: `Create a 3-day workout plan with these parameters:
+                Age: ${age} years
+                Weight: ${weight} kg
+                Goal: ${fitnessGoal}
+                Location: ${workoutLocation}
+                Equipment: ${Array.isArray(equipment) ? equipment.join(', ') : equipment}
+                Intensity: ${intensityLevel}
+                
+                Return ONLY a JSON object with this exact structure:
+                {
+                  "workouts": [
+                    {
+                      "day": number,
+                      "exercises": [
+                        {
+                          "name": string,
+                          "sets": number,
+                          "reps": number,
+                          "rest": number
+                        }
+                      ]
+                    }
+                  ]
+                }`
             }
           ],
           temperature: 0.7,
@@ -155,18 +153,14 @@ serve(async (req) => {
             status: 'error'
           }),
           { 
-            status: 200, // Changed from 502 to 200
+            status: 200,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
         )
       }
 
       const data = await response.json()
-      console.log('OpenAI API response received:', {
-        status: 'success',
-        hasChoices: Boolean(data.choices),
-        firstChoice: Boolean(data.choices?.[0]),
-        messageContent: Boolean(data.choices?.[0]?.message?.content)
-      })
+      console.log('Raw OpenAI response:', data.choices?.[0]?.message?.content)
 
       if (!data.choices?.[0]?.message?.content) {
         console.error('Invalid AI response structure:', data)
@@ -177,7 +171,7 @@ serve(async (req) => {
             status: 'error'
           }),
           { 
-            status: 200, // Changed from 502 to 200
+            status: 200,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
           }
         )
@@ -185,7 +179,12 @@ serve(async (req) => {
 
       let workoutPlan
       try {
-        workoutPlan = JSON.parse(data.choices[0].message.content)
+        // Try to extract JSON if it's wrapped in markdown
+        const content = data.choices[0].message.content
+        const jsonMatch = content.match(/\{[\s\S]*\}/)
+        const jsonString = jsonMatch ? jsonMatch[0] : content
+        
+        workoutPlan = JSON.parse(jsonString)
       } catch (parseError) {
         console.error('Failed to parse AI response:', {
           error: parseError,
@@ -198,7 +197,7 @@ serve(async (req) => {
             status: 'error'
           }),
           { 
-            status: 200, // Changed from 502 to 200
+            status: 200,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
           }
         )
@@ -213,7 +212,7 @@ serve(async (req) => {
             status: 'error'
           }),
           { 
-            status: 200, // Changed from 502 to 200
+            status: 200,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
           }
         )
@@ -242,7 +241,7 @@ serve(async (req) => {
           status: 'error'
         }),
         { 
-          status: 200, // Changed from 502 to 200
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
       )
@@ -260,9 +259,9 @@ serve(async (req) => {
         status: 'error'
       }),
       { 
-        status: 200, // Changed from 500 to 200
+        status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
+      }
     )
   }
 })
