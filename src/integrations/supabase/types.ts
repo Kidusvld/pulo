@@ -98,6 +98,45 @@ export type Database = {
           },
         ]
       }
+      saved_workout_plans: {
+        Row: {
+          id: string
+          name: string | null
+          plan_data: Json
+          saved_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          name?: string | null
+          plan_data: Json
+          saved_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string | null
+          plan_data?: Json
+          saved_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_workout_plans_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscription_events: {
         Row: {
           created_at: string

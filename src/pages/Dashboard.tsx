@@ -8,6 +8,15 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowRight, DumbbellIcon, Trophy, Calendar } from "lucide-react";
 
+interface WorkoutRequest {
+  age: number;
+  weight: number;
+  fitnessGoal: 'lose_weight' | 'build_muscle' | 'stay_fit';
+  workoutLocation: 'home' | 'gym';
+  equipment: string[];
+  intensityLevel: 'beginner' | 'intermediate' | 'advanced';
+}
+
 interface WorkoutPlan {
   id: string;
   plan_data: {
@@ -38,6 +47,22 @@ interface Profile {
   equipment: string[];
 }
 
+interface SaveWorkoutPlan {
+  user_id: string;
+  plan_data: {
+    workouts: Array<{
+      day: number;
+      exercises: Array<{
+        name: string;
+        sets: number;
+        reps: number;
+        rest: number;
+      }>;
+    }>;
+  };
+  name: string;
+}
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -47,6 +72,7 @@ const Dashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedWeight, setEditedWeight] = useState<string>("");
   const [editedIntensity, setEditedIntensity] = useState<"beginner" | "intermediate" | "advanced">("beginner");
+  const [numberOfDays, setNumberOfDays] = useState<number>(3);
 
   useEffect(() => {
     checkAuth();
@@ -183,6 +209,7 @@ const Dashboard = () => {
             workoutLocation: profile.workout_location,
             equipment: profile.equipment,
             intensityLevel: profile.intensity_level,
+            numberOfDays: numberOfDays
           },
         });
 
@@ -227,7 +254,7 @@ const Dashboard = () => {
             equipment: profile.equipment,
             plan_data: aiResponse,
             is_active: true,
-            workout_frequency: 3
+            workout_frequency: numberOfDays
           }
         ])
         .select()
@@ -411,24 +438,44 @@ const Dashboard = () => {
                   <DumbbellIcon className="h-5 w-5 text-purple-600" />
                   Your Workout Plan
                 </CardTitle>
-                <div className="flex gap-2">
-                  {workoutPlan && (
-                    <Button
-                      variant="outline"
-                      onClick={handleSaveWorkout}
-                      className="bg-white hover:bg-purple-50 hover:text-purple-600"
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <label htmlFor="days" className="text-sm text-gray-600">Days:</label>
+                    <Select
+                      value={numberOfDays.toString()}
+                      onValueChange={(value) => setNumberOfDays(parseInt(value))}
                     >
-                      Save Plan
+                      <SelectTrigger className="w-[100px] bg-white">
+                        <SelectValue placeholder="Days" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+                          <SelectItem key={num} value={num.toString()}>
+                            {num} {num === 1 ? 'day' : 'days'}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex gap-2">
+                    {workoutPlan && (
+                      <Button
+                        variant="outline"
+                        onClick={handleSaveWorkout}
+                        className="bg-white hover:bg-purple-50 hover:text-purple-600"
+                      >
+                        Save Plan
+                      </Button>
+                    )}
+                    <Button
+                      onClick={generateNewPlan}
+                      disabled={generatingPlan}
+                      className="bg-purple-600 hover:bg-purple-700 text-white"
+                    >
+                      {generatingPlan ? "Generating..." : "Generate New Plan"}
+                      {!generatingPlan && <ArrowRight className="ml-2 h-4 w-4" />}
                     </Button>
-                  )}
-                  <Button
-                    onClick={generateNewPlan}
-                    disabled={generatingPlan}
-                    className="bg-purple-600 hover:bg-purple-700 text-white"
-                  >
-                    {generatingPlan ? "Generating..." : "Generate New Plan"}
-                    {!generatingPlan && <ArrowRight className="ml-2 h-4 w-4" />}
-                  </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>

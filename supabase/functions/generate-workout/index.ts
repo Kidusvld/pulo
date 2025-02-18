@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
@@ -14,6 +13,7 @@ interface WorkoutRequest {
   workoutLocation: 'home' | 'gym';
   equipment: string[];
   intensityLevel: 'beginner' | 'intermediate' | 'advanced';
+  numberOfDays: number;
 }
 
 serve(async (req) => {
@@ -22,9 +22,8 @@ serve(async (req) => {
   }
 
   try {
-    const { age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel } = await req.json() as WorkoutRequest;
+    const { age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel, numberOfDays } = await req.json() as WorkoutRequest;
 
-    // Adjust workout parameters based on intensity level
     const getIntensityMultipliers = (level: string) => {
       switch (level) {
         case 'beginner':
@@ -58,7 +57,6 @@ serve(async (req) => {
       }
     };
 
-    // Exercise pools based on location and equipment
     const exercises = {
       gym: {
         cardio: ['Treadmill Run', 'Rowing Machine', 'Stationary Bike', 'Elliptical', 'Stair Climber'],
@@ -74,7 +72,6 @@ serve(async (req) => {
 
     const intensityParams = getIntensityMultipliers(intensityLevel);
 
-    // Shuffle array function
     const shuffleArray = <T>(array: T[]): T[] => {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -83,8 +80,7 @@ serve(async (req) => {
       return array;
     };
 
-    // Generate a 3-day workout plan
-    const workouts = Array.from({ length: 3 }, (_, i) => {
+    const workouts = Array.from({ length: numberOfDays }, (_, i) => {
       const exercisesCount = Math.floor(
         Math.random() * 
         (intensityParams.exercisesPerDay.max - intensityParams.exercisesPerDay.min + 1) + 
@@ -98,7 +94,6 @@ serve(async (req) => {
         ...exercises[poolType].compound
       ];
 
-      // Shuffle the pool and take unique exercises
       const shuffledExercises = shuffleArray([...exercisePool]);
       const selectedExercises = shuffledExercises.slice(0, exercisesCount);
       
@@ -119,7 +114,6 @@ serve(async (req) => {
         return { name, sets, reps, rest };
       });
 
-      // Add more challenging variations for advanced levels
       if (intensityLevel === 'advanced') {
         dayExercises.forEach(exercise => {
           if (Math.random() > 0.5) {
