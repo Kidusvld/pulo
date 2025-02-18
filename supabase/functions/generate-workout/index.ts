@@ -1,266 +1,137 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import "https://deno.land/x/xhr@0.1.0/mod.ts"
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+};
+
+interface WorkoutRequest {
+  age: number;
+  weight: number;
+  fitnessGoal: 'lose_weight' | 'build_muscle' | 'stay_fit';
+  workoutLocation: 'home' | 'gym';
+  equipment: string[];
+  intensityLevel: 'beginner' | 'intermediate' | 'advanced';
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { 
-      status: 200,
-      headers: corsHeaders 
-    })
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
-    console.log('OpenAI API Key status:', openAIApiKey ? 'Present' : 'Missing')
-    
-    if (!openAIApiKey) {
-      console.error('Missing OpenAI API key in environment variables')
-      return new Response(
-        JSON.stringify({ 
-          error: 'Server configuration error: OpenAI API key not found',
-          status: 'error' 
-        }),
-        { 
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
+    const { age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel } = await req.json() as WorkoutRequest;
 
-    let requestBody
-    try {
-      requestBody = await req.json()
-    } catch (parseError) {
-      console.error('Failed to parse request body:', parseError)
-      return new Response(
-        JSON.stringify({ 
-          error: 'Invalid request body',
-          details: parseError.message,
-          status: 'error'
-        }),
-        { 
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
+    // Adjust workout parameters based on intensity level
+    const getIntensityMultipliers = (level: string) => {
+      switch (level) {
+        case 'beginner':
+          return {
+            sets: { min: 2, max: 3 },
+            reps: { min: 8, max: 12 },
+            rest: { min: 60, max: 90 },
+            exercisesPerDay: { min: 4, max: 6 }
+          };
+        case 'intermediate':
+          return {
+            sets: { min: 3, max: 4 },
+            reps: { min: 10, max: 15 },
+            rest: { min: 45, max: 75 },
+            exercisesPerDay: { min: 6, max: 8 }
+          };
+        case 'advanced':
+          return {
+            sets: { min: 4, max: 5 },
+            reps: { min: 12, max: 20 },
+            rest: { min: 30, max: 60 },
+            exercisesPerDay: { min: 8, max: 10 }
+          };
+        default:
+          return {
+            sets: { min: 2, max: 3 },
+            reps: { min: 8, max: 12 },
+            rest: { min: 60, max: 90 },
+            exercisesPerDay: { min: 4, max: 6 }
+          };
+      }
+    };
 
-    const { 
-      age, 
-      weight, 
-      fitnessGoal, 
-      workoutLocation, 
-      equipment, 
-      intensityLevel 
-    } = requestBody
+    // Exercise pools based on location and equipment
+    const exercises = {
+      gym: {
+        cardio: ['Treadmill Run', 'Rowing Machine', 'Stationary Bike', 'Elliptical', 'Stair Climber'],
+        strength: ['Bench Press', 'Lat Pulldown', 'Leg Press', 'Cable Rows', 'Shoulder Press Machine'],
+        compound: ['Barbell Squats', 'Deadlifts', 'Military Press', 'Bent Over Rows']
+      },
+      home: {
+        cardio: ['High Knees', 'Mountain Climbers', 'Jumping Jacks', 'Burpees', 'Jump Rope'],
+        strength: ['Push-ups', 'Diamond Push-ups', 'Bodyweight Squats', 'Lunges', 'Tricep Dips'],
+        compound: ['Pull-ups', 'Pike Push-ups', 'Bulgarian Split Squats', 'Step-ups']
+      }
+    };
 
-    console.log('Full request parameters:', JSON.stringify({
-      age,
-      weight,
-      fitnessGoal,
-      workoutLocation,
-      equipment,
-      intensityLevel
-    }, null, 2))
+    const intensityParams = getIntensityMultipliers(intensityLevel);
 
-    if (!age || !weight || !fitnessGoal || !workoutLocation || !equipment || !intensityLevel) {
-      const missingParams = []
-      if (!age) missingParams.push('age')
-      if (!weight) missingParams.push('weight')
-      if (!fitnessGoal) missingParams.push('fitnessGoal')
-      if (!workoutLocation) missingParams.push('workoutLocation')
-      if (!equipment) missingParams.push('equipment')
-      if (!intensityLevel) missingParams.push('intensityLevel')
+    // Generate a 3-day workout plan
+    const workouts = Array.from({ length: 3 }, (_, i) => {
+      const exercisesCount = Math.floor(
+        Math.random() * 
+        (intensityParams.exercisesPerDay.max - intensityParams.exercisesPerDay.min + 1) + 
+        intensityParams.exercisesPerDay.min
+      );
 
-      console.error('Missing required parameters:', missingParams)
-      return new Response(
-        JSON.stringify({ 
-          error: 'Missing required parameters',
-          details: `Missing: ${missingParams.join(', ')}`,
-          status: 'error'
-        }),
-        { 
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
-
-    try {
-      console.log('Initiating OpenAI API request...')
+      const poolType = workoutLocation as 'home' | 'gym';
+      const exercisePool = [...exercises[poolType].cardio, ...exercises[poolType].strength, ...exercises[poolType].compound];
       
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openAIApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            { 
-              role: 'system', 
-              content: 'You are a professional fitness trainer. Your responses must be PURE JSON only, no markdown formatting, no explanations. Follow the exact structure requested.' 
-            },
-            { 
-              role: 'user', 
-              content: `Create a 3-day workout plan with these parameters:
-                Age: ${age} years
-                Weight: ${weight} kg
-                Goal: ${fitnessGoal}
-                Location: ${workoutLocation}
-                Equipment: ${Array.isArray(equipment) ? equipment.join(', ') : equipment}
-                Intensity: ${intensityLevel}
-                
-                Return ONLY a JSON object with this exact structure:
-                {
-                  "workouts": [
-                    {
-                      "day": number,
-                      "exercises": [
-                        {
-                          "name": string,
-                          "sets": number,
-                          "reps": number,
-                          "rest": number
-                        }
-                      ]
-                    }
-                  ]
-                }`
-            }
-          ],
-          temperature: 0.7,
-          max_tokens: 1000,
-        }),
-      })
+      const dayExercises = Array.from({ length: exercisesCount }, () => {
+        const name = exercisePool[Math.floor(Math.random() * exercisePool.length)];
+        const sets = Math.floor(
+          Math.random() * (intensityParams.sets.max - intensityParams.sets.min + 1) + 
+          intensityParams.sets.min
+        );
+        const reps = Math.floor(
+          Math.random() * (intensityParams.reps.max - intensityParams.reps.min + 1) + 
+          intensityParams.reps.min
+        );
+        const rest = Math.floor(
+          Math.random() * (intensityParams.rest.max - intensityParams.rest.min + 1) + 
+          intensityParams.rest.min
+        );
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        console.error('OpenAI API error details:', JSON.stringify(errorData, null, 2))
-        return new Response(
-          JSON.stringify({ 
-            error: 'AI service error',
-            details: errorData,
-            status: 'error'
-          }),
-          { 
-            status: 200,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        return { name, sets, reps, rest };
+      });
+
+      // Add more challenging variations for advanced levels
+      if (intensityLevel === 'advanced') {
+        dayExercises.forEach(exercise => {
+          if (Math.random() > 0.5) {
+            exercise.name = `${exercise.name} (with progressive overload)`;
           }
-        )
+        });
       }
 
-      const data = await response.json()
-      console.log('Raw OpenAI response:', data.choices?.[0]?.message?.content)
+      return {
+        day: i + 1,
+        exercises: dayExercises
+      };
+    });
 
-      if (!data.choices?.[0]?.message?.content) {
-        console.error('Invalid AI response structure:', data)
-        return new Response(
-          JSON.stringify({ 
-            error: 'Invalid AI response format',
-            details: 'AI response missing required data',
-            status: 'error'
-          }),
-          { 
-            status: 200,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
-        )
-      }
+    console.log('Generated workout plan:', { workouts });
 
-      let workoutPlan
-      try {
-        // Try to extract JSON if it's wrapped in markdown
-        const content = data.choices[0].message.content
-        const jsonMatch = content.match(/\{[\s\S]*\}/)
-        const jsonString = jsonMatch ? jsonMatch[0] : content
-        
-        workoutPlan = JSON.parse(jsonString)
-      } catch (parseError) {
-        console.error('Failed to parse AI response:', {
-          error: parseError,
-          content: data.choices[0].message.content
-        })
-        return new Response(
-          JSON.stringify({ 
-            error: 'Invalid workout plan format',
-            details: parseError.message,
-            status: 'error'
-          }),
-          { 
-            status: 200,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
-        )
-      }
-
-      if (!workoutPlan.workouts || !Array.isArray(workoutPlan.workouts)) {
-        console.error('Invalid workout plan structure:', workoutPlan)
-        return new Response(
-          JSON.stringify({ 
-            error: 'Invalid workout plan structure',
-            details: 'Response missing workouts array',
-            status: 'error'
-          }),
-          { 
-            status: 200,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-          }
-        )
-      }
-
-      return new Response(
-        JSON.stringify({ 
-          ...workoutPlan,
-          status: 'success' 
-        }),
-        { 
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-
-    } catch (aiError) {
-      console.error('AI service error:', {
-        error: aiError,
-        stack: aiError.stack
-      })
-      return new Response(
-        JSON.stringify({ 
-          error: 'AI service unavailable',
-          details: aiError.message,
-          status: 'error'
-        }),
-        { 
-          status: 200,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
-    }
+    return new Response(
+      JSON.stringify({ workouts }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
 
   } catch (error) {
-    console.error('Unexpected server error:', {
-      error: error,
-      stack: error.stack
-    })
+    console.error('Error:', error);
     return new Response(
-      JSON.stringify({ 
-        error: 'Internal server error',
-        details: error.message,
-        status: 'error'
-      }),
+      JSON.stringify({ error: error.message }),
       { 
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500 
       }
     )
   }
