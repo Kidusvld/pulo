@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,7 +7,7 @@ import { toast } from "sonner";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import type { Json } from "@/integrations/supabase/types";
+import { ArrowRight, DumbbellIcon, Trophy, Calendar } from "lucide-react";
 
 interface WorkoutPlan {
   id: string;
@@ -263,136 +264,160 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">
-            Welcome{profile?.first_name ? `, ${profile.first_name}` : ""}
-          </h1>
-          <Button 
-            variant="outline" 
-            onClick={handleSignOut}
-          >
-            Sign Out
-          </Button>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+      <div className="relative overflow-hidden">
+        <div 
+          className="absolute inset-0 z-0 bg-cover bg-center opacity-10"
+          style={{ 
+            backgroundImage: 'url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80")',
+          }}
+        />
+        
+        <div className="relative z-10 max-w-4xl mx-auto px-4 py-8">
+          <div className="flex justify-between items-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">
+              Welcome{profile?.first_name ? `, ${profile.first_name}` : ""}! 👋
+            </h1>
+            <Button 
+              variant="outline" 
+              onClick={handleSignOut}
+              className="hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+            >
+              Sign Out
+            </Button>
+          </div>
 
-        <div className="space-y-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Your Profile</CardTitle>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  if (isEditing) {
-                    handleUpdateProfile();
-                  } else {
-                    setEditedWeight(profile?.weight?.toString() || "");
-                    setEditedIntensity(profile?.intensity_level || "beginner");
-                    setIsEditing(true);
-                  }
-                }}
-              >
-                {isEditing ? "Save Changes" : "Edit Profile"}
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">Age</p>
-                  <p className="text-lg font-medium">{profile?.age} years</p>
+          <div className="space-y-6">
+            <Card className="bg-white/95 backdrop-blur-sm border-purple-100">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-xl font-semibold flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-purple-600" />
+                  Your Profile
+                </CardTitle>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    if (isEditing) {
+                      handleUpdateProfile();
+                    } else {
+                      setEditedWeight(profile?.weight?.toString() || "");
+                      setEditedIntensity(profile?.intensity_level || "beginner");
+                      setIsEditing(true);
+                    }
+                  }}
+                  className="bg-white hover:bg-purple-50 hover:text-purple-600"
+                >
+                  {isEditing ? "Save Changes" : "Edit Profile"}
+                  {!isEditing && <ArrowRight className="ml-2 h-4 w-4" />}
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Age</p>
+                    <p className="text-lg font-medium">{profile?.age} years</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Weight</p>
+                    {isEditing ? (
+                      <Input
+                        type="number"
+                        value={editedWeight}
+                        onChange={(e) => setEditedWeight(e.target.value)}
+                        placeholder="Enter weight in kg"
+                        className="mt-1 bg-white"
+                      />
+                    ) : (
+                      <p className="text-lg font-medium">{profile?.weight} kg</p>
+                    )}
+                  </div>
+                  <div className="col-span-2">
+                    <p className="text-sm text-gray-500">Workout Intensity</p>
+                    {isEditing ? (
+                      <Select
+                        value={editedIntensity}
+                        onValueChange={(value: "beginner" | "intermediate" | "advanced") => 
+                          setEditedIntensity(value)
+                        }
+                      >
+                        <SelectTrigger className="mt-1 bg-white">
+                          <SelectValue placeholder="Select intensity" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="beginner">Beginner</SelectItem>
+                          <SelectItem value="intermediate">Intermediate</SelectItem>
+                          <SelectItem value="advanced">Advanced</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <p className="text-lg font-medium capitalize">
+                        {profile?.intensity_level}
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Weight</p>
-                  {isEditing ? (
-                    <Input
-                      type="number"
-                      value={editedWeight}
-                      onChange={(e) => setEditedWeight(e.target.value)}
-                      placeholder="Enter weight in kg"
-                      className="mt-1"
-                    />
-                  ) : (
-                    <p className="text-lg font-medium">{profile?.weight} kg</p>
-                  )}
-                </div>
-                <div className="col-span-2">
-                  <p className="text-sm text-gray-500">Workout Intensity</p>
-                  {isEditing ? (
-                    <Select
-                      value={editedIntensity}
-                      onValueChange={(value: "beginner" | "intermediate" | "advanced") => 
-                        setEditedIntensity(value)
-                      }
-                    >
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select intensity" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="beginner">Beginner</SelectItem>
-                        <SelectItem value="intermediate">Intermediate</SelectItem>
-                        <SelectItem value="advanced">Advanced</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <p className="text-lg font-medium capitalize">
-                      {profile?.intensity_level}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Your Workout Plan</CardTitle>
-              <Button
-                onClick={generateNewPlan}
-                disabled={generatingPlan}
-              >
-                {generatingPlan ? "Generating..." : "Generate New Plan"}
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {workoutPlan?.plan_data?.workouts ? (
-                <div className="space-y-6">
-                  {workoutPlan.plan_data.workouts.map((workout, index) => (
-                    <div key={index} className="space-y-4">
-                      <h3 className="font-semibold">Day {workout.day}</h3>
-                      <div className="grid gap-4">
-                        {workout.exercises.map((exercise, exerciseIndex) => (
-                          <div
-                            key={exerciseIndex}
-                            className="bg-gray-50 p-4 rounded-lg"
-                          >
-                            <p className="font-medium">{exercise.name}</p>
-                            <p className="text-sm text-gray-500">
-                              {exercise.sets} sets × {exercise.reps} reps
-                              (Rest: {exercise.rest}s)
-                            </p>
-                          </div>
-                        ))}
+            <Card className="bg-white/95 backdrop-blur-sm border-purple-100">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-xl font-semibold flex items-center gap-2">
+                  <DumbbellIcon className="h-5 w-5 text-purple-600" />
+                  Your Workout Plan
+                </CardTitle>
+                <Button
+                  onClick={generateNewPlan}
+                  disabled={generatingPlan}
+                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                >
+                  {generatingPlan ? "Generating..." : "Generate New Plan"}
+                  {!generatingPlan && <ArrowRight className="ml-2 h-4 w-4" />}
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {workoutPlan?.plan_data?.workouts ? (
+                  <div className="space-y-6">
+                    {workoutPlan.plan_data.workouts.map((workout, index) => (
+                      <div key={index} className="space-y-4">
+                        <h3 className="font-semibold flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-purple-600" />
+                          Day {workout.day}
+                        </h3>
+                        <div className="grid gap-4">
+                          {workout.exercises.map((exercise, exerciseIndex) => (
+                            <div
+                              key={exerciseIndex}
+                              className="bg-purple-50/50 p-4 rounded-lg border border-purple-100"
+                            >
+                              <p className="font-medium text-gray-900">{exercise.name}</p>
+                              <p className="text-sm text-gray-600">
+                                {exercise.sets} sets × {exercise.reps} reps
+                                (Rest: {exercise.rest}s)
+                              </p>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">
-                    No workout plan generated yet. Click the button above to create one!
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <DumbbellIcon className="h-12 w-12 text-purple-200 mx-auto mb-4" />
+                    <p className="text-gray-500">
+                      No workout plan generated yet. Click the button above to create one!
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
