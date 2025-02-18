@@ -251,6 +251,16 @@ const Dashboard = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate("/");
+    } catch (error) {
+      console.error('Error signing out:', error);
+      toast.error("Failed to sign out");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -268,7 +278,7 @@ const Dashboard = () => {
           </h1>
           <Button 
             variant="outline" 
-            onClick={() => supabase.auth.signOut()}
+            onClick={handleSignOut}
           >
             Sign Out
           </Button>
