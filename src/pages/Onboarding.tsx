@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -45,43 +44,54 @@ const Onboarding = () => {
       return;
     }
 
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        age: parseInt(formData.age),
-        weight: parseFloat(formData.weight),
-      })
-      .eq("id", session.user.id);
+    try {
+      // Deactivate all existing workout plans first
+      await supabase
+        .from("workout_plans")
+        .update({ is_active: false })
+        .eq("user_id", session.user.id);
 
-    if (error) {
-      toast.error("Error saving profile");
+      // Update profile data
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          age: parseInt(formData.age),
+          weight: parseFloat(formData.weight),
+        })
+        .eq("id", session.user.id);
+
+      if (profileError) {
+        throw new Error("Error saving profile");
+      }
+
+      // Create initial workout plan with properly typed values
+      const { error: planError } = await supabase
+        .from("workout_plans")
+        .insert({
+          user_id: session.user.id,
+          fitness_goal: formData.fitness_goal as "lose_weight" | "build_muscle" | "stay_fit",
+          workout_location: formData.workout_location,
+          intensity_level: formData.intensity_level,
+          equipment: formData.equipment,
+          workout_frequency: 3,
+          plan_data: {} as Json,
+          is_active: true,
+        });
+
+      if (planError) {
+        throw new Error("Error creating workout plan");
+      }
+
+      toast.success("Profile completed!");
+      navigate("/dashboard");
+    } catch (error) {
+      console.error('Error saving data:', error);
+      toast.error(error instanceof Error ? error.message : "Error saving data");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    // Create initial workout plan with properly typed values
-    const { error: planError } = await supabase
-      .from("workout_plans")
-      .insert({
-        user_id: session.user.id,
-        fitness_goal: formData.fitness_goal as "lose_weight" | "build_muscle" | "stay_fit",
-        workout_location: formData.workout_location,
-        intensity_level: formData.intensity_level,
-        equipment: formData.equipment,
-        workout_frequency: 3,
-        plan_data: {} as Json,
-      });
-
-    if (planError) {
-      toast.error("Error creating workout plan");
-      setLoading(false);
-      return;
-    }
-
-    toast.success("Profile completed!");
-    navigate("/dashboard");
   };
 
   const renderStep = () => {
