@@ -141,20 +141,45 @@ const Dashboard = () => {
         throw new Error('Invalid workout plan structure received from AI');
       }
 
-      // Update the workout plan in the database
-      const { data: plan, error: updateError } = await supabase
+      console.log('Saving workout plan:', {
+        userId: session.user.id,
+        fitnessGoal: profile.fitness_goal,
+        workoutLocation: profile.workout_location,
+        intensityLevel: profile.intensity_level,
+        equipment: profile.equipment,
+        planData: aiResponse
+      });
+
+      // First, deactivate all existing workout plans for this user
+      const { error: deactivateError } = await supabase
         .from("workout_plans")
-        .update({ 
-          plan_data: aiResponse,
-          created_at: new Date().toISOString()
-        })
-        .eq("user_id", session.user.id)
-        .eq("is_active", true)
+        .update({ is_active: false })
+        .eq("user_id", session.user.id);
+
+      if (deactivateError) {
+        throw new Error('Failed to deactivate existing workout plans');
+      }
+
+      // Then, create a new active workout plan
+      const { data: plan, error: createError } = await supabase
+        .from("workout_plans")
+        .insert([
+          {
+            user_id: session.user.id,
+            fitness_goal: profile.fitness_goal,
+            workout_location: profile.workout_location,
+            intensity_level: profile.intensity_level,
+            equipment: profile.equipment,
+            plan_data: aiResponse,
+            is_active: true,
+            workout_frequency: 3 // Since we're generating a 3-day plan
+          }
+        ])
         .select()
         .single();
 
-      if (updateError) {
-        throw new Error('Failed to save workout plan to database');
+      if (createError) {
+        throw new Error('Failed to save new workout plan');
       }
 
       if (!plan) {
