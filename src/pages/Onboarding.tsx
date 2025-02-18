@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -45,13 +47,11 @@ const Onboarding = () => {
     }
 
     try {
-      // Deactivate all existing workout plans first
       await supabase
         .from("workout_plans")
         .update({ is_active: false })
         .eq("user_id", session.user.id);
 
-      // Update profile data
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
@@ -66,12 +66,11 @@ const Onboarding = () => {
         throw new Error("Error saving profile");
       }
 
-      // Create initial workout plan with properly typed values
       const { error: planError } = await supabase
         .from("workout_plans")
         .insert({
           user_id: session.user.id,
-          fitness_goal: formData.fitness_goal as "lose_weight" | "build_muscle" | "stay_fit",
+          fitness_goal: formData.fitness_goal,
           workout_location: formData.workout_location,
           intensity_level: formData.intensity_level,
           equipment: formData.equipment,
@@ -107,6 +106,7 @@ const Onboarding = () => {
                 value={formData.first_name}
                 onChange={(e) => updateFormData("first_name", e.target.value)}
                 placeholder="Enter your first name"
+                className="bg-white"
               />
             </div>
             <div className="space-y-2">
@@ -117,6 +117,7 @@ const Onboarding = () => {
                 value={formData.last_name}
                 onChange={(e) => updateFormData("last_name", e.target.value)}
                 placeholder="Enter your last name"
+                className="bg-white"
               />
             </div>
           </div>
@@ -133,6 +134,7 @@ const Onboarding = () => {
                 value={formData.age}
                 onChange={(e) => updateFormData("age", e.target.value)}
                 placeholder="Enter your age"
+                className="bg-white"
               />
             </div>
             <div className="space-y-2">
@@ -143,6 +145,7 @@ const Onboarding = () => {
                 value={formData.weight}
                 onChange={(e) => updateFormData("weight", e.target.value)}
                 placeholder="Enter your weight"
+                className="bg-white"
               />
             </div>
           </div>
@@ -157,7 +160,7 @@ const Onboarding = () => {
                 value={formData.fitness_goal}
                 onValueChange={(value) => updateFormData("fitness_goal", value)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Select your goal" />
                 </SelectTrigger>
                 <SelectContent>
@@ -173,7 +176,7 @@ const Onboarding = () => {
                 value={formData.workout_location}
                 onValueChange={(value) => updateFormData("workout_location", value)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Select location" />
                 </SelectTrigger>
                 <SelectContent>
@@ -188,7 +191,7 @@ const Onboarding = () => {
                 value={formData.intensity_level}
                 onValueChange={(value) => updateFormData("intensity_level", value)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Select intensity" />
                 </SelectTrigger>
                 <SelectContent>
@@ -220,45 +223,67 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-lg">
-        <CardHeader>
-          <CardTitle>Complete Your Profile ({step}/3)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {renderStep()}
-            <div className="flex justify-between pt-4">
-              {step > 1 && (
-                <Button
-                  variant="outline"
-                  onClick={() => setStep((s) => s - 1)}
-                  disabled={loading}
-                >
-                  Previous
-                </Button>
-              )}
-              {step < 3 ? (
-                <Button
-                  onClick={() => setStep((s) => s + 1)}
-                  disabled={!canProceed() || loading}
-                  className="ml-auto"
-                >
-                  Next
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleSubmit}
-                  disabled={!canProceed() || loading}
-                  className="ml-auto"
-                >
-                  Complete Profile
-                </Button>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+      <div className="relative overflow-hidden">
+        <div 
+          className="absolute inset-0 z-0 bg-cover bg-center opacity-10"
+          style={{ 
+            backgroundImage: 'url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80")',
+          }}
+        />
+        <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+          <Card className="w-full max-w-lg bg-white/95 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-center">
+                Complete Your Profile ({step}/3)
+              </CardTitle>
+              <div className="w-full bg-gray-200 h-2 rounded-full mt-4">
+                <div 
+                  className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${(step / 3) * 100}%` }}
+                />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {renderStep()}
+                <div className="flex justify-between pt-4">
+                  {step > 1 && (
+                    <Button
+                      variant="outline"
+                      onClick={() => setStep((s) => s - 1)}
+                      disabled={loading}
+                      className="flex items-center"
+                    >
+                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      Previous
+                    </Button>
+                  )}
+                  {step < 3 ? (
+                    <Button
+                      onClick={() => setStep((s) => s + 1)}
+                      disabled={!canProceed() || loading}
+                      className="ml-auto bg-purple-600 hover:bg-purple-700"
+                    >
+                      Next
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={handleSubmit}
+                      disabled={!canProceed() || loading}
+                      className="ml-auto bg-purple-600 hover:bg-purple-700"
+                    >
+                      Complete Profile
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };
