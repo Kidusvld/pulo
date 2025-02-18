@@ -1,25 +1,31 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [isSignUp, setIsSignUp] = useState(searchParams.get("mode") === "signup");
   const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    checkSession();
+  }, []);
+
+  const checkSession = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      navigate("/dashboard");
+    }
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,22 +33,51 @@ const Auth = () => {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
         });
+
         if (error) throw error;
-        toast.success("Check your email to verify your account!");
+
+        if (data.user) {
+          // Create a profile entry for the new user
+          const { error: profileError } = await supabase
+            .from("profiles")
+            .insert([{ id: data.user.id, email: data.user.email }]);
+
+          if (profileError) throw profileError;
+
+          toast.success("Account created successfully!");
+          navigate("/onboarding");
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
+
         if (error) throw error;
-        navigate("/");
+        
+        // For sign in, check if profile is complete
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("age, weight, first_name")
+          .eq("id", (await supabase.auth.getUser()).data.user?.id)
+          .single();
+
+        if (profileError) throw profileError;
+
+        // Only redirect to onboarding if profile is incomplete
+        if (!profile?.age || !profile?.weight || !profile?.first_name) {
+          navigate("/onboarding");
+        } else {
+          navigate("/dashboard");
+        }
       }
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      console.error('Auth error:', error);
+      toast.error(error instanceof Error ? error.message : "Authentication error");
     } finally {
       setLoading(false);
     }
@@ -53,11 +88,6 @@ const Auth = () => {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>{isSignUp ? "Create Account" : "Welcome Back"}</CardTitle>
-          <CardDescription>
-            {isSignUp
-              ? "Sign up to start your fitness journey"
-              : "Sign in to continue your fitness journey"}
-          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleAuth} className="space-y-4">
@@ -86,17 +116,19 @@ const Auth = () => {
             <Button type="submit" className="w-full" disabled={loading}>
               {isSignUp ? "Sign Up" : "Sign In"}
             </Button>
-            <div className="text-center">
-              <Button
+            <p className="text-center text-sm text-gray-600">
+              {isSignUp ? "Already have an account? " : "Don't have an account? "}
+              <button
                 type="button"
-                variant="link"
-                onClick={() => setIsSignUp(!isSignUp)}
+                onClick={() => {
+                  setIsSignUp(!isSignUp);
+                  navigate(`/auth?mode=${isSignUp ? "signin" : "signup"}`, { replace: true });
+                }}
+                className="text-blue-600 hover:underline"
               >
-                {isSignUp
-                  ? "Already have an account? Sign In"
-                  : "Don't have an account? Sign Up"}
-              </Button>
-            </div>
+                {isSignUp ? "Sign In" : "Sign Up"}
+              </button>
+            </p>
           </form>
         </CardContent>
       </Card>
