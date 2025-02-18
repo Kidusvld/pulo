@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -252,6 +251,37 @@ const Dashboard = () => {
     }
   };
 
+  const handleSaveWorkout = async () => {
+    if (!workoutPlan) {
+      toast.error("No workout plan to save");
+      return;
+    }
+
+    const { data: session } = await supabase.auth.getSession();
+    
+    if (!session?.session) {
+      toast.error("Please sign in to save workouts");
+      navigate("/auth");
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("saved_workout_plans")
+        .insert({
+          user_id: session.session.user.id,
+          plan_data: workoutPlan.plan_data,
+          name: `Workout Plan - ${new Date().toLocaleDateString()}`
+        });
+
+      if (error) throw error;
+      toast.success("Workout plan saved successfully!");
+    } catch (error) {
+      console.error("Error saving workout:", error);
+      toast.error("Failed to save workout plan");
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
@@ -285,13 +315,22 @@ const Dashboard = () => {
             <h1 className="text-3xl font-bold text-gray-900">
               Welcome{profile?.first_name ? `, ${profile.first_name}` : ""}! 👋
             </h1>
-            <Button 
-              variant="outline" 
-              onClick={handleSignOut}
-              className="hover:bg-red-50 hover:text-red-600 hover:border-red-200"
-            >
-              Sign Out
-            </Button>
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                onClick={() => navigate("/saved-workouts")}
+                className="hover:bg-purple-50 hover:text-purple-600"
+              >
+                Saved Plans
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={handleSignOut}
+                className="hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+              >
+                Sign Out
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-6">
@@ -372,14 +411,25 @@ const Dashboard = () => {
                   <DumbbellIcon className="h-5 w-5 text-purple-600" />
                   Your Workout Plan
                 </CardTitle>
-                <Button
-                  onClick={generateNewPlan}
-                  disabled={generatingPlan}
-                  className="bg-purple-600 hover:bg-purple-700 text-white"
-                >
-                  {generatingPlan ? "Generating..." : "Generate New Plan"}
-                  {!generatingPlan && <ArrowRight className="ml-2 h-4 w-4" />}
-                </Button>
+                <div className="flex gap-2">
+                  {workoutPlan && (
+                    <Button
+                      variant="outline"
+                      onClick={handleSaveWorkout}
+                      className="bg-white hover:bg-purple-50 hover:text-purple-600"
+                    >
+                      Save Plan
+                    </Button>
+                  )}
+                  <Button
+                    onClick={generateNewPlan}
+                    disabled={generatingPlan}
+                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    {generatingPlan ? "Generating..." : "Generate New Plan"}
+                    {!generatingPlan && <ArrowRight className="ml-2 h-4 w-4" />}
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 {workoutPlan?.plan_data?.workouts ? (
