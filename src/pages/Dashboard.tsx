@@ -1,10 +1,11 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Json } from "@/integrations/supabase/types";
 
 interface WorkoutPlan {
@@ -43,6 +44,9 @@ const Dashboard = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [workoutPlan, setWorkoutPlan] = useState<WorkoutPlan | null>(null);
   const [generatingPlan, setGeneratingPlan] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedWeight, setEditedWeight] = useState<string>("");
+  const [editedIntensity, setEditedIntensity] = useState<"beginner" | "intermediate" | "advanced">("beginner");
 
   useEffect(() => {
     checkAuth();
@@ -57,7 +61,6 @@ const Dashboard = () => {
     }
 
     try {
-      // Check if profile is complete and get workout plan settings
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("first_name, age, weight")
@@ -69,7 +72,6 @@ const Dashboard = () => {
         return;
       }
 
-      // Get active workout plan which contains the user's preferences
       const { data: planData, error: planError } = await supabase
         .from("workout_plans")
         .select("*")
@@ -82,7 +84,6 @@ const Dashboard = () => {
         return;
       }
 
-      // Combine profile data with workout preferences from the plan
       setProfile({
         first_name: profileData.first_name,
         age: profileData.age,
@@ -102,6 +103,61 @@ const Dashboard = () => {
     }
   };
 
+  const handleUpdateProfile = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session || !profile) {
+      toast.error("Session expired. Please sign in again.");
+      navigate("/auth");
+      return;
+    }
+
+    const weight = parseFloat(editedWeight);
+    if (isNaN(weight) || weight <= 0) {
+      toast.error("Please enter a valid weight");
+      return;
+    }
+
+    try {
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ weight })
+        .eq("id", session.user.id);
+
+      if (profileError) throw profileError;
+
+      const { error: planError } = await supabase
+        .from("workout_plans")
+        .update({ 
+          intensity_level: editedIntensity,
+          is_active: true
+        })
+        .eq("user_id", session.user.id)
+        .eq("is_active", true);
+
+      if (planError) throw planError;
+
+      setProfile({
+        ...profile,
+        weight,
+        intensity_level: editedIntensity
+      });
+
+      if (workoutPlan) {
+        setWorkoutPlan({
+          ...workoutPlan,
+          intensity_level: editedIntensity
+        });
+      }
+
+      toast.success("Profile updated successfully!");
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error("Failed to update profile");
+    }
+  };
+
   const generateNewPlan = async () => {
     if (!profile) return;
     
@@ -115,7 +171,6 @@ const Dashboard = () => {
     }
 
     try {
-      // Generate workout plan using AI
       const { data: aiResponse, error: aiError } = await supabase.functions
         .invoke('generate-workout', {
           body: {
@@ -136,7 +191,6 @@ const Dashboard = () => {
         throw new Error(aiResponse.error);
       }
 
-      // Validate the AI response structure
       if (!aiResponse.workouts || !Array.isArray(aiResponse.workouts)) {
         throw new Error('Invalid workout plan structure received from AI');
       }
@@ -150,7 +204,6 @@ const Dashboard = () => {
         planData: aiResponse
       });
 
-      // First, deactivate all existing workout plans for this user
       const { error: deactivateError } = await supabase
         .from("workout_plans")
         .update({ is_active: false })
@@ -160,7 +213,6 @@ const Dashboard = () => {
         throw new Error('Failed to deactivate existing workout plans');
       }
 
-      // Then, create a new active workout plan
       const { data: plan, error: createError } = await supabase
         .from("workout_plans")
         .insert([
@@ -172,7 +224,7 @@ const Dashboard = () => {
             equipment: profile.equipment,
             plan_data: aiResponse,
             is_active: true,
-            workout_frequency: 3 // Since we're generating a 3-day plan
+            workout_frequency: 3
           }
         ])
         .select()
@@ -220,10 +272,23 @@ const Dashboard = () => {
         </div>
 
         <div className="space-y-6">
-          {/* Profile Summary */}
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Your Profile</CardTitle>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (isEditing) {
+                    handleUpdateProfile();
+                  } else {
+                    setEditedWeight(profile?.weight?.toString() || "");
+                    setEditedIntensity(profile?.intensity_level || "beginner");
+                    setIsEditing(true);
+                  }
+                }}
+              >
+                {isEditing ? "Save Changes" : "Edit Profile"}
+              </Button>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
@@ -233,13 +298,46 @@ const Dashboard = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Weight</p>
-                  <p className="text-lg font-medium">{profile?.weight} kg</p>
+                  {isEditing ? (
+                    <Input
+                      type="number"
+                      value={editedWeight}
+                      onChange={(e) => setEditedWeight(e.target.value)}
+                      placeholder="Enter weight in kg"
+                      className="mt-1"
+                    />
+                  ) : (
+                    <p className="text-lg font-medium">{profile?.weight} kg</p>
+                  )}
+                </div>
+                <div className="col-span-2">
+                  <p className="text-sm text-gray-500">Workout Intensity</p>
+                  {isEditing ? (
+                    <Select
+                      value={editedIntensity}
+                      onValueChange={(value: "beginner" | "intermediate" | "advanced") => 
+                        setEditedIntensity(value)
+                      }
+                    >
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select intensity" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="beginner">Beginner</SelectItem>
+                        <SelectItem value="intermediate">Intermediate</SelectItem>
+                        <SelectItem value="advanced">Advanced</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <p className="text-lg font-medium capitalize">
+                      {profile?.intensity_level}
+                    </p>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Workout Plan */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Your Workout Plan</CardTitle>
