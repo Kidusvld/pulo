@@ -36,6 +36,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_progress_tracking"
+            columns: ["progress_tracking_id"]
+            isOneToOne: false
+            referencedRelation: "progress_tracking"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "muscle_group_tracking_progress_tracking_id_fkey"
             columns: ["progress_tracking_id"]
             isOneToOne: false
