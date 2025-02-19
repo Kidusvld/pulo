@@ -78,6 +78,7 @@ const Dashboard = () => {
   const [editedWeight, setEditedWeight] = useState<string>("");
   const [editedIntensity, setEditedIntensity] = useState<"beginner" | "intermediate" | "advanced">("beginner");
   const [editedFitnessGoal, setEditedFitnessGoal] = useState<"build_muscle" | "lose_fat" | "increase_mobility">("build_muscle");
+  const [editedWorkoutLocation, setEditedWorkoutLocation] = useState<"home" | "gym">("home");
   const [numberOfDays, setNumberOfDays] = useState<number>(3);
   const [progressStats, setProgressStats] = useState({
     totalWorkouts: 0,
@@ -261,6 +262,7 @@ const Dashboard = () => {
         .update({ 
           intensity_level: editedIntensity,
           fitness_goal: editedFitnessGoal,
+          workout_location: editedWorkoutLocation,
           is_active: true
         })
         .eq("user_id", session.user.id)
@@ -272,14 +274,16 @@ const Dashboard = () => {
         ...profile,
         weight,
         intensity_level: editedIntensity,
-        fitness_goal: editedFitnessGoal
+        fitness_goal: editedFitnessGoal,
+        workout_location: editedWorkoutLocation
       });
 
       if (workoutPlan) {
         setWorkoutPlan({
           ...workoutPlan,
           intensity_level: editedIntensity,
-          fitness_goal: editedFitnessGoal
+          fitness_goal: editedFitnessGoal,
+          workout_location: editedWorkoutLocation
         });
       }
 
@@ -492,6 +496,7 @@ const Dashboard = () => {
                       setEditedWeight(profile?.weight?.toString() || "");
                       setEditedIntensity(profile?.intensity_level || "beginner");
                       setEditedFitnessGoal(profile?.fitness_goal || "build_muscle");
+                      setEditedWorkoutLocation(profile?.workout_location || "home");
                       setIsEditing(true);
                     }
                   }}
@@ -566,6 +571,29 @@ const Dashboard = () => {
                     ) : (
                       <p className="text-lg font-semibold text-purple-900 capitalize">
                         {profile?.intensity_level}
+                      </p>
+                    )}
+                  </div>
+                  <div className="col-span-2 bg-purple-50/50 rounded-lg p-4 border border-purple-100">
+                    <p className="text-sm text-purple-600 font-medium">Workout Location</p>
+                    {isEditing ? (
+                      <Select
+                        value={editedWorkoutLocation}
+                        onValueChange={(value: "home" | "gym") => 
+                          setEditedWorkoutLocation(value)
+                        }
+                      >
+                        <SelectTrigger className="mt-1 bg-white border-purple-100">
+                          <SelectValue placeholder="Select workout location" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="home">Home</SelectItem>
+                          <SelectItem value="gym">Gym</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <p className="text-lg font-semibold text-purple-900 capitalize">
+                        {profile?.workout_location}
                       </p>
                     )}
                   </div>
