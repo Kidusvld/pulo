@@ -1,13 +1,41 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Leaf } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+      {/* Navigation */}
+      <nav className="relative z-20 border-b border-purple-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-purple-600 text-white">
+                <Leaf className="w-6 h-6" />
+              </div>
+              <span className="text-2xl font-bold text-purple-600">PULO</span>
+            </div>
+            <div className="flex gap-4">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate("/auth?mode=signin")}
+              >
+                Sign In
+              </Button>
+              <Button 
+                onClick={() => navigate("/auth?mode=signup")}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                Get Started
+              </Button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div 
