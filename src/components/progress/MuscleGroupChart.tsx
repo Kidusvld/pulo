@@ -1,89 +1,19 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from "recharts";
-import { Target, Dumbbell } from "lucide-react";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-
-interface MuscleGroupData {
-  muscle_group: string;
-  total_volume: number;
-}
+import { Target } from "lucide-react";
+import { useMuscleGroupData } from "@/hooks/use-muscle-group-data";
+import { EmptyMuscleGroupChart } from "./EmptyMuscleGroupChart";
 
 interface MuscleGroupChartProps {
-  data: MuscleGroupData[];
+  data: Array<{
+    muscle_group: string;
+    total_volume: number;
+  }>;
 }
 
 export const MuscleGroupChart = ({ data: initialData }: MuscleGroupChartProps) => {
-  const [data, setData] = useState<MuscleGroupData[]>(initialData);
-  const hasData = data && data.length > 0;
-
-  const fetchMuscleGroupData = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-
-      // Using proper join syntax with progress_tracking table
-      const { data: muscleGroups, error } = await supabase
-        .from('muscle_group_tracking')
-        .select(`
-          muscle_group,
-          total_weight,
-          progress_tracking!inner (
-            user_id
-          )
-        `)
-        .eq('progress_tracking.user_id', session.user.id)
-        .gt('total_weight', 0);
-
-      if (error) throw error;
-
-      // Aggregate the data by muscle group with proper type casting
-      const aggregatedData = muscleGroups.reduce((acc: { [key: string]: number }, curr) => {
-        const group = curr.muscle_group;
-        const weight = typeof curr.total_weight === 'number' ? curr.total_weight : 0;
-        acc[group] = (acc[group] || 0) + weight;
-        return acc;
-      }, {});
-
-      // Format data for the chart with explicit typing
-      const formattedData: MuscleGroupData[] = Object.entries(aggregatedData).map(([muscle_group, total_volume]) => ({
-        muscle_group,
-        total_volume: Number(total_volume),
-      }));
-
-      setData(formattedData);
-    } catch (error) {
-      console.error('Error fetching muscle group data:', error);
-      toast.error('Failed to update muscle group chart');
-    }
-  };
-
-  useEffect(() => {
-    // Set initial data
-    setData(initialData);
-
-    // Set up real-time subscription
-    const channel = supabase
-      .channel('muscle-group-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'muscle_group_tracking'
-        },
-        () => {
-          fetchMuscleGroupData();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [initialData]);
+  const { data, hasData } = useMuscleGroupData(initialData);
 
   return (
     <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-xl shadow-purple-100/20">
@@ -110,11 +40,7 @@ export const MuscleGroupChart = ({ data: initialData }: MuscleGroupChartProps) =
             </RadarChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-full flex flex-col items-center justify-center text-gray-500">
-            <Dumbbell className="h-12 w-12 text-purple-200 mb-3" />
-            <p className="text-lg font-medium">No data yet</p>
-            <p className="text-sm text-gray-400 mt-1">Log your workouts to see muscle group focus</p>
-          </div>
+          <EmptyMuscleGroupChart />
         )}
       </CardContent>
     </Card>
