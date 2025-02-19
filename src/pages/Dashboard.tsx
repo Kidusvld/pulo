@@ -517,6 +517,12 @@ const Dashboard = () => {
                     )}
                   </div>
                   <div className="col-span-2 bg-purple-50/50 rounded-lg p-4 border border-purple-100">
+                    <p className="text-sm text-purple-600 font-medium">Fitness Goal</p>
+                    <p className="text-lg font-semibold text-purple-900 capitalize">
+                      {profile?.fitness_goal?.replace(/_/g, ' ')}
+                    </p>
+                  </div>
+                  <div className="col-span-2 bg-purple-50/50 rounded-lg p-4 border border-purple-100">
                     <p className="text-sm text-purple-600 font-medium">Workout Intensity</p>
                     {isEditing ? (
                       <Select
