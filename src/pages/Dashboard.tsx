@@ -452,6 +452,14 @@ const Dashboard = () => {
           <div className="flex gap-4">
             <Button
               variant="outline"
+              onClick={() => navigate("/log-workout")}
+              className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100 transition-all duration-200"
+            >
+              <DumbbellIcon className="w-4 h-4 mr-2" />
+              Log Workout
+            </Button>
+            <Button
+              variant="outline"
               onClick={() => navigate("/saved-workouts")}
               className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100 transition-all duration-200"
             >
