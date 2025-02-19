@@ -74,6 +74,7 @@ const Onboarding = () => {
           last_name: formData.last_name,
           age: parseInt(formData.age),
           weight: parseFloat(formData.weight),
+          intensity_level: formData.intensity_level,
         })
         .eq("id", session.user.id);
 
@@ -88,7 +89,7 @@ const Onboarding = () => {
 
       // Save the workout plan
       const { error: planError } = await supabase
-        .from("workout_plans")
+        .from('workout_plans')
         .insert({
           user_id: session.user.id,
           fitness_goal: formData.fitness_goal,
@@ -105,7 +106,7 @@ const Onboarding = () => {
       }
 
       toast.success("Your workout plan is ready!");
-      navigate("/saved-workouts");
+      navigate("/profile");
     } catch (error) {
       console.error('Error saving data:', error);
       toast.error(error instanceof Error ? error.message : "Error saving data");
