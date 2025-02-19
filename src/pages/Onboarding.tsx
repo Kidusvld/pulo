@@ -26,7 +26,7 @@ const Onboarding = () => {
     last_name: "",
     age: "",
     weight: "",
-    fitness_goal: "stay_fit" as "lose_weight" | "build_muscle" | "stay_fit",
+    fitness_goal: "build_muscle" as "build_muscle" | "lose_fat" | "increase_mobility",
     workout_location: "home" as "home" | "gym",
     intensity_level: "beginner" as "beginner" | "intermediate" | "advanced",
     equipment: [] as string[],
@@ -158,15 +158,15 @@ const Onboarding = () => {
               <Label>Fitness Goal</Label>
               <Select
                 value={formData.fitness_goal}
-                onValueChange={(value: "lose_weight" | "build_muscle" | "stay_fit") => updateFormData("fitness_goal", value)}
+                onValueChange={(value: "build_muscle" | "lose_fat" | "increase_mobility") => updateFormData("fitness_goal", value)}
               >
                 <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Select your goal" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="lose_weight">Lose Weight</SelectItem>
+                  <SelectItem value="lose_fat">Lose Fat</SelectItem>
                   <SelectItem value="build_muscle">Build Muscle</SelectItem>
-                  <SelectItem value="stay_fit">Stay Fit</SelectItem>
+                  <SelectItem value="increase_mobility">Increase Mobility</SelectItem>
                 </SelectContent>
               </Select>
             </div>
