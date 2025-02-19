@@ -13,6 +13,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [isSignUp, setIsSignUp] = useState(searchParams.get("mode") === "signup");
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,7 +34,16 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      if (isSignUp) {
+      if (isForgotPassword) {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/auth?mode=reset`,
+        });
+        
+        if (error) throw error;
+        
+        toast.success("Password reset instructions have been sent to your email!");
+        setIsForgotPassword(false);
+      } else if (isSignUp) {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -81,6 +91,18 @@ const Auth = () => {
     }
   };
 
+  const getFormTitle = () => {
+    if (isForgotPassword) return "Reset Password";
+    return isSignUp ? "Start Your Fitness Journey" : "Welcome Back";
+  };
+
+  const getFormDescription = () => {
+    if (isForgotPassword) return "Enter your email to receive password reset instructions";
+    return isSignUp 
+      ? "Create an account to get your personalized workout plan" 
+      : "Sign in to continue your fitness journey";
+  };
+
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-purple-50 via-white to-purple-50">
       {/* Decorative Elements */}
@@ -104,12 +126,10 @@ const Auth = () => {
         <Card className="w-full max-w-md bg-white/90 backdrop-blur-lg shadow-xl border-purple-100">
           <CardHeader className="space-y-2">
             <CardTitle className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to-purple-900">
-              {isSignUp ? "Start Your Fitness Journey" : "Welcome Back"}
+              {getFormTitle()}
             </CardTitle>
             <p className="text-center text-gray-600">
-              {isSignUp 
-                ? "Create an account to get your personalized workout plan" 
-                : "Sign in to continue your fitness journey"}
+              {getFormDescription()}
             </p>
           </CardHeader>
           <CardContent>
@@ -129,21 +149,23 @@ const Auth = () => {
                   />
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-700">Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                    required
-                    className="pl-10 bg-white/80 border-purple-100 focus:border-purple-300 focus:ring-purple-200"
-                  />
+              {!isForgotPassword && (
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-gray-700">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <Input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Enter your password"
+                      required
+                      className="pl-10 bg-white/80 border-purple-100 focus:border-purple-300 focus:ring-purple-200"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
               <Button 
                 type="submit" 
                 className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white h-11 shadow-lg shadow-purple-200 transition-all duration-200"
@@ -156,12 +178,22 @@ const Auth = () => {
                   </div>
                 ) : (
                   <div className="flex items-center justify-center">
-                    {isSignUp ? "Create Account" : "Sign In"}
+                    {isForgotPassword ? "Send Reset Instructions" : (isSignUp ? "Create Account" : "Sign In")}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </div>
                 )}
               </Button>
               
+              {!isSignUp && !isForgotPassword && (
+                <button
+                  type="button"
+                  onClick={() => setIsForgotPassword(true)}
+                  className="w-full text-sm text-purple-600 hover:text-purple-700 hover:underline mt-2"
+                >
+                  Forgot your password?
+                </button>
+              )}
+
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-200"></div>
@@ -172,17 +204,33 @@ const Auth = () => {
               </div>
 
               <p className="text-center text-sm text-gray-600">
-                {isSignUp ? "Already have an account? " : "Don't have an account? "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsSignUp(!isSignUp);
-                    navigate(`/auth?mode=${isSignUp ? "signin" : "signup"}`, { replace: true });
-                  }}
-                  className="text-purple-600 hover:text-purple-700 hover:underline font-medium"
-                >
-                  {isSignUp ? "Sign In" : "Sign Up"}
-                </button>
+                {isForgotPassword ? (
+                  <>
+                    Remember your password?{" "}
+                    <button
+                      type="button"
+                      onClick={() => setIsForgotPassword(false)}
+                      className="text-purple-600 hover:text-purple-700 hover:underline font-medium"
+                    >
+                      Sign In
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    {isSignUp ? "Already have an account? " : "Don't have an account? "}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsSignUp(!isSignUp);
+                        setIsForgotPassword(false);
+                        navigate(`/auth?mode=${isSignUp ? "signin" : "signup"}`, { replace: true });
+                      }}
+                      className="text-purple-600 hover:text-purple-700 hover:underline font-medium"
+                    >
+                      {isSignUp ? "Sign In" : "Sign Up"}
+                    </button>
+                  </>
+                )}
               </p>
             </form>
           </CardContent>
