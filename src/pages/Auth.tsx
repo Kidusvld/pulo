@@ -1,18 +1,18 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Lock, Mail, Dumbbell } from "lucide-react";
+import { ArrowRight, Lock, Mail } from "lucide-react";
 import { toast } from "sonner";
 
 const Auth = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [isSignUp, setIsSignUp] = useState(location.state?.mode === "signup");
+  const [searchParams] = useSearchParams();
+  const [isSignUp, setIsSignUp] = useState(searchParams.get("mode") === "signup");
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,7 +24,7 @@ const Auth = () => {
   const checkSession = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-      navigate("/profile");
+      navigate("/dashboard");
     }
   };
 
@@ -67,12 +67,10 @@ const Auth = () => {
 
         if (profileError) throw profileError;
 
-        // Direct users to profile page if they've completed onboarding
-        if (profile?.age && profile?.weight && profile?.first_name) {
-          navigate("/profile");
-        } else {
-          // If essential profile data is missing, send to onboarding
+        if (!profile?.age || !profile?.weight || !profile?.first_name) {
           navigate("/onboarding");
+        } else {
+          navigate("/dashboard");
         }
       }
     } catch (error) {
@@ -95,7 +93,7 @@ const Auth = () => {
         {/* Logo and Branding */}
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
-            <Dumbbell className="h-12 w-12 text-purple-600" />
+            <DumbbellIcon className="h-12 w-12 text-purple-600" />
           </div>
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
             FitTrack Pro

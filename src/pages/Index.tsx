@@ -33,7 +33,7 @@ const Index = () => {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
                     size="lg" 
-                    onClick={() => navigate("/auth", { state: { mode: "signup" } })}
+                    onClick={() => navigate("/auth?mode=signup")}
                     className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg h-auto"
                   >
                     Start Your Journey
@@ -42,7 +42,7 @@ const Index = () => {
                   <Button 
                     variant="outline"
                     size="lg" 
-                    onClick={() => navigate("/auth", { state: { mode: "signin" } })}
+                    onClick={() => navigate("/auth?mode=signin")}
                     className="px-8 py-6 text-lg h-auto"
                   >
                     Sign In
