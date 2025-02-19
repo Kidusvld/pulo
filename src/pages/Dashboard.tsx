@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ProgressStats } from "@/components/progress/ProgressStats";
 import { WorkoutForm } from "@/components/progress/WorkoutForm";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, DumbbellIcon, Trophy, Calendar, LogOut, BarChart } from "lucide-react";
+import { ArrowRight, DumbbellIcon, Trophy, Calendar, LogOut, BarChart, History } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 interface ProgressData {
@@ -94,11 +94,18 @@ const Dashboard = () => {
           </h1>
           <div className="flex gap-4">
             <Link
-              to="/onboarding"
+              to="/workout-generator"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
             >
               <DumbbellIcon className="h-5 w-5" />
               Generate Workout
+            </Link>
+            <Link
+              to="/workout-logs"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
+            >
+              <History className="h-5 w-5" />
+              Workout Logs
             </Link>
             <Button
               variant="ghost"

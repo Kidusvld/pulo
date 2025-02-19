@@ -10,6 +10,7 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import SavedWorkouts from "./pages/SavedWorkouts";
 import WorkoutLogs from "./pages/WorkoutLogs";
+import WorkoutGenerator from "./pages/WorkoutGenerator";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/saved-workouts" element={<SavedWorkouts />} />
           <Route path="/workout-logs" element={<WorkoutLogs />} />
+          <Route path="/workout-generator" element={<WorkoutGenerator />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
