@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
@@ -11,8 +12,10 @@ const Index = () => {
       <nav className="relative z-20 border-b border-purple-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <span className="text-3xl font-bold text-purple-600 tracking-tight">PULO</span>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center px-3 h-10 rounded-xl bg-purple-600 text-white">
+                <span className="text-xl font-bold tracking-tight">PULO</span>
+              </div>
             </div>
             <div className="flex gap-4">
               <Button 
