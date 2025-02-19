@@ -415,7 +415,10 @@ const Dashboard = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-700 to-purple-900 bg-clip-text text-transparent">
+            <h1 
+              onClick={() => navigate("/")}
+              className="text-4xl font-bold bg-gradient-to-r from-purple-700 to-purple-900 bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity"
+            >
               Welcome{profile?.first_name ? `, ${profile.first_name}` : ""}! 👋
             </h1>
             <p className="text-gray-600 mt-2">Track your fitness journey and achieve your goals</p>
