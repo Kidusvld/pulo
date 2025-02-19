@@ -52,6 +52,7 @@ export type Database = {
           first_name: string | null
           free_plan_generated: boolean | null
           id: string
+          intensity_level: string | null
           last_name: string | null
           stripe_customer_id: string | null
           subscription_end_date: string | null
@@ -68,6 +69,7 @@ export type Database = {
           first_name?: string | null
           free_plan_generated?: boolean | null
           id: string
+          intensity_level?: string | null
           last_name?: string | null
           stripe_customer_id?: string | null
           subscription_end_date?: string | null
@@ -84,6 +86,7 @@ export type Database = {
           first_name?: string | null
           free_plan_generated?: boolean | null
           id?: string
+          intensity_level?: string | null
           last_name?: string | null
           stripe_customer_id?: string | null
           subscription_end_date?: string | null
