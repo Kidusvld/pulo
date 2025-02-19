@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,8 +6,9 @@ import { Dumbbell } from "lucide-react";
 import { SignInForm } from "@/components/auth/SignInForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
 import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
+import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 
-type AuthMode = "signin" | "signup" | "forgot";
+type AuthMode = "signin" | "signup" | "forgot" | "recovery";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -36,6 +36,8 @@ const Auth = () => {
         return "Start Your Fitness Journey";
       case "forgot":
         return "Reset Password";
+      case "recovery":
+        return "Set New Password";
       default:
         return "Welcome Back";
     }
@@ -47,6 +49,8 @@ const Auth = () => {
         return "Create an account to get your personalized workout plan";
       case "forgot":
         return "Enter your email to receive password reset instructions";
+      case "recovery":
+        return "Enter your new password below";
       default:
         return "Sign in to continue your fitness journey";
     }
@@ -91,8 +95,11 @@ const Auth = () => {
             {currentMode === "forgot" && (
               <ForgotPasswordForm onSwitchMode={handleSwitchMode} />
             )}
+            {currentMode === "recovery" && (
+              <ResetPasswordForm />
+            )}
 
-            {currentMode !== "forgot" && (
+            {currentMode !== "forgot" && currentMode !== "recovery" && (
               <>
                 <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">
