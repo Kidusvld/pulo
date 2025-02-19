@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { Dumbbell } from "lucide-react";
 
 type MuscleGroup = "chest" | "back" | "legs" | "shoulders" | "arms" | "core" | "full_body" | "cardio";
 
@@ -77,7 +78,10 @@ export const WorkoutForm = ({ onSuccess }: WorkoutFormProps) => {
   return (
     <Card className="bg-white/90 backdrop-blur-sm border-purple-100">
       <CardHeader>
-        <CardTitle className="text-xl font-semibold text-purple-900">Log Workout</CardTitle>
+        <CardTitle className="text-xl font-semibold text-purple-900 flex items-center gap-2">
+          <Dumbbell className="h-5 w-5 text-purple-600" />
+          Log Workout
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">

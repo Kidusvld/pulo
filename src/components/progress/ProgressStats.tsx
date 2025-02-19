@@ -1,6 +1,5 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Dumbbell, Clock, Target, RotateCcw } from "lucide-react";
+import { Activity, Dumbbell, Clock, Target, RotateCcw, BarChart } from "lucide-react";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -183,7 +182,10 @@ export const ProgressStats = ({
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-purple-900">Progress Statistics</h2>
+        <h2 className="text-lg font-semibold text-purple-900 flex items-center gap-2">
+          <BarChart className="h-5 w-5 text-purple-600" />
+          Progress Statistics
+        </h2>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
@@ -215,7 +217,7 @@ export const ProgressStats = ({
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {statItems.map((stat) => (
-          <Card key={stat.title} className="bg-white/90 backdrop-blur-sm border-purple-100">
+          <Card key={stat.title} className="bg-white/900 backdrop-blur-sm border-purple-100">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium text-gray-500">{stat.title}</CardTitle>
               <stat.icon className={`h-5 w-5 ${stat.color}`} />
