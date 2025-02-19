@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,7 +52,7 @@ const LogWorkout = () => {
         .from('progress_tracking')
         .select(`
           *,
-          muscle_group_tracking(muscle_group)
+          muscle_group_tracking!fk_progress_tracking(muscle_group)
         `)
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false });
