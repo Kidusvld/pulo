@@ -24,7 +24,7 @@ const Auth = () => {
   const checkSession = async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-      navigate("/dashboard");
+      navigate("/profile");
     }
   };
 
@@ -67,10 +67,12 @@ const Auth = () => {
 
         if (profileError) throw profileError;
 
-        if (!profile?.age || !profile?.weight || !profile?.first_name) {
-          navigate("/onboarding");
+        // Direct users to profile page if they've completed onboarding
+        if (profile?.age && profile?.weight && profile?.first_name) {
+          navigate("/profile");
         } else {
-          navigate("/dashboard");
+          // If essential profile data is missing, send to onboarding
+          navigate("/onboarding");
         }
       }
     } catch (error) {
