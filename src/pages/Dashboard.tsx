@@ -102,7 +102,6 @@ const Dashboard = () => {
 
     checkSession();
 
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session) {
         navigate("/auth");
@@ -608,7 +607,7 @@ const Dashboard = () => {
                               <p className="font-medium text-purple-900">{exercise.name}</p>
                               <p className="text-sm text-purple-600 mt-1">
                                 {exercise.sets} sets × {exercise.reps} reps
-                                (Rest: {exercise.rest}s)
+                                (Rest: {Math.floor(exercise.rest / 60)} min)
                               </p>
                             </div>
                           ))}
