@@ -24,9 +24,9 @@ serve(async (req) => {
   }
 
   try {
-    const { intensityLevel, fitnessGoal, workoutLocation, equipment } = await req.json();
+    const { intensityLevel, fitnessGoal, workoutLocation, equipment, numberOfDays = 3 } = await req.json();
 
-    const prompt = `Create a 3-day workout plan for a ${intensityLevel} level fitness enthusiast with a goal of ${fitnessGoal}, working out at ${workoutLocation}.
+    const prompt = `Create a ${numberOfDays}-day workout plan for a ${intensityLevel} level fitness enthusiast with a goal of ${fitnessGoal}, working out at ${workoutLocation}.
     ${equipment ? `Available equipment: ${equipment.join(', ')}` : 'No specific equipment requirements.'}
 
     Return a JSON object with this exact structure (no markdown, no explanations, just the JSON):
@@ -61,7 +61,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a fitness expert that creates personalized workout plans. You always respond with valid JSON only, no explanations or markdown formatting.'
+            content: `You are a fitness expert that creates personalized workout plans. You always respond with valid JSON only, no explanations or markdown formatting. Always create exactly ${numberOfDays} days of workouts.`
           },
           {
             role: 'user',

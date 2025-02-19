@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -37,6 +36,7 @@ const Profile = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [currentPlan, setCurrentPlan] = useState<WorkoutPlan | null>(null);
   const [loading, setLoading] = useState(false);
+  const [numberOfDays, setNumberOfDays] = useState(3);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -82,7 +82,8 @@ const Profile = () => {
           intensityLevel: profile?.intensity_level || 'beginner',
           fitnessGoal: latestPlan?.fitness_goal || 'stay_fit',
           workoutLocation: latestPlan?.workout_location || 'home',
-          equipment: latestPlan?.equipment || []
+          equipment: latestPlan?.equipment || [],
+          numberOfDays
         }
       });
 
@@ -128,26 +129,56 @@ const Profile = () => {
       return (
         <div className="text-center py-8">
           <p className="text-gray-600 mb-4">No workout plan generated yet.</p>
-          <Button
-            onClick={generateWorkout}
-            disabled={loading}
-            className="bg-purple-600 text-white hover:bg-purple-700"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              "Generate Workout Plan"
-            )}
-          </Button>
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex items-center gap-2">
+              <label htmlFor="days" className="text-sm font-medium text-gray-700">
+                Number of days:
+              </label>
+              <input
+                id="days"
+                type="number"
+                min="1"
+                max="7"
+                value={numberOfDays}
+                onChange={(e) => setNumberOfDays(Math.min(7, Math.max(1, parseInt(e.target.value) || 1)))}
+                className="w-20 rounded-md border border-gray-300 p-2 text-center"
+              />
+            </div>
+            <Button
+              onClick={generateWorkout}
+              disabled={loading}
+              className="bg-purple-600 text-white hover:bg-purple-700"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                "Generate Workout Plan"
+              )}
+            </Button>
+          </div>
         </div>
       );
     }
 
     return (
       <div className="space-y-6">
+        <div className="flex items-center gap-2 mb-4">
+          <label htmlFor="days" className="text-sm font-medium text-gray-700">
+            Number of days:
+          </label>
+          <input
+            id="days"
+            type="number"
+            min="1"
+            max="7"
+            value={numberOfDays}
+            onChange={(e) => setNumberOfDays(Math.min(7, Math.max(1, parseInt(e.target.value) || 1)))}
+            className="w-20 rounded-md border border-gray-300 p-2 text-center"
+          />
+        </div>
         {currentPlan.workouts.map((workout, index) => (
           <div key={index} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
             <h3 className="text-lg font-semibold text-purple-700 mb-3">
