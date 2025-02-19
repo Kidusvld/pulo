@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
@@ -17,6 +18,17 @@ const AuthCallback = () => {
         const hash = window.location.hash;
         const isPasswordReset = hash.includes('type=recovery');
         
+        // Check for error parameters in the URL hash
+        const hashParams = new URLSearchParams(hash.replace('#', ''));
+        const errorCode = hashParams.get('error_code');
+        const errorDescription = hashParams.get('error_description');
+
+        if (errorCode === 'otp_expired') {
+          toast.error("The password reset link has expired. Please request a new one.");
+          navigate("/auth?mode=forgot");
+          return;
+        }
+
         if (error) throw error;
 
         if (isPasswordReset) {
@@ -31,6 +43,7 @@ const AuthCallback = () => {
         }
       } catch (error) {
         console.error("Error in auth callback:", error);
+        toast.error("There was an error processing your request. Please try again.");
         navigate("/auth?mode=signin");
       }
     };
