@@ -21,7 +21,7 @@ export const useMuscleGroupData = (initialData: MuscleGroupData[]) => {
         .select(`
           muscle_group,
           total_weight,
-          progress_tracking!inner (
+          progress_tracking!muscle_group_tracking_progress_tracking_id_fkey (
             user_id
           )
         `)
