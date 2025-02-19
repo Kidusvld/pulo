@@ -26,7 +26,7 @@ const Onboarding = () => {
     last_name: "",
     age: "",
     weight: "",
-    fitness_goal: "" as "lose_weight" | "build_muscle" | "stay_fit" | "",
+    fitness_goal: "stay_fit" as "lose_weight" | "build_muscle" | "stay_fit",
     workout_location: "home" as "home" | "gym",
     intensity_level: "beginner" as "beginner" | "intermediate" | "advanced",
     equipment: [] as string[],
@@ -138,7 +138,7 @@ const Onboarding = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="weight">Weight (in kg)</Label>
+              <Label htmlFor="weight">Weight (in lbs)</Label>
               <Input
                 id="weight"
                 type="number"
@@ -158,7 +158,7 @@ const Onboarding = () => {
               <Label>Fitness Goal</Label>
               <Select
                 value={formData.fitness_goal}
-                onValueChange={(value) => updateFormData("fitness_goal", value)}
+                onValueChange={(value: "lose_weight" | "build_muscle" | "stay_fit") => updateFormData("fitness_goal", value)}
               >
                 <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Select your goal" />
@@ -174,7 +174,7 @@ const Onboarding = () => {
               <Label>Workout Location</Label>
               <Select
                 value={formData.workout_location}
-                onValueChange={(value) => updateFormData("workout_location", value)}
+                onValueChange={(value: "home" | "gym") => updateFormData("workout_location", value)}
               >
                 <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Select location" />
@@ -189,7 +189,7 @@ const Onboarding = () => {
               <Label>Intensity Level</Label>
               <Select
                 value={formData.intensity_level}
-                onValueChange={(value) => updateFormData("intensity_level", value)}
+                onValueChange={(value: "beginner" | "intermediate" | "advanced") => updateFormData("intensity_level", value)}
               >
                 <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Select intensity" />

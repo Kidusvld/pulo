@@ -397,11 +397,11 @@ const Dashboard = () => {
                         type="number"
                         value={editedWeight}
                         onChange={(e) => setEditedWeight(e.target.value)}
-                        placeholder="Enter weight in kg"
+                        placeholder="Enter weight in lbs"
                         className="mt-1 bg-white"
                       />
                     ) : (
-                      <p className="text-lg font-medium">{profile?.weight} kg</p>
+                      <p className="text-lg font-medium">{profile?.weight} lbs</p>
                     )}
                   </div>
                   <div className="col-span-2">

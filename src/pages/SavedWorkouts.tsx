@@ -10,6 +10,7 @@ import { toast } from "sonner";
 
 interface SavedWorkout {
   id: string;
+  user_id: string;
   plan_data: {
     workouts: Array<{
       day: number;
@@ -22,7 +23,7 @@ interface SavedWorkout {
     }>;
   };
   saved_at: string;
-  name: string;
+  name: string | null;
 }
 
 const SavedWorkouts = () => {
@@ -44,11 +45,11 @@ const SavedWorkouts = () => {
 
       const { data, error } = await supabase
         .from("saved_workout_plans")
-        .select("*")
+        .select()
         .order("saved_at", { ascending: false });
 
       if (error) throw error;
-      setSavedWorkouts(data || []);
+      setSavedWorkouts(data as SavedWorkout[]);
     } catch (error) {
       console.error("Error loading saved workouts:", error);
       toast.error("Failed to load saved workouts");
