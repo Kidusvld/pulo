@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Dumbbell, Clock, Target } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -25,36 +25,41 @@ export const ProgressStats = ({
     consistencyStreak: 0
   });
 
-  useEffect(() => {
-    fetchStats();
+  const calculateStreak = useCallback((workouts: any[]) => {
+    if (!workouts.length) return 0;
 
-    // Subscribe to real-time updates
-    const channel = supabase
-      .channel('progress-tracking-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'progress_tracking'
-        },
-        () => {
-          fetchStats(); // Refresh stats when changes occur
-        }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Pre-process dates for faster lookup
+    const workoutDates = new Set(
+      workouts.map(workout => 
+        new Date(workout.created_at).toISOString().split('T')[0]
       )
-      .subscribe();
+    );
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    let streak = 0;
+    for (let i = 0; i < 30; i++) {
+      const checkDate = new Date(today);
+      checkDate.setDate(today.getDate() - i);
+      const dateStr = checkDate.toISOString().split('T')[0];
+
+      if (workoutDates.has(dateStr)) {
+        streak++;
+      } else if (streak > 0) {
+        break;
+      }
+    }
+
+    return streak;
   }, []);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      // Fetch all workout records for the user
+      // Use single query to fetch all needed data
       const { data: workouts, error } = await supabase
         .from('progress_tracking')
         .select('workout_duration, total_volume, created_at')
@@ -63,17 +68,14 @@ export const ProgressStats = ({
 
       if (error) throw error;
 
-      // Calculate total workouts
+      // Use reduce to calculate all stats in one pass
+      const { totalVolume, totalDuration } = workouts?.reduce((acc, workout) => ({
+        totalVolume: acc.totalVolume + (workout.total_volume || 0),
+        totalDuration: acc.totalDuration + (workout.workout_duration || 0)
+      }), { totalVolume: 0, totalDuration: 0 }) || { totalVolume: 0, totalDuration: 0 };
+
       const totalWorkouts = workouts?.length || 0;
-
-      // Calculate total volume
-      const totalVolume = workouts?.reduce((sum, workout) => sum + (workout.total_volume || 0), 0) || 0;
-
-      // Calculate average duration
-      const totalDuration = workouts?.reduce((sum, workout) => sum + (workout.workout_duration || 0), 0) || 0;
       const averageDuration = totalWorkouts > 0 ? Math.round(totalDuration / totalWorkouts) : 0;
-
-      // Calculate streak
       const streak = calculateStreak(workouts || []);
 
       setStats({
@@ -86,39 +88,30 @@ export const ProgressStats = ({
       console.error('Error fetching stats:', error);
       toast.error('Failed to load workout statistics');
     }
-  };
+  }, [calculateStreak]);
 
-  const calculateStreak = (workouts: any[]) => {
-    if (!workouts.length) return 0;
+  useEffect(() => {
+    fetchStats();
 
-    let streak = 0;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // Create a Set of workout dates (in YYYY-MM-DD format) for easy lookup
-    const workoutDates = new Set(
-      workouts.map(workout => 
-        new Date(workout.created_at).toISOString().split('T')[0]
+    const channel = supabase
+      .channel('progress-tracking-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'progress_tracking'
+        },
+        fetchStats
       )
-    );
+      .subscribe();
 
-    // Check each day, starting from today and going backwards
-    for (let i = 0; i < 30; i++) { // Limit to last 30 days
-      const checkDate = new Date(today);
-      checkDate.setDate(today.getDate() - i);
-      const dateStr = checkDate.toISOString().split('T')[0];
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchStats]);
 
-      if (workoutDates.has(dateStr)) {
-        streak++;
-      } else if (streak > 0) { // Break on first miss after starting streak
-        break;
-      }
-    }
-
-    return streak;
-  };
-
-  const statItems = [
+  const statItems = useMemo(() => [
     {
       title: "Total Workouts",
       value: stats.totalWorkouts,
@@ -147,7 +140,7 @@ export const ProgressStats = ({
       color: "text-rose-600",
       bgColor: "bg-rose-50",
     },
-  ];
+  ], [stats]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
