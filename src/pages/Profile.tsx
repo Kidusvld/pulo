@@ -220,7 +220,7 @@ const Profile = () => {
             <h2 className="text-2xl font-semibold text-purple-700">
               👤 Your Profile
             </h2>
-            <Link to="/onboarding">
+            <Link to="/edit-profile">
               <Button variant="ghost" className="flex items-center gap-2">
                 Edit Profile
                 <ArrowRight className="h-4 w-4" />
