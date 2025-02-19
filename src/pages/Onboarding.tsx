@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,27 +37,18 @@ const Onboarding = () => {
 
   const generateWorkoutPlan = async (userId: string) => {
     try {
-      const response = await fetch('https://lovable-demo.supabase.co/functions/v1/generate-workout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('generate-workout', {
+        body: {
           userId,
           fitnessGoal: formData.fitness_goal,
           workoutLocation: formData.workout_location,
           intensityLevel: formData.intensity_level,
           equipment: formData.equipment
-        }),
+        }
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to generate workout plan');
-      }
-
-      const workoutPlan = await response.json();
-      return workoutPlan;
+      if (error) throw error;
+      return data;
     } catch (error) {
       console.error('Error generating workout:', error);
       throw error;
@@ -91,6 +81,8 @@ const Onboarding = () => {
         throw new Error("Error saving profile");
       }
 
+      toast.success("Profile saved, generating your workout plan...");
+
       // Generate workout plan
       const workoutPlan = await generateWorkoutPlan(session.user.id);
 
@@ -112,7 +104,7 @@ const Onboarding = () => {
         throw new Error("Error creating workout plan");
       }
 
-      toast.success("Workout plan generated!");
+      toast.success("Your workout plan is ready!");
       navigate("/saved-workouts");
     } catch (error) {
       console.error('Error saving data:', error);

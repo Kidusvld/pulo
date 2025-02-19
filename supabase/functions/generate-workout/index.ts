@@ -1,148 +1,94 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
+
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface WorkoutRequest {
-  age: number;
-  weight: number;
-  fitnessGoal: 'lose_weight' | 'build_muscle' | 'stay_fit';
-  workoutLocation: 'home' | 'gym';
-  equipment: string[];
-  intensityLevel: 'beginner' | 'intermediate' | 'advanced';
-  numberOfDays: number;
-}
-
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel, numberOfDays } = await req.json() as WorkoutRequest;
+    const { userId, fitnessGoal, workoutLocation, intensityLevel } = await req.json();
 
-    const getIntensityMultipliers = (level: string) => {
-      switch (level) {
-        case 'beginner':
-          return {
-            sets: { min: 2, max: 3 },
-            reps: { min: 8, max: 12 },
-            rest: { min: 60, max: 90 },
-            exercisesPerDay: { min: 4, max: 6 }
-          };
-        case 'intermediate':
-          return {
-            sets: { min: 3, max: 4 },
-            reps: { min: 10, max: 15 },
-            rest: { min: 45, max: 75 },
-            exercisesPerDay: { min: 6, max: 8 }
-          };
-        case 'advanced':
-          return {
-            sets: { min: 4, max: 5 },
-            reps: { min: 12, max: 20 },
-            rest: { min: 30, max: 60 },
-            exercisesPerDay: { min: 8, max: 10 }
-          };
-        default:
-          return {
-            sets: { min: 2, max: 3 },
-            reps: { min: 8, max: 12 },
-            rest: { min: 60, max: 90 },
-            exercisesPerDay: { min: 4, max: 6 }
-          };
-      }
+    // Create a basic workout plan based on user preferences
+    const workoutPlan = {
+      workouts: [
+        {
+          day: 1,
+          focus: "Upper Body",
+          exercises: [
+            {
+              name: workoutLocation === 'home' ? "Push-ups" : "Bench Press",
+              sets: intensityLevel === 'beginner' ? 3 : 4,
+              reps: 12,
+              rest: 60,
+            },
+            {
+              name: workoutLocation === 'home' ? "Diamond Push-ups" : "Incline Dumbbell Press",
+              sets: intensityLevel === 'beginner' ? 3 : 4,
+              reps: 12,
+              rest: 60,
+            }
+          ]
+        },
+        {
+          day: 2,
+          focus: "Lower Body",
+          exercises: [
+            {
+              name: "Bodyweight Squats",
+              sets: intensityLevel === 'beginner' ? 3 : 4,
+              reps: 15,
+              rest: 60,
+            },
+            {
+              name: workoutLocation === 'home' ? "Lunges" : "Leg Press",
+              sets: intensityLevel === 'beginner' ? 3 : 4,
+              reps: 12,
+              rest: 60,
+            }
+          ]
+        },
+        {
+          day: 3,
+          focus: "Full Body",
+          exercises: [
+            {
+              name: workoutLocation === 'home' ? "Mountain Climbers" : "Cable Rows",
+              sets: intensityLevel === 'beginner' ? 3 : 4,
+              reps: 15,
+              rest: 45,
+            },
+            {
+              name: "Plank",
+              sets: intensityLevel === 'beginner' ? 2 : 3,
+              reps: 1,
+              duration: 30,
+              rest: 45,
+            }
+          ]
+        }
+      ]
     };
-
-    const exercises = {
-      gym: {
-        cardio: ['Treadmill Run', 'Rowing Machine', 'Stationary Bike', 'Elliptical', 'Stair Climber'],
-        strength: ['Bench Press', 'Lat Pulldown', 'Leg Press', 'Cable Rows', 'Shoulder Press Machine'],
-        compound: ['Barbell Squats', 'Deadlifts', 'Military Press', 'Bent Over Rows']
-      },
-      home: {
-        cardio: ['High Knees', 'Mountain Climbers', 'Jumping Jacks', 'Burpees', 'Jump Rope'],
-        strength: ['Push-ups', 'Diamond Push-ups', 'Bodyweight Squats', 'Lunges', 'Tricep Dips'],
-        compound: ['Pull-ups', 'Pike Push-ups', 'Bulgarian Split Squats', 'Step-ups']
-      }
-    };
-
-    const intensityParams = getIntensityMultipliers(intensityLevel);
-
-    const shuffleArray = <T>(array: T[]): T[] => {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    };
-
-    const workouts = Array.from({ length: numberOfDays }, (_, i) => {
-      const exercisesCount = Math.floor(
-        Math.random() * 
-        (intensityParams.exercisesPerDay.max - intensityParams.exercisesPerDay.min + 1) + 
-        intensityParams.exercisesPerDay.min
-      );
-
-      const poolType = workoutLocation as 'home' | 'gym';
-      const exercisePool = [
-        ...exercises[poolType].cardio,
-        ...exercises[poolType].strength,
-        ...exercises[poolType].compound
-      ];
-
-      const shuffledExercises = shuffleArray([...exercisePool]);
-      const selectedExercises = shuffledExercises.slice(0, exercisesCount);
-      
-      const dayExercises = selectedExercises.map(name => {
-        const sets = Math.floor(
-          Math.random() * (intensityParams.sets.max - intensityParams.sets.min + 1) + 
-          intensityParams.sets.min
-        );
-        const reps = Math.floor(
-          Math.random() * (intensityParams.reps.max - intensityParams.reps.min + 1) + 
-          intensityParams.reps.min
-        );
-        const rest = Math.floor(
-          Math.random() * (intensityParams.rest.max - intensityParams.rest.min + 1) + 
-          intensityParams.rest.min
-        );
-
-        return { name, sets, reps, rest };
-      });
-
-      if (intensityLevel === 'advanced') {
-        dayExercises.forEach(exercise => {
-          if (Math.random() > 0.5) {
-            exercise.name = `${exercise.name} (with progressive overload)`;
-          }
-        });
-      }
-
-      return {
-        day: i + 1,
-        exercises: dayExercises
-      };
-    });
-
-    console.log('Generated workout plan:', { workouts });
 
     return new Response(
-      JSON.stringify({ workouts }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
-
+      JSON.stringify(workoutPlan),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    );
   } catch (error) {
     console.error('Error:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500 
-      }
-    )
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      },
+    );
   }
-})
+});
