@@ -1,6 +1,5 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -8,69 +7,101 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { userId, fitnessGoal, workoutLocation, intensityLevel } = await req.json();
+    const { intensityLevel } = await req.json();
 
-    // Create a basic workout plan based on user preferences
+    // Adjust workout parameters based on intensity level
+    const getSetsAndReps = () => {
+      switch (intensityLevel) {
+        case 'beginner':
+          return { sets: 3, reps: 10, rest: 90 };
+        case 'intermediate':
+          return { sets: 4, reps: 12, rest: 60 };
+        case 'advanced':
+          return { sets: 5, reps: 15, rest: 45 };
+        default:
+          return { sets: 3, reps: 10, rest: 90 };
+      }
+    };
+
+    const { sets, reps, rest } = getSetsAndReps();
+
     const workoutPlan = {
       workouts: [
         {
           day: 1,
-          focus: "Upper Body",
+          focus: "Upper Body Strength",
           exercises: [
             {
-              name: workoutLocation === 'home' ? "Push-ups" : "Bench Press",
-              sets: intensityLevel === 'beginner' ? 3 : 4,
-              reps: 12,
-              rest: 60,
+              name: "Push-ups",
+              sets,
+              reps,
+              rest,
             },
             {
-              name: workoutLocation === 'home' ? "Diamond Push-ups" : "Incline Dumbbell Press",
-              sets: intensityLevel === 'beginner' ? 3 : 4,
-              reps: 12,
-              rest: 60,
+              name: "Dumbbell Rows",
+              sets,
+              reps,
+              rest,
+            },
+            {
+              name: "Shoulder Press",
+              sets,
+              reps,
+              rest,
             }
           ]
         },
         {
           day: 2,
-          focus: "Lower Body",
+          focus: "Lower Body Power",
           exercises: [
             {
-              name: "Bodyweight Squats",
-              sets: intensityLevel === 'beginner' ? 3 : 4,
-              reps: 15,
-              rest: 60,
+              name: "Squats",
+              sets,
+              reps,
+              rest,
             },
             {
-              name: workoutLocation === 'home' ? "Lunges" : "Leg Press",
-              sets: intensityLevel === 'beginner' ? 3 : 4,
-              reps: 12,
-              rest: 60,
+              name: "Lunges",
+              sets,
+              reps,
+              rest,
+            },
+            {
+              name: "Calf Raises",
+              sets,
+              reps,
+              rest,
             }
           ]
         },
         {
           day: 3,
-          focus: "Full Body",
+          focus: "Core and Conditioning",
           exercises: [
             {
-              name: workoutLocation === 'home' ? "Mountain Climbers" : "Cable Rows",
-              sets: intensityLevel === 'beginner' ? 3 : 4,
-              reps: 15,
-              rest: 45,
+              name: "Plank",
+              sets: Math.max(2, sets - 1),
+              duration: intensityLevel === 'advanced' ? 60 : 30,
+              reps: 1,
+              rest,
             },
             {
-              name: "Plank",
-              sets: intensityLevel === 'beginner' ? 2 : 3,
-              reps: 1,
-              duration: 30,
-              rest: 45,
+              name: "Mountain Climbers",
+              sets,
+              reps: reps * 2,
+              rest,
+            },
+            {
+              name: "Russian Twists",
+              sets,
+              reps: reps * 2,
+              rest,
             }
           ]
         }
