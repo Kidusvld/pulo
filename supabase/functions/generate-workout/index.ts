@@ -26,29 +26,34 @@ serve(async (req) => {
   try {
     const { intensityLevel, fitnessGoal, workoutLocation, equipment, numberOfDays = 3 } = await req.json();
 
-    const prompt = `Create a ${numberOfDays}-day workout plan for a ${intensityLevel} level fitness enthusiast with a goal of ${fitnessGoal}, working out at ${workoutLocation}.
-    ${equipment ? `Available equipment: ${equipment.join(', ')}` : 'No specific equipment requirements.'}
-
-    Return a JSON object with this exact structure (no markdown, no explanations, just the JSON):
+    // Optimize the prompt for faster processing
+    const prompt = `Create a concise ${numberOfDays}-day workout plan for ${intensityLevel} level. Format:
     {
       "workouts": [
         {
-          "day": number,
-          "focus": string,
+          "day": (number),
+          "focus": (primary muscle group),
           "exercises": [
             {
-              "name": string,
-              "sets": number,
-              "reps": number,
-              "rest": number,
-              "duration": number (optional, only for time-based exercises)
+              "name": (exercise name),
+              "sets": (number),
+              "reps": (number),
+              "rest": (seconds),
+              "duration": (optional, seconds)
             }
           ]
         }
       ]
-    }`;
+    }
+    Rules:
+    - ${intensityLevel} appropriate exercises only
+    - Location: ${workoutLocation}
+    - Equipment: ${equipment ? equipment.join(', ') : 'bodyweight only'}
+    - Keep exercise names clear and standard
+    - Include exactly ${numberOfDays} days
+    - JSON only, no explanations`;
 
-    console.log('Sending prompt to OpenAI:', prompt);
+    console.log('Sending optimized prompt to OpenAI');
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -57,18 +62,19 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4o-mini', // Using the faster mini model
         messages: [
           {
             role: 'system',
-            content: `You are a fitness expert that creates personalized workout plans. You always respond with valid JSON only, no explanations or markdown formatting. Always create exactly ${numberOfDays} days of workouts.`
+            content: 'You are a fitness expert. Respond with valid JSON only. No markdown or explanations.'
           },
           {
             role: 'user',
             content: prompt
           }
         ],
-        temperature: 0.7
+        temperature: 0.5, // Lower temperature for more focused outputs
+        max_tokens: 800, // Limit token count for faster response
       }),
     });
 
@@ -79,7 +85,7 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('OpenAI response:', data);
+    console.log('Received response from OpenAI');
 
     if (!data.choices?.[0]?.message?.content) {
       throw new Error('Invalid response from OpenAI');
@@ -93,7 +99,6 @@ serve(async (req) => {
       );
     } catch (parseError) {
       console.error('Error parsing OpenAI response:', parseError);
-      console.error('Raw content:', data.choices[0].message.content);
       throw new Error('Invalid JSON in workout plan response');
     }
   } catch (error) {

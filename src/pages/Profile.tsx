@@ -37,6 +37,7 @@ const Profile = () => {
   const [currentPlan, setCurrentPlan] = useState<WorkoutPlan | null>(null);
   const [loading, setLoading] = useState(false);
   const [numberOfDays, setNumberOfDays] = useState(3);
+  const [generationProgress, setGenerationProgress] = useState<string>('');
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -63,10 +64,13 @@ const Profile = () => {
 
   const generateWorkout = async () => {
     setLoading(true);
+    setGenerationProgress('Initializing workout generation...');
+    
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
+      setGenerationProgress('Fetching latest plan settings...');
       const { data: latestPlan } = await supabase
         .from('workout_plans')
         .select('*')
@@ -75,6 +79,7 @@ const Profile = () => {
         .limit(1)
         .single();
 
+      setGenerationProgress('Generating personalized workout plan...');
       const { data: workoutPlan, error } = await supabase.functions.invoke('generate-workout', {
         body: {
           userId: user.id,
@@ -94,6 +99,7 @@ const Profile = () => {
       toast.error("Failed to generate workout plan. Please try again.");
     } finally {
       setLoading(false);
+      setGenerationProgress('');
     }
   };
 
@@ -127,37 +133,46 @@ const Profile = () => {
     if (!currentPlan) {
       return (
         <div className="text-center py-8">
-          <p className="text-gray-600 mb-4">No workout plan generated yet.</p>
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex items-center gap-2">
-              <label htmlFor="days" className="text-sm font-medium text-gray-700">
-                Number of days:
-              </label>
-              <input
-                id="days"
-                type="number"
-                min="1"
-                max="7"
-                value={numberOfDays}
-                onChange={(e) => setNumberOfDays(Math.min(7, Math.max(1, parseInt(e.target.value) || 1)))}
-                className="w-20 rounded-md border border-gray-300 p-2 text-center"
-              />
+          {loading ? (
+            <div className="space-y-4">
+              <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+              <p className="text-purple-600">{generationProgress}</p>
             </div>
-            <Button
-              onClick={generateWorkout}
-              disabled={loading}
-              className="bg-purple-600 text-white hover:bg-purple-700"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                "Generate Workout Plan"
-              )}
-            </Button>
-          </div>
+          ) : (
+            <>
+              <p className="text-gray-600 mb-4">No workout plan generated yet.</p>
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <label htmlFor="days" className="text-sm font-medium text-gray-700">
+                    Number of days:
+                  </label>
+                  <input
+                    id="days"
+                    type="number"
+                    min="1"
+                    max="7"
+                    value={numberOfDays}
+                    onChange={(e) => setNumberOfDays(Math.min(7, Math.max(1, parseInt(e.target.value) || 1)))}
+                    className="w-20 rounded-md border border-gray-300 p-2 text-center"
+                  />
+                </div>
+                <Button
+                  onClick={generateWorkout}
+                  disabled={loading}
+                  className="bg-purple-600 text-white hover:bg-purple-700"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    "Generate Workout Plan"
+                  )}
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       );
     }
