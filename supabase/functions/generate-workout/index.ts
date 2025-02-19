@@ -26,11 +26,47 @@ serve(async (req) => {
   try {
     const { intensityLevel } = await req.json();
 
-    const prompt = `Create a 3-day workout plan for a ${intensityLevel} level fitness enthusiast. The plan should:
+    const intensityGuidelines = {
+      beginner: `
+        - Keep exercises simple and focus on form
+        - Use bodyweight exercises or light weights
+        - Include longer rest periods (60-90 seconds)
+        - Focus on basic compound movements
+        - Sets should be 2-3 with 8-12 reps
+        - Include detailed form cues
+      `,
+      intermediate: `
+        - Mix of bodyweight and weighted exercises
+        - Moderate rest periods (45-60 seconds)
+        - Include some supersets
+        - Sets should be 3-4 with 10-15 reps
+        - Add some complex movements
+        - Include some HIIT elements
+      `,
+      advanced: `
+        - Complex exercise combinations
+        - Shorter rest periods (30-45 seconds)
+        - Include supersets and drop sets
+        - Sets should be 4-5 with 12-15 reps
+        - Advanced movement patterns
+        - High-intensity circuits
+        - Include compound exercises with progressive overload
+      `
+    };
+
+    const prompt = `Create a 3-day workout plan for a ${intensityLevel} level fitness enthusiast. 
+
+    Follow these ${intensityLevel} level guidelines:
+    ${intensityGuidelines[intensityLevel as keyof typeof intensityGuidelines]}
+
+    The plan should:
     - Include different focus areas for each day (e.g., upper body, lower body, core)
-    - Specify sets, reps, and rest periods appropriate for ${intensityLevel} level
+    - Create challenging but appropriate exercises for ${intensityLevel} level
     - Include 3 exercises per day
-    - Return ONLY a JSON object with this exact structure:
+    - Consider proper exercise progression and form requirements
+    - Ensure the intensity matches the user's ${intensityLevel} level exactly
+
+    Return ONLY a JSON object with this exact structure:
     {
       "workouts": [
         {
@@ -60,7 +96,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a professional fitness trainer that creates personalized workout plans. Always return valid JSON that matches the specified structure exactly.'
+            content: 'You are an expert fitness trainer with deep knowledge of exercise progression and proper form. You create personalized workout plans that perfectly match the user\'s fitness level. For beginners, you focus on form and fundamentals. For intermediate users, you add complexity and intensity. For advanced users, you create challenging, complex workouts with advanced techniques.'
           },
           {
             role: 'user',
