@@ -1,22 +1,19 @@
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Lock, Mail, Dumbbell } from "lucide-react";
-import { toast } from "sonner";
+import { Dumbbell } from "lucide-react";
+import { SignInForm } from "@/components/auth/SignInForm";
+import { SignUpForm } from "@/components/auth/SignUpForm";
+import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
+
+type AuthMode = "signin" | "signup" | "forgot";
 
 const Auth = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const [isSignUp, setIsSignUp] = useState(searchParams.get("mode") === "signup");
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentMode = searchParams.get("mode") as AuthMode || "signin";
 
   useEffect(() => {
     checkSession();
@@ -29,78 +26,30 @@ const Auth = () => {
     }
   };
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      if (isForgotPassword) {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/auth?mode=reset`,
-        });
-        
-        if (error) throw error;
-        
-        toast.success("Password reset instructions have been sent to your email!");
-        setIsForgotPassword(false);
-      } else if (isSignUp) {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-
-        if (error) throw error;
-
-        if (data.user) {
-          const { error: profileError } = await supabase
-            .from("profiles")
-            .insert([{ id: data.user.id, email: data.user.email }]);
-
-          if (profileError) throw profileError;
-
-          toast.success("Account created successfully!");
-          navigate("/onboarding");
-        }
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) throw error;
-        
-        const { data: profile, error: profileError } = await supabase
-          .from("profiles")
-          .select("age, weight, first_name")
-          .eq("id", (await supabase.auth.getUser()).data.user?.id)
-          .single();
-
-        if (profileError) throw profileError;
-
-        if (!profile?.age || !profile?.weight || !profile?.first_name) {
-          navigate("/onboarding");
-        } else {
-          navigate("/dashboard");
-        }
-      }
-    } catch (error) {
-      console.error('Auth error:', error);
-      toast.error(error instanceof Error ? error.message : "Authentication error");
-    } finally {
-      setLoading(false);
-    }
+  const handleSwitchMode = (mode: AuthMode) => {
+    setSearchParams({ mode }, { replace: true });
   };
 
   const getFormTitle = () => {
-    if (isForgotPassword) return "Reset Password";
-    return isSignUp ? "Start Your Fitness Journey" : "Welcome Back";
+    switch (currentMode) {
+      case "signup":
+        return "Start Your Fitness Journey";
+      case "forgot":
+        return "Reset Password";
+      default:
+        return "Welcome Back";
+    }
   };
 
   const getFormDescription = () => {
-    if (isForgotPassword) return "Enter your email to receive password reset instructions";
-    return isSignUp 
-      ? "Create an account to get your personalized workout plan" 
-      : "Sign in to continue your fitness journey";
+    switch (currentMode) {
+      case "signup":
+        return "Create an account to get your personalized workout plan";
+      case "forgot":
+        return "Enter your email to receive password reset instructions";
+      default:
+        return "Sign in to continue your fitness journey";
+    }
   };
 
   return (
@@ -133,106 +82,39 @@ const Auth = () => {
             </p>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleAuth} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-700">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    required
-                    className="pl-10 bg-white/80 border-purple-100 focus:border-purple-300 focus:ring-purple-200"
-                  />
-                </div>
-              </div>
-              {!isForgotPassword && (
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-700">Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                    <Input
-                      id="password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your password"
-                      required
-                      className="pl-10 bg-white/80 border-purple-100 focus:border-purple-300 focus:ring-purple-200"
-                    />
-                  </div>
-                </div>
-              )}
-              <Button 
-                type="submit" 
-                className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white h-11 shadow-lg shadow-purple-200 transition-all duration-200"
-                disabled={loading}
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Processing...
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center">
-                    {isForgotPassword ? "Send Reset Instructions" : (isSignUp ? "Create Account" : "Sign In")}
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </div>
-                )}
-              </Button>
-              
-              {!isSignUp && !isForgotPassword && (
-                <button
-                  type="button"
-                  onClick={() => setIsForgotPassword(true)}
-                  className="w-full text-sm text-purple-600 hover:text-purple-700 hover:underline mt-2"
-                >
-                  Forgot your password?
-                </button>
-              )}
+            {currentMode === "signin" && (
+              <SignInForm onSwitchMode={handleSwitchMode} />
+            )}
+            {currentMode === "signup" && (
+              <SignUpForm onSwitchMode={handleSwitchMode} />
+            )}
+            {currentMode === "forgot" && (
+              <ForgotPasswordForm onSwitchMode={handleSwitchMode} />
+            )}
 
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
+            {currentMode !== "forgot" && (
+              <>
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-200"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">or</span>
+                  </div>
                 </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">or</span>
-                </div>
-              </div>
 
-              <p className="text-center text-sm text-gray-600">
-                {isForgotPassword ? (
-                  <>
-                    Remember your password?{" "}
-                    <button
-                      type="button"
-                      onClick={() => setIsForgotPassword(false)}
-                      className="text-purple-600 hover:text-purple-700 hover:underline font-medium"
-                    >
-                      Sign In
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    {isSignUp ? "Already have an account? " : "Don't have an account? "}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsSignUp(!isSignUp);
-                        setIsForgotPassword(false);
-                        navigate(`/auth?mode=${isSignUp ? "signin" : "signup"}`, { replace: true });
-                      }}
-                      className="text-purple-600 hover:text-purple-700 hover:underline font-medium"
-                    >
-                      {isSignUp ? "Sign In" : "Sign Up"}
-                    </button>
-                  </>
-                )}
-              </p>
-            </form>
+                <p className="text-center text-sm text-gray-600">
+                  {currentMode === "signin" ? "Don't have an account? " : "Already have an account? "}
+                  <button
+                    type="button"
+                    onClick={() => handleSwitchMode(currentMode === "signin" ? "signup" : "signin")}
+                    className="text-purple-600 hover:text-purple-700 hover:underline font-medium"
+                  >
+                    {currentMode === "signin" ? "Sign Up" : "Sign In"}
+                  </button>
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
 
