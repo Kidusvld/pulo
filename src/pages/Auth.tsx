@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Lock, Mail } from "lucide-react";
+import { ArrowRight, Lock, Mail, Dumbbell } from "lucide-react";
 import { toast } from "sonner";
 
 const Auth = () => {
@@ -93,7 +93,7 @@ const Auth = () => {
         {/* Logo and Branding */}
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
-            <DumbbellIcon className="h-12 w-12 text-purple-600" />
+            <Dumbbell className="h-12 w-12 text-purple-600" />
           </div>
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
             FitTrack Pro
