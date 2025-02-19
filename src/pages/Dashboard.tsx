@@ -2,18 +2,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ProgressStats } from "@/components/progress/ProgressStats";
-import { WorkoutForm } from "@/components/progress/WorkoutForm";
-import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, DumbbellIcon, Trophy, Calendar, LogOut, BarChart } from "lucide-react";
+import { DumbbellIcon, LogOut } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-
-interface ProgressData {
-  id: string;
-  total_volume: number;
-  workout_duration: number;
-  created_at: string;
-}
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -50,37 +41,6 @@ const Dashboard = () => {
     }
   };
 
-  const fetchProgressData = async (): Promise<ProgressData[]> => {
-    const { data, error } = await supabase
-      .from('progress_tracking')
-      .select('id, total_volume, workout_duration, created_at');
-
-    if (error) {
-      throw new Error(error.message);
-    }
-    return data || [];
-  };
-
-  const { data: progressData, isLoading, isError } = useQuery({
-    queryKey: ['progress'],
-    queryFn: fetchProgressData
-  });
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Error fetching data</div>;
-  }
-
-  const totalWorkouts = progressData.length;
-  const totalVolume = progressData.reduce((sum, record) => sum + (record.total_volume || 0), 0);
-  const averageDuration = totalWorkouts ? 
-    Math.round(progressData.reduce((sum, record) => sum + (record.workout_duration || 0), 0) / totalWorkouts) : 
-    0;
-  const consistencyStreak = 7;
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50">
       <div className="absolute inset-0 bg-grid-purple-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))] -z-10"></div>
@@ -92,33 +52,50 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold text-purple-900">
             Welcome back{firstName ? `, ${firstName}` : ''}!
           </h1>
-          <div className="flex gap-4">
-            <Link
-              to="/onboarding"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
-            >
-              <DumbbellIcon className="h-5 w-5" />
-              Generate Workout
-            </Link>
-            <Button
-              variant="ghost"
-              className="text-gray-600 hover:text-gray-900"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            className="text-gray-600 hover:text-gray-900"
+            onClick={handleLogout}
+          >
+            <LogOut className="h-5 w-5" />
+          </Button>
         </div>
 
-        <ProgressStats
-          totalWorkouts={totalWorkouts}
-          totalVolume={totalVolume}
-          averageDuration={averageDuration}
-          consistencyStreak={consistencyStreak}
-        />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <Card className="bg-white/90 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-xl">Generate New Workout</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 mb-4">
+                Create a personalized workout plan based on your goals and preferences.
+              </p>
+              <Link
+                to="/onboarding"
+                className="inline-flex items-center justify-center w-full gap-2 px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors"
+              >
+                <DumbbellIcon className="h-5 w-5" />
+                Generate Workout
+              </Link>
+            </CardContent>
+          </Card>
 
-        <div className="mt-8">
-          <WorkoutForm />
+          <Card className="bg-white/90 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-xl">Saved Workouts</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600 mb-4">
+                Access your previously generated workout plans.
+              </p>
+              <Link
+                to="/saved-workouts"
+                className="inline-flex items-center justify-center w-full gap-2 px-4 py-2 rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
+              >
+                View Saved Workouts
+              </Link>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
