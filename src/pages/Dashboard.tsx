@@ -77,6 +77,7 @@ const Dashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedWeight, setEditedWeight] = useState<string>("");
   const [editedIntensity, setEditedIntensity] = useState<"beginner" | "intermediate" | "advanced">("beginner");
+  const [editedFitnessGoal, setEditedFitnessGoal] = useState<"build_muscle" | "lose_fat" | "increase_mobility">("build_muscle");
   const [numberOfDays, setNumberOfDays] = useState<number>(3);
   const [progressStats, setProgressStats] = useState({
     totalWorkouts: 0,
@@ -259,6 +260,7 @@ const Dashboard = () => {
         .from("workout_plans")
         .update({ 
           intensity_level: editedIntensity,
+          fitness_goal: editedFitnessGoal,
           is_active: true
         })
         .eq("user_id", session.user.id)
@@ -269,13 +271,15 @@ const Dashboard = () => {
       setProfile({
         ...profile,
         weight,
-        intensity_level: editedIntensity
+        intensity_level: editedIntensity,
+        fitness_goal: editedFitnessGoal
       });
 
       if (workoutPlan) {
         setWorkoutPlan({
           ...workoutPlan,
-          intensity_level: editedIntensity
+          intensity_level: editedIntensity,
+          fitness_goal: editedFitnessGoal
         });
       }
 
@@ -487,6 +491,7 @@ const Dashboard = () => {
                     } else {
                       setEditedWeight(profile?.weight?.toString() || "");
                       setEditedIntensity(profile?.intensity_level || "beginner");
+                      setEditedFitnessGoal(profile?.fitness_goal || "build_muscle");
                       setIsEditing(true);
                     }
                   }}
@@ -518,9 +523,27 @@ const Dashboard = () => {
                   </div>
                   <div className="col-span-2 bg-purple-50/50 rounded-lg p-4 border border-purple-100">
                     <p className="text-sm text-purple-600 font-medium">Fitness Goal</p>
-                    <p className="text-lg font-semibold text-purple-900 capitalize">
-                      {profile?.fitness_goal?.replace(/_/g, ' ')}
-                    </p>
+                    {isEditing ? (
+                      <Select
+                        value={editedFitnessGoal}
+                        onValueChange={(value: "build_muscle" | "lose_fat" | "increase_mobility") => 
+                          setEditedFitnessGoal(value)
+                        }
+                      >
+                        <SelectTrigger className="mt-1 bg-white border-purple-100">
+                          <SelectValue placeholder="Select fitness goal" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="build_muscle">Build Muscle</SelectItem>
+                          <SelectItem value="lose_fat">Lose Fat</SelectItem>
+                          <SelectItem value="increase_mobility">Increase Mobility</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <p className="text-lg font-semibold text-purple-900 capitalize">
+                        {profile?.fitness_goal?.replace(/_/g, ' ')}
+                      </p>
+                    )}
                   </div>
                   <div className="col-span-2 bg-purple-50/50 rounded-lg p-4 border border-purple-100">
                     <p className="text-sm text-purple-600 font-medium">Workout Intensity</p>
