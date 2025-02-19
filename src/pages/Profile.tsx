@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -42,80 +41,78 @@ const Profile = () => {
   const [generationProgress, setGenerationProgress] = useState<string>('');
 
   useEffect(() => {
-    initializeProfile();
+    checkAndInitializeProfile();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') {
-        navigate('/auth');
+      if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+        handleSignOut();
       }
     });
 
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const initializeProfile = async () => {
+  const checkAndInitializeProfile = async () => {
     try {
-      // First, check if we have a valid session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      // First clear any potentially invalid session data
+      const { data: { session } } = await supabase.auth.getSession();
       
-      if (sessionError) throw sessionError;
-      
-      if (!session?.user) {
-        navigate("/auth");
+      if (!session) {
+        console.log("No session found, redirecting to auth");
+        await handleSignOut();
         return;
       }
 
-      // Then try to fetch existing profile
-      const { data: existingProfile, error: fetchError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .maybeSingle();
-
-      if (fetchError) throw fetchError;
-
-      // If profile exists, set it and return
-      if (existingProfile) {
-        setProfile(existingProfile);
-        return;
-      }
-
-      // Verify user exists before creating profile
+      // Verify the session is valid by attempting to get the user
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       
       if (userError || !user) {
-        throw new Error("Unable to verify user");
+        console.log("Invalid session detected, signing out");
+        await handleSignOut();
+        return;
       }
 
-      // Create new profile with minimal data
-      const { data: newProfile, error: createError } = await supabase
+      // Now that we have a valid session, try to fetch or create the profile
+      const { data: existingProfile, error: profileError } = await supabase
         .from('profiles')
-        .insert([
-          { 
-            id: user.id,
-            email: user.email 
-          }
-        ])
-        .select()
-        .single();
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
 
-      if (createError) {
-        // If we hit the foreign key constraint, the user might need to sign in again
-        if (createError.code === '23503') {
-          await supabase.auth.signOut();
-          toast.error("Please sign in again to complete your profile");
-          navigate("/auth");
-          return;
-        }
-        throw createError;
+      if (profileError) {
+        throw profileError;
       }
 
-      setProfile(newProfile);
-      navigate("/edit-profile");
-      
+      if (existingProfile) {
+        setProfile(existingProfile);
+      } else {
+        // Create new profile with basic info
+        const { data: newProfile, error: createError } = await supabase
+          .from('profiles')
+          .insert([{ 
+            id: user.id,
+            email: user.email,
+          }])
+          .select()
+          .single();
+
+        if (createError) {
+          throw createError;
+        }
+
+        setProfile(newProfile);
+        navigate("/edit-profile");
+      }
     } catch (error: any) {
       console.error("Profile initialization error:", error);
-      toast.error(error.message || "Failed to load profile");
+      
+      // If we get a 403 or user_not_found error, sign out
+      if (error.status === 403 || error.message?.includes('user_not_found')) {
+        await handleSignOut();
+        return;
+      }
+      
+      toast.error("Failed to load profile. Please try signing in again.");
       navigate("/auth");
     } finally {
       setLoading(false);
@@ -124,10 +121,18 @@ const Profile = () => {
 
   const handleSignOut = async () => {
     try {
+      // Clear any local session data
       await supabase.auth.signOut();
+      // Clear local state
+      setProfile(null);
+      setCurrentPlan(null);
+      // Navigate to auth page
+      navigate("/auth");
     } catch (error) {
       console.error("Sign out error:", error);
-      toast.error("Error signing out");
+      toast.error("Error signing out. Please refresh the page.");
+      // Force navigation to auth page even if sign out fails
+      navigate("/auth");
     }
   };
 
