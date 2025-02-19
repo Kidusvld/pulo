@@ -7,16 +7,27 @@ const AuthCallback = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const next = searchParams.get("next") || "/dashboard";
-
+  
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Get the session after OAuth or email link sign-in
         const { data: { session }, error } = await supabase.auth.getSession();
+        
+        // Check if this is a password reset flow
+        const hash = window.location.hash;
+        const isPasswordReset = hash.includes('type=recovery');
+        
         if (error) throw error;
 
-        if (session) {
+        if (isPasswordReset) {
+          // For password reset, redirect to the recovery page regardless of session
+          navigate("/auth?mode=recovery");
+        } else if (session) {
+          // For other auth flows (like OAuth), redirect to the next page
           navigate(next);
+        } else {
+          // If no session and not password reset, go to sign in
+          navigate("/auth?mode=signin");
         }
       } catch (error) {
         console.error("Error in auth callback:", error);
