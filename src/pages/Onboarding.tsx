@@ -36,6 +36,35 @@ const Onboarding = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const generateWorkoutPlan = async (userId: string) => {
+    try {
+      const response = await fetch('https://lovable-demo.supabase.co/functions/v1/generate-workout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          userId,
+          fitnessGoal: formData.fitness_goal,
+          workoutLocation: formData.workout_location,
+          intensityLevel: formData.intensity_level,
+          equipment: formData.equipment
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate workout plan');
+      }
+
+      const workoutPlan = await response.json();
+      return workoutPlan;
+    } catch (error) {
+      console.error('Error generating workout:', error);
+      throw error;
+    }
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     const { data: { session } } = await supabase.auth.getSession();
@@ -47,11 +76,7 @@ const Onboarding = () => {
     }
 
     try {
-      await supabase
-        .from("workout_plans")
-        .update({ is_active: false })
-        .eq("user_id", session.user.id);
-
+      // Update profile information
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
@@ -66,6 +91,10 @@ const Onboarding = () => {
         throw new Error("Error saving profile");
       }
 
+      // Generate workout plan
+      const workoutPlan = await generateWorkoutPlan(session.user.id);
+
+      // Save the workout plan
       const { error: planError } = await supabase
         .from("workout_plans")
         .insert({
@@ -75,7 +104,7 @@ const Onboarding = () => {
           intensity_level: formData.intensity_level,
           equipment: formData.equipment,
           workout_frequency: 3,
-          plan_data: {} as Json,
+          plan_data: workoutPlan as Json,
           is_active: true,
         });
 
@@ -83,8 +112,8 @@ const Onboarding = () => {
         throw new Error("Error creating workout plan");
       }
 
-      toast.success("Profile completed!");
-      navigate("/dashboard");
+      toast.success("Workout plan generated!");
+      navigate("/saved-workouts");
     } catch (error) {
       console.error('Error saving data:', error);
       toast.error(error instanceof Error ? error.message : "Error saving data");
