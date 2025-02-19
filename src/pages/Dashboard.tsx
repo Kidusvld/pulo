@@ -9,11 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 interface Profile {
   first_name: string | null;
   last_name: string | null;
-  age: number | null;
-  weight: number | null;
-  fitness_goal?: string | null;
-  workout_location?: string | null;
-  intensity_level?: string | null;
 }
 
 const Dashboard = () => {
@@ -27,7 +22,7 @@ const Dashboard = () => {
       if (user) {
         const { data: profileData, error: profileError } = await supabase
           .from('profiles')
-          .select('*')
+          .select('first_name, last_name')
           .eq('id', user.id)
           .single();
 
@@ -62,66 +57,24 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold text-purple-900">
             Welcome back{profile?.first_name ? `, ${profile.first_name}` : ''}!
           </h1>
-          <Button
-            variant="ghost"
-            className="text-gray-600 hover:text-gray-900"
-            onClick={handleLogout}
-          >
-            <LogOut className="h-5 w-5" />
-          </Button>
+          <div className="flex items-center gap-4">
+            <Link to="/profile">
+              <Button variant="outline" className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                View Profile
+              </Button>
+            </Link>
+            <Button
+              variant="ghost"
+              className="text-gray-600 hover:text-gray-900"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Profile Card */}
-          <Card className="bg-white/90 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
-                <User className="h-5 w-5 text-purple-600" />
-                Profile Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div>
-                  <p className="text-sm text-gray-500">Name</p>
-                  <p className="font-medium">
-                    {profile?.first_name} {profile?.last_name}
-                  </p>
-                </div>
-                {profile?.age && (
-                  <div>
-                    <p className="text-sm text-gray-500">Age</p>
-                    <p className="font-medium">{profile.age} years</p>
-                  </div>
-                )}
-                {profile?.weight && (
-                  <div>
-                    <p className="text-sm text-gray-500">Weight</p>
-                    <p className="font-medium">{profile.weight} lbs</p>
-                  </div>
-                )}
-                {profile?.fitness_goal && (
-                  <div>
-                    <p className="text-sm text-gray-500">Fitness Goal</p>
-                    <p className="font-medium capitalize">{profile.fitness_goal.replace('_', ' ')}</p>
-                  </div>
-                )}
-                {profile?.workout_location && (
-                  <div>
-                    <p className="text-sm text-gray-500">Preferred Location</p>
-                    <p className="font-medium capitalize">{profile.workout_location}</p>
-                  </div>
-                )}
-                {profile?.intensity_level && (
-                  <div>
-                    <p className="text-sm text-gray-500">Intensity Level</p>
-                    <p className="font-medium capitalize">{profile.intensity_level}</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
+        <div className="grid gap-6 md:grid-cols-2">
           {/* Generate Workout Card */}
           <Card className="bg-white/90 backdrop-blur-sm">
             <CardHeader>
