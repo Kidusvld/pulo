@@ -34,7 +34,7 @@ export const SignInForm = ({ onSwitchMode }: SignInFormProps) => {
         .from("profiles")
         .select("age, weight, first_name")
         .eq("id", (await supabase.auth.getUser()).data.user?.id)
-        .single();
+        .maybeSingle();
 
       if (profileError) throw profileError;
 
