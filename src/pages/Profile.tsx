@@ -36,62 +36,78 @@ const Profile = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [currentPlan, setCurrentPlan] = useState<WorkoutPlan | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [numberOfDays, setNumberOfDays] = useState(3);
   const [generationProgress, setGenerationProgress] = useState<string>('');
 
   useEffect(() => {
-    checkUser();
-    fetchProfile();
+    checkAuth();
   }, []);
 
-  const checkUser = async () => {
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    
-    if (sessionError) {
-      console.error("Session error:", sessionError);
-      toast.error("Authentication error");
-      navigate("/auth");
-      return;
-    }
-
-    if (!session) {
-      navigate("/auth");
-      return;
-    }
-
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-    
-    if (userError || !user) {
-      console.error("User error:", userError);
-      toast.error("Authentication error");
-      navigate("/auth");
-    }
-  };
-
-  const fetchProfile = async () => {
+  const checkAuth = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      if (!session?.user) {
+      if (sessionError) {
+        console.error("Session error:", sessionError);
+        throw sessionError;
+      }
+
+      if (!session) {
         navigate("/auth");
         return;
       }
 
-      const { data: profileData, error: profileError } = await supabase
+      await fetchOrCreateProfile(session.user.id);
+      
+    } catch (error) {
+      console.error("Auth error:", error);
+      toast.error("Authentication error");
+      navigate("/auth");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchOrCreateProfile = async (userId: string) => {
+    try {
+      // First try to fetch existing profile
+      const { data: existingProfile, error: fetchError } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', session.user.id)
+        .eq('id', userId)
+        .maybeSingle();  // Using maybeSingle instead of single
+
+      if (fetchError) {
+        throw fetchError;
+      }
+
+      if (existingProfile) {
+        setProfile(existingProfile);
+        return;
+      }
+
+      // If no profile exists, create one
+      const { data: newProfile, error: insertError } = await supabase
+        .from('profiles')
+        .insert([
+          { 
+            id: userId,
+            created_at: new Date().toISOString()
+          }
+        ])
+        .select()
         .single();
 
-      if (profileError) {
-        console.error("Error fetching profile:", profileError);
-        toast.error("Failed to load profile");
-      } else if (profileData) {
-        setProfile(profileData);
+      if (insertError) {
+        throw insertError;
       }
+
+      setProfile(newProfile);
+      navigate("/edit-profile"); // Redirect to complete profile
+      
     } catch (error) {
-      console.error("Error in fetchProfile:", error);
+      console.error("Profile error:", error);
       toast.error("Failed to load profile");
     }
   };
@@ -252,6 +268,17 @@ const Profile = () => {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-purple-50">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p className="text-purple-600">Loading your profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 p-8">
