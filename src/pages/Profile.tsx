@@ -14,18 +14,22 @@ interface Profile {
   intensity_level?: string | null;
 }
 
+interface Exercise {
+  name: string;
+  sets: number;
+  reps: number;
+  rest: number;
+  duration?: number;
+}
+
+interface WorkoutDay {
+  day: number;
+  focus: string;
+  exercises: Exercise[];
+}
+
 interface WorkoutPlan {
-  workouts: Array<{
-    day: number;
-    focus: string;
-    exercises: Array<{
-      name: string;
-      sets: number;
-      reps: number;
-      rest: number;
-      duration?: number;
-    }>;
-  }>;
+  workouts: WorkoutDay[];
 }
 
 const Profile = () => {
@@ -93,7 +97,7 @@ const Profile = () => {
         .from('saved_workout_plans')
         .insert({
           user_id: user.id,
-          plan_data: currentPlan,
+          plan_data: currentPlan as unknown as Json,
           name: `Workout Plan - ${new Date().toLocaleDateString()}`
         });
 

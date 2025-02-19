@@ -1,4 +1,5 @@
 
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -11,115 +12,79 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+  if (!openAIApiKey) {
+    return new Response(
+      JSON.stringify({ error: 'OpenAI API key not configured' }),
+      { 
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    );
+  }
+
   try {
     const { intensityLevel } = await req.json();
 
-    // Adjust workout parameters based on intensity level
-    const getSetsAndReps = () => {
-      switch (intensityLevel) {
-        case 'beginner':
-          return { sets: 3, reps: 10, rest: 90 };
-        case 'intermediate':
-          return { sets: 4, reps: 12, rest: 60 };
-        case 'advanced':
-          return { sets: 5, reps: 15, rest: 45 };
-        default:
-          return { sets: 3, reps: 10, rest: 90 };
-      }
-    };
-
-    const { sets, reps, rest } = getSetsAndReps();
-
-    const workoutPlan = {
-      workouts: [
+    const prompt = `Create a 3-day workout plan for a ${intensityLevel} level fitness enthusiast. The plan should:
+    - Include different focus areas for each day (e.g., upper body, lower body, core)
+    - Specify sets, reps, and rest periods appropriate for ${intensityLevel} level
+    - Include 3 exercises per day
+    - Return ONLY a JSON object with this exact structure:
+    {
+      "workouts": [
         {
-          day: 1,
-          focus: "Upper Body Strength",
-          exercises: [
+          "day": number,
+          "focus": string,
+          "exercises": [
             {
-              name: "Push-ups",
-              sets,
-              reps,
-              rest,
-            },
-            {
-              name: "Dumbbell Rows",
-              sets,
-              reps,
-              rest,
-            },
-            {
-              name: "Shoulder Press",
-              sets,
-              reps,
-              rest,
-            }
-          ]
-        },
-        {
-          day: 2,
-          focus: "Lower Body Power",
-          exercises: [
-            {
-              name: "Squats",
-              sets,
-              reps,
-              rest,
-            },
-            {
-              name: "Lunges",
-              sets,
-              reps,
-              rest,
-            },
-            {
-              name: "Calf Raises",
-              sets,
-              reps,
-              rest,
-            }
-          ]
-        },
-        {
-          day: 3,
-          focus: "Core and Conditioning",
-          exercises: [
-            {
-              name: "Plank",
-              sets: Math.max(2, sets - 1),
-              duration: intensityLevel === 'advanced' ? 60 : 30,
-              reps: 1,
-              rest,
-            },
-            {
-              name: "Mountain Climbers",
-              sets,
-              reps: reps * 2,
-              rest,
-            },
-            {
-              name: "Russian Twists",
-              sets,
-              reps: reps * 2,
-              rest,
+              "name": string,
+              "sets": number,
+              "reps": number,
+              "rest": number,
+              "duration": number (optional, only for time-based exercises)
             }
           ]
         }
       ]
-    };
+    }`;
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openAIApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a professional fitness trainer that creates personalized workout plans. Always return valid JSON that matches the specified structure exactly.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      }),
+    });
+
+    const data = await response.json();
+    const workoutPlan = JSON.parse(data.choices[0].message.content);
 
     return new Response(
       JSON.stringify(workoutPlan),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     console.error('Error:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
-        status: 400,
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      },
+      }
     );
   }
 });
