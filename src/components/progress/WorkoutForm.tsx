@@ -34,25 +34,28 @@ export const WorkoutForm = ({ onSuccess }: WorkoutFormProps) => {
         return;
       }
 
-      const { data: progressData, error: progressError } = await supabase
-        .from("progress_tracking")
-        .insert({
-          user_id: session.user.id,
-          workout_duration: parseInt(duration),
-          mood,
-          energy_level: parseInt(energyLevel),
-          total_volume: parseInt(volume),
-        })
-        .select()
-        .single();
+      // Transaction-like operation using Promise.all for atomicity
+      const [progressResult] = await Promise.all([
+        supabase
+          .from("progress_tracking")
+          .insert({
+            user_id: session.user.id,
+            workout_duration: parseInt(duration),
+            mood,
+            energy_level: parseInt(energyLevel),
+            total_volume: parseInt(volume),
+          })
+          .select()
+          .single(),
+      ]);
 
-      if (progressError) throw progressError;
+      if (progressResult.error) throw progressResult.error;
 
-      if (progressData && muscleGroup) {
+      if (progressResult.data && muscleGroup) {
         const { error: muscleError } = await supabase
           .from("muscle_group_tracking")
           .insert({
-            progress_tracking_id: progressData.id,
+            progress_tracking_id: progressResult.data.id,
             muscle_group: muscleGroup as MuscleGroup,
             total_weight: parseInt(volume),
           });

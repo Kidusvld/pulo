@@ -65,6 +65,9 @@ export const useMuscleGroupData = (initialData: MuscleGroupData[]) => {
       )
       .subscribe();
 
+    // Initial fetch
+    fetchMuscleGroupData();
+
     return () => {
       supabase.removeChannel(channel);
     };
