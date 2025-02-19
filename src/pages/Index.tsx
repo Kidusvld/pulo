@@ -7,13 +7,13 @@ const Index = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-b from-black/[0.02] to-gray-100">
       {/* Navigation */}
-      <nav className="relative z-20 border-b border-purple-100">
+      <nav className="relative z-20 border-b border-black/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center px-3 h-10 rounded-xl bg-purple-600 text-white">
+              <div className="flex items-center justify-center px-3 h-10 rounded-xl bg-black text-white">
                 <span className="text-xl font-bold tracking-tight">PULO</span>
               </div>
             </div>
@@ -21,12 +21,13 @@ const Index = () => {
               <Button 
                 variant="ghost" 
                 onClick={() => navigate("/auth?mode=signin")}
+                className="text-black hover:text-black/80"
               >
                 Sign In
               </Button>
               <Button 
                 onClick={() => navigate("/auth?mode=signup")}
-                className="bg-purple-600 hover:bg-purple-700"
+                className="bg-black hover:bg-black/90"
               >
                 Get Started
               </Button>
@@ -38,7 +39,7 @@ const Index = () => {
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div 
-          className="absolute inset-0 z-0 bg-cover bg-center opacity-10"
+          className="absolute inset-0 z-0 bg-cover bg-center opacity-5"
           style={{ 
             backgroundImage: 'url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80")',
           }}
@@ -48,12 +49,12 @@ const Index = () => {
           <div className="py-20 md:py-28">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="text-left space-y-8">
-                <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
+                <h1 className="text-5xl md:text-6xl font-bold text-black leading-tight">
                   Transform Your
                   <span className="text-purple-600 block">Fitness Journey</span>
                 </h1>
                 
-                <p className="text-xl text-gray-600 max-w-lg">
+                <p className="text-xl text-black/70 max-w-lg">
                   Your personalized AI workout companion that adapts to your goals, schedule, and progress. Get started today and unlock your full potential.
                 </p>
 
@@ -61,7 +62,7 @@ const Index = () => {
                   <Button 
                     size="lg" 
                     onClick={() => navigate("/auth?mode=signup")}
-                    className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg h-auto"
+                    className="bg-black hover:bg-black/90 text-white px-8 py-6 text-lg h-auto"
                   >
                     Start Your Journey
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -70,7 +71,7 @@ const Index = () => {
                     variant="outline"
                     size="lg" 
                     onClick={() => navigate("/auth?mode=signin")}
-                    className="px-8 py-6 text-lg h-auto"
+                    className="px-8 py-6 text-lg h-auto border-black/20 text-black hover:bg-black/5"
                   >
                     Sign In
                   </Button>
