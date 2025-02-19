@@ -7,12 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
+type MuscleGroup = "chest" | "back" | "legs" | "shoulders" | "arms" | "core" | "full_body" | "cardio";
+
 export const WorkoutForm = () => {
   const [loading, setLoading] = useState(false);
   const [duration, setDuration] = useState("");
   const [mood, setMood] = useState<string>("");
   const [energyLevel, setEnergyLevel] = useState<string>("");
-  const [muscleGroup, setMuscleGroup] = useState<string>("");
+  const [muscleGroup, setMuscleGroup] = useState<MuscleGroup | "">("");
   const [volume, setVolume] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,9 +22,19 @@ export const WorkoutForm = () => {
     setLoading(true);
 
     try {
+      // Get the current user's session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.user) {
+        toast.error("Please sign in to log workouts");
+        return;
+      }
+
+      // Insert progress tracking record with user_id
       const { data: progressData, error: progressError } = await supabase
         .from("progress_tracking")
         .insert({
+          user_id: session.user.id,
           workout_duration: parseInt(duration),
           mood,
           energy_level: parseInt(energyLevel),
@@ -33,12 +45,17 @@ export const WorkoutForm = () => {
 
       if (progressError) throw progressError;
 
-      if (progressData) {
-        await supabase.from("muscle_group_tracking").insert({
-          progress_tracking_id: progressData.id,
-          muscle_group: muscleGroup,
-          total_weight: parseInt(volume),
-        });
+      if (progressData && muscleGroup) {
+        // Insert muscle group tracking with proper type
+        const { error: muscleError } = await supabase
+          .from("muscle_group_tracking")
+          .insert({
+            progress_tracking_id: progressData.id,
+            muscle_group: muscleGroup as MuscleGroup,
+            total_weight: parseInt(volume),
+          });
+
+        if (muscleError) throw muscleError;
       }
 
       toast.success("Workout logged successfully!");
@@ -71,6 +88,7 @@ export const WorkoutForm = () => {
                 onChange={(e) => setDuration(e.target.value)}
                 placeholder="Enter duration"
                 className="bg-white border-purple-100"
+                required
               />
             </div>
             <div className="space-y-2">
@@ -81,11 +99,12 @@ export const WorkoutForm = () => {
                 onChange={(e) => setVolume(e.target.value)}
                 placeholder="Enter total weight"
                 className="bg-white border-purple-100"
+                required
               />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Muscle Group</label>
-              <Select value={muscleGroup} onValueChange={setMuscleGroup}>
+              <Select value={muscleGroup} onValueChange={(value: MuscleGroup) => setMuscleGroup(value)}>
                 <SelectTrigger className="bg-white border-purple-100">
                   <SelectValue placeholder="Select muscle group" />
                 </SelectTrigger>
