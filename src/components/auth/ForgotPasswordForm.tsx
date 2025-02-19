@@ -20,9 +20,7 @@ export const ForgotPasswordForm = ({ onSwitchMode }: ForgotPasswordFormProps) =>
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "http://localhost:8080/auth?mode=recovery",
-      });
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
       
       if (error) throw error;
       
