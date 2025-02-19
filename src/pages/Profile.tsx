@@ -1,7 +1,8 @@
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import type { Json } from "@/integrations/supabase/types";
@@ -50,6 +51,7 @@ const Profile = () => {
 
         if (profileError) {
           console.error("Error fetching profile:", profileError);
+          toast.error("Failed to load profile");
         } else if (profileData) {
           setProfile(profileData);
         }
@@ -65,10 +67,22 @@ const Profile = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
+      // Get the latest workout plan for equipment and goals
+      const { data: latestPlan } = await supabase
+        .from('workout_plans')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
       const { data: workoutPlan, error } = await supabase.functions.invoke('generate-workout', {
         body: {
           userId: user.id,
-          intensityLevel: profile?.intensity_level || 'beginner'
+          intensityLevel: profile?.intensity_level || 'beginner',
+          fitnessGoal: latestPlan?.fitness_goal || 'stay_fit',
+          workoutLocation: latestPlan?.workout_location || 'home',
+          equipment: latestPlan?.equipment || []
         }
       });
 
@@ -77,7 +91,7 @@ const Profile = () => {
       toast.success("New workout plan generated!");
     } catch (error) {
       console.error("Error generating workout:", error);
-      toast.error("Failed to generate workout plan");
+      toast.error("Failed to generate workout plan. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -110,7 +124,27 @@ const Profile = () => {
   };
 
   const renderWorkoutPlan = () => {
-    if (!currentPlan) return null;
+    if (!currentPlan) {
+      return (
+        <div className="text-center py-8">
+          <p className="text-gray-600 mb-4">No workout plan generated yet.</p>
+          <Button
+            onClick={generateWorkout}
+            disabled={loading}
+            className="bg-purple-600 text-white hover:bg-purple-700"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              "Generate Workout Plan"
+            )}
+          </Button>
+        </div>
+      );
+    }
 
     return (
       <div className="space-y-6">
@@ -211,25 +245,34 @@ const Profile = () => {
             <h2 className="text-2xl font-semibold text-purple-700">
               💪 Your Workout Plan
             </h2>
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                className="text-purple-600"
-                onClick={savePlan}
-                disabled={!currentPlan || loading}
-              >
-                Save Plan
-              </Button>
-              <Button 
-                className="bg-purple-600 text-white hover:bg-purple-700"
-                onClick={generateWorkout}
-                disabled={loading}
-              >
-                {loading ? "Generating..." : "Generate New Plan"}
-              </Button>
-            </div>
+            {currentPlan && (
+              <div className="flex items-center gap-4">
+                <Button 
+                  variant="outline" 
+                  className="text-purple-600"
+                  onClick={savePlan}
+                  disabled={loading}
+                >
+                  Save Plan
+                </Button>
+                <Button 
+                  className="bg-purple-600 text-white hover:bg-purple-700"
+                  onClick={generateWorkout}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    "Generate New Plan"
+                  )}
+                </Button>
+              </div>
+            )}
           </div>
-          {currentPlan && renderWorkoutPlan()}
+          {renderWorkoutPlan()}
         </div>
       </div>
     </div>
