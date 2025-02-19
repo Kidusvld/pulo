@@ -67,7 +67,6 @@ const Profile = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
-      // Get the latest workout plan for equipment and goals
       const { data: latestPlan } = await supabase
         .from('workout_plans')
         .select('*')
@@ -165,20 +164,6 @@ const Profile = () => {
 
     return (
       <div className="space-y-6">
-        <div className="flex items-center gap-2 mb-4">
-          <label htmlFor="days" className="text-sm font-medium text-gray-700">
-            Number of days:
-          </label>
-          <input
-            id="days"
-            type="number"
-            min="1"
-            max="7"
-            value={numberOfDays}
-            onChange={(e) => setNumberOfDays(Math.min(7, Math.max(1, parseInt(e.target.value) || 1)))}
-            className="w-20 rounded-md border border-gray-300 p-2 text-center"
-          />
-        </div>
         {currentPlan.workouts.map((workout, index) => (
           <div key={index} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
             <h3 className="text-lg font-semibold text-purple-700 mb-3">
@@ -276,32 +261,48 @@ const Profile = () => {
             <h2 className="text-2xl font-semibold text-purple-700">
               💪 Your Workout Plan
             </h2>
-            {currentPlan && (
-              <div className="flex items-center gap-4">
-                <Button 
-                  variant="outline" 
-                  className="text-purple-600"
-                  onClick={savePlan}
-                  disabled={loading}
-                >
-                  Save Plan
-                </Button>
-                <Button 
-                  className="bg-purple-600 text-white hover:bg-purple-700"
-                  onClick={generateWorkout}
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    "Generate New Plan"
-                  )}
-                </Button>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label htmlFor="days" className="text-sm font-medium text-gray-700">
+                  Number of days:
+                </label>
+                <input
+                  id="days"
+                  type="number"
+                  min="1"
+                  max="7"
+                  value={numberOfDays}
+                  onChange={(e) => setNumberOfDays(Math.min(7, Math.max(1, parseInt(e.target.value) || 1)))}
+                  className="w-20 rounded-md border border-gray-300 p-2 text-center"
+                />
               </div>
-            )}
+              {currentPlan && (
+                <>
+                  <Button 
+                    variant="outline" 
+                    className="text-purple-600"
+                    onClick={savePlan}
+                    disabled={loading}
+                  >
+                    Save Plan
+                  </Button>
+                  <Button 
+                    className="bg-purple-600 text-white hover:bg-purple-700"
+                    onClick={generateWorkout}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      "Generate New Plan"
+                    )}
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
           {renderWorkoutPlan()}
         </div>
