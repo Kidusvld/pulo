@@ -1,10 +1,6 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 interface WorkoutRequest {
   age: number;
@@ -16,6 +12,11 @@ interface WorkoutRequest {
   numberOfDays: number;
 }
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
@@ -23,39 +24,6 @@ serve(async (req) => {
 
   try {
     const { age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel, numberOfDays } = await req.json() as WorkoutRequest;
-
-    const getIntensityMultipliers = (level: string) => {
-      switch (level) {
-        case 'beginner':
-          return {
-            sets: { min: 2, max: 3 },
-            reps: { min: 8, max: 12 },
-            rest: { min: 60, max: 90 },
-            exercisesPerDay: { min: 4, max: 6 }
-          };
-        case 'intermediate':
-          return {
-            sets: { min: 3, max: 4 },
-            reps: { min: 10, max: 15 },
-            rest: { min: 45, max: 75 },
-            exercisesPerDay: { min: 6, max: 8 }
-          };
-        case 'advanced':
-          return {
-            sets: { min: 4, max: 5 },
-            reps: { min: 12, max: 20 },
-            rest: { min: 30, max: 60 },
-            exercisesPerDay: { min: 8, max: 10 }
-          };
-        default:
-          return {
-            sets: { min: 2, max: 3 },
-            reps: { min: 8, max: 12 },
-            rest: { min: 60, max: 90 },
-            exercisesPerDay: { min: 4, max: 6 }
-          };
-      }
-    };
 
     const exercises = {
       gym: {
@@ -70,8 +38,6 @@ serve(async (req) => {
       }
     };
 
-    const intensityParams = getIntensityMultipliers(intensityLevel);
-
     const shuffleArray = <T>(array: T[]): T[] => {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -80,11 +46,24 @@ serve(async (req) => {
       return array;
     };
 
+    const getExercisesPerDay = () => {
+      switch (intensityLevel) {
+        case 'beginner':
+          return { min: 4, max: 6 };
+        case 'intermediate':
+          return { min: 6, max: 8 };
+        case 'advanced':
+          return { min: 8, max: 10 };
+        default:
+          return { min: 4, max: 6 };
+      }
+    };
+
     const workouts = Array.from({ length: numberOfDays }, (_, i) => {
       const exercisesCount = Math.floor(
         Math.random() * 
-        (intensityParams.exercisesPerDay.max - intensityParams.exercisesPerDay.min + 1) + 
-        intensityParams.exercisesPerDay.min
+        (getExercisesPerDay().max - getExercisesPerDay().min + 1) + 
+        getExercisesPerDay().min
       );
 
       const poolType = workoutLocation as 'home' | 'gym';
@@ -98,29 +77,18 @@ serve(async (req) => {
       const selectedExercises = shuffledExercises.slice(0, exercisesCount);
       
       const dayExercises = selectedExercises.map(name => {
-        const sets = Math.floor(
-          Math.random() * (intensityParams.sets.max - intensityParams.sets.min + 1) + 
-          intensityParams.sets.min
-        );
-        const reps = Math.floor(
-          Math.random() * (intensityParams.reps.max - intensityParams.reps.min + 1) + 
-          intensityParams.reps.min
-        );
-        const rest = Math.floor(
-          Math.random() * (intensityParams.rest.max - intensityParams.rest.min + 1) + 
-          intensityParams.rest.min
-        );
+        // Fixed range for sets (2-3)
+        const sets = Math.floor(Math.random() * 2) + 2; // Generates 2 or 3
+        
+        // Fixed range for reps (6-10)
+        const reps = Math.floor(Math.random() * 5) + 6; // Generates 6 to 10
+        
+        // Fixed range for rest (2-3 minutes)
+        const restMinutes = Math.floor(Math.random() * 2) + 2; // Generates 2 or 3
+        const rest = restMinutes * 60; // Convert to seconds for consistency with frontend
 
         return { name, sets, reps, rest };
       });
-
-      if (intensityLevel === 'advanced') {
-        dayExercises.forEach(exercise => {
-          if (Math.random() > 0.5) {
-            exercise.name = `${exercise.name} (with progressive overload)`;
-          }
-        });
-      }
 
       return {
         day: i + 1,
@@ -128,7 +96,7 @@ serve(async (req) => {
       };
     });
 
-    console.log('Generated workout plan:', { workouts });
+    console.log('Generated workout plan with adjusted sets, reps, and rest times:', { workouts });
 
     return new Response(
       JSON.stringify({ workouts }),
@@ -136,7 +104,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error generating workout:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
