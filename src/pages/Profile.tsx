@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -43,7 +44,6 @@ const Profile = () => {
   useEffect(() => {
     initializeProfile();
 
-    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') {
         navigate('/auth');
@@ -55,40 +55,67 @@ const Profile = () => {
 
   const initializeProfile = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      // First, check if we have a valid session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      if (!session) {
+      if (sessionError) throw sessionError;
+      
+      if (!session?.user) {
         navigate("/auth");
         return;
       }
 
-      const { data: profile, error } = await supabase
+      // Then try to fetch existing profile
+      const { data: existingProfile, error: fetchError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
         .maybeSingle();
 
-      if (error) throw error;
+      if (fetchError) throw fetchError;
 
-      if (!profile) {
-        // Create new profile
-        const { data: newProfile, error: createError } = await supabase
-          .from('profiles')
-          .insert([{ id: session.user.id }])
-          .select()
-          .single();
-
-        if (createError) throw createError;
-        
-        setProfile(newProfile);
-        navigate("/edit-profile");
+      // If profile exists, set it and return
+      if (existingProfile) {
+        setProfile(existingProfile);
         return;
       }
 
-      setProfile(profile);
-    } catch (error) {
+      // Verify user exists before creating profile
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        throw new Error("Unable to verify user");
+      }
+
+      // Create new profile with minimal data
+      const { data: newProfile, error: createError } = await supabase
+        .from('profiles')
+        .insert([
+          { 
+            id: user.id,
+            email: user.email 
+          }
+        ])
+        .select()
+        .single();
+
+      if (createError) {
+        // If we hit the foreign key constraint, the user might need to sign in again
+        if (createError.code === '23503') {
+          await supabase.auth.signOut();
+          toast.error("Please sign in again to complete your profile");
+          navigate("/auth");
+          return;
+        }
+        throw createError;
+      }
+
+      setProfile(newProfile);
+      navigate("/edit-profile");
+      
+    } catch (error: any) {
       console.error("Profile initialization error:", error);
-      toast.error("Failed to load profile");
+      toast.error(error.message || "Failed to load profile");
       navigate("/auth");
     } finally {
       setLoading(false);
@@ -98,7 +125,6 @@ const Profile = () => {
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
-      // No need to navigate here as the auth state listener will handle it
     } catch (error) {
       console.error("Sign out error:", error);
       toast.error("Error signing out");
