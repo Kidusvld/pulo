@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -137,6 +136,13 @@ const Profile = () => {
     );
   };
 
+  const formatIntensityLevel = (level: string | null | undefined) => {
+    if (!level) return '-';
+    return level.split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 p-8">
       <div className="max-w-4xl mx-auto">
@@ -192,8 +198,8 @@ const Profile = () => {
                 <h3 className="text-sm font-medium text-purple-400">
                   Workout Intensity
                 </h3>
-                <p className="text-2xl font-semibold capitalize">
-                  {profile?.intensity_level?.replace('_', ' ') || '-'}
+                <p className="text-2xl font-semibold">
+                  {formatIntensityLevel(profile?.intensity_level)}
                 </p>
               </div>
             </div>
