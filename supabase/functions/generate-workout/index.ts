@@ -26,6 +26,14 @@ serve(async (req) => {
   try {
     const { intensityLevel, fitnessGoal, workoutLocation, equipment, numberOfDays = 3 } = await req.json();
 
+    console.log('Generating workout plan with params:', {
+      intensityLevel,
+      fitnessGoal,
+      workoutLocation,
+      equipment,
+      numberOfDays
+    });
+
     // Optimize the prompt for faster processing
     const prompt = `Create a concise ${numberOfDays}-day workout plan for ${intensityLevel} level. Format:
     {
@@ -53,7 +61,7 @@ serve(async (req) => {
     - Include exactly ${numberOfDays} days
     - JSON only, no explanations`;
 
-    console.log('Sending optimized prompt to OpenAI');
+    console.log('Sending prompt to OpenAI');
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -62,7 +70,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini', // Using the faster mini model
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -73,8 +81,8 @@ serve(async (req) => {
             content: prompt
           }
         ],
-        temperature: 0.5, // Lower temperature for more focused outputs
-        max_tokens: 800, // Limit token count for faster response
+        temperature: 0.5,
+        max_tokens: 800,
       }),
     });
 
@@ -93,6 +101,7 @@ serve(async (req) => {
 
     try {
       const workoutPlan = JSON.parse(data.choices[0].message.content);
+      console.log('Successfully parsed workout plan');
       return new Response(
         JSON.stringify(workoutPlan),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
