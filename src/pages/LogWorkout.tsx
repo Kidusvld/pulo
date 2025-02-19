@@ -74,15 +74,25 @@ const LogWorkout = () => {
 
   const handleDeleteWorkout = async (id: string) => {
     try {
-      const { error } = await supabase
+      // First, delete the associated muscle group tracking record
+      const { error: muscleError } = await supabase
+        .from('muscle_group_tracking')
+        .delete()
+        .eq('progress_tracking_id', id);
+
+      if (muscleError) throw muscleError;
+
+      // Then, delete the progress tracking record
+      const { error: progressError } = await supabase
         .from('progress_tracking')
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (progressError) throw progressError;
       
+      // Update local state to remove the deleted workout
+      setWorkouts(workouts => workouts.filter(workout => workout.id !== id));
       toast.success('Workout deleted successfully');
-      fetchWorkouts();
     } catch (error) {
       console.error('Error deleting workout:', error);
       toast.error('Failed to delete workout');
