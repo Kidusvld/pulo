@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { Activity, Clock, Dumbbell, ThermometerSun } from "lucide-react";
+import { WorkoutForm } from "@/components/progress/WorkoutForm";
 
 interface WorkoutLog {
   id: string;
@@ -131,6 +132,11 @@ const WorkoutLogs = () => {
               </Card>
             ))
           )}
+        </div>
+
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold text-purple-900 mb-6">Log New Workout</h2>
+          <WorkoutForm />
         </div>
       </div>
     </div>
