@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Dumbbell } from "lucide-react";
+import { Dumbbell, Timer, Weight, Dices, Smile } from "lucide-react";
 
 type MuscleGroup = "chest" | "back" | "legs" | "shoulders" | "arms" | "core" | "full_body" | "cardio";
 
@@ -84,37 +84,46 @@ export const WorkoutForm = ({ onSuccess }: WorkoutFormProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Duration (minutes)</label>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2.5">
+              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Timer className="h-4 w-4 text-purple-500" />
+                Duration (minutes)
+              </label>
               <Input
                 type="number"
                 value={duration}
                 onChange={(e) => setDuration(e.target.value)}
                 placeholder="Enter duration"
-                className="bg-white border-purple-100"
+                className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200 placeholder:text-gray-400"
                 required
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Total Volume (lbs)</label>
+            <div className="space-y-2.5">
+              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Weight className="h-4 w-4 text-purple-500" />
+                Total Volume (lbs)
+              </label>
               <Input
                 type="number"
                 value={volume}
                 onChange={(e) => setVolume(e.target.value)}
                 placeholder="Enter total weight"
-                className="bg-white border-purple-100"
+                className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200 placeholder:text-gray-400"
                 required
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Muscle Group</label>
+            <div className="space-y-2.5">
+              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Dumbbell className="h-4 w-4 text-purple-500" />
+                Muscle Group
+              </label>
               <Select value={muscleGroup} onValueChange={(value: MuscleGroup) => setMuscleGroup(value)}>
-                <SelectTrigger className="bg-white border-purple-100">
+                <SelectTrigger className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200">
                   <SelectValue placeholder="Select muscle group" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white/95 backdrop-blur-sm border-purple-100">
                   <SelectItem value="chest">Chest</SelectItem>
                   <SelectItem value="back">Back</SelectItem>
                   <SelectItem value="legs">Legs</SelectItem>
@@ -126,13 +135,16 @@ export const WorkoutForm = ({ onSuccess }: WorkoutFormProps) => {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Energy Level (1-5)</label>
+            <div className="space-y-2.5">
+              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <Dices className="h-4 w-4 text-purple-500" />
+                Energy Level (1-5)
+              </label>
               <Select value={energyLevel} onValueChange={setEnergyLevel}>
-                <SelectTrigger className="bg-white border-purple-100">
+                <SelectTrigger className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200">
                   <SelectValue placeholder="Select energy level" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white/95 backdrop-blur-sm border-purple-100">
                   {[1, 2, 3, 4, 5].map((level) => (
                     <SelectItem key={level} value={level.toString()}>
                       {level}
@@ -142,19 +154,22 @@ export const WorkoutForm = ({ onSuccess }: WorkoutFormProps) => {
               </Select>
             </div>
           </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Mood</label>
+          <div className="space-y-2.5">
+            <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+              <Smile className="h-4 w-4 text-purple-500" />
+              Mood
+            </label>
             <Input
               value={mood}
               onChange={(e) => setMood(e.target.value)}
               placeholder="How are you feeling?"
-              className="bg-white border-purple-100"
+              className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200 placeholder:text-gray-400"
             />
           </div>
           <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white"
+            className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-sm"
           >
             {loading ? "Logging..." : "Log Workout"}
           </Button>
