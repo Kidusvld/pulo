@@ -6,7 +6,7 @@ import { ProgressStats } from "@/components/progress/ProgressStats";
 import { WorkoutForm } from "@/components/progress/WorkoutForm";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, DumbbellIcon, Trophy, Calendar, LogOut, BarChart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface ProgressData {
   id: string;
@@ -92,13 +92,22 @@ const Dashboard = () => {
           <h1 className="text-3xl font-bold text-purple-900">
             Welcome back{firstName ? `, ${firstName}` : ''}!
           </h1>
-          <Button
-            variant="ghost"
-            className="text-gray-600 hover:text-gray-900"
-            onClick={handleLogout}
-          >
-            <LogOut className="h-5 w-5" />
-          </Button>
+          <div className="flex gap-4">
+            <Link
+              to="/onboarding"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
+            >
+              <DumbbellIcon className="h-5 w-5" />
+              Generate Workout
+            </Link>
+            <Button
+              variant="ghost"
+              className="text-gray-600 hover:text-gray-900"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
 
         <ProgressStats
