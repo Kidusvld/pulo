@@ -24,26 +24,33 @@ export const MuscleGroupChart = ({ data: initialData }: MuscleGroupChartProps) =
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
+      // Using proper join syntax with progress_tracking table
       const { data: muscleGroups, error } = await supabase
         .from('muscle_group_tracking')
-        .select('muscle_group, total_weight')
+        .select(`
+          muscle_group,
+          total_weight,
+          progress_tracking!inner (
+            user_id
+          )
+        `)
         .eq('progress_tracking.user_id', session.user.id)
-        .gt('total_weight', 0)
-        .join('progress_tracking', { foreignKey: 'progress_tracking_id' });
+        .gt('total_weight', 0);
 
       if (error) throw error;
 
-      // Aggregate the data by muscle group
+      // Aggregate the data by muscle group with proper type casting
       const aggregatedData = muscleGroups.reduce((acc: { [key: string]: number }, curr) => {
         const group = curr.muscle_group;
-        acc[group] = (acc[group] || 0) + (curr.total_weight || 0);
+        const weight = typeof curr.total_weight === 'number' ? curr.total_weight : 0;
+        acc[group] = (acc[group] || 0) + weight;
         return acc;
       }, {});
 
-      // Format data for the chart
-      const formattedData = Object.entries(aggregatedData).map(([muscle_group, total_volume]) => ({
+      // Format data for the chart with explicit typing
+      const formattedData: MuscleGroupData[] = Object.entries(aggregatedData).map(([muscle_group, total_volume]) => ({
         muscle_group,
-        total_volume,
+        total_volume: Number(total_volume),
       }));
 
       setData(formattedData);
