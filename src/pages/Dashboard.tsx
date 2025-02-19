@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,13 @@ import { WorkoutForm } from "@/components/progress/WorkoutForm";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, DumbbellIcon, Trophy, Calendar, LogOut, BarChart, History } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+
+interface ProgressData {
+  id: string;
+  total_volume: number;
+  workout_duration: number;
+  created_at: string;
+}
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -42,15 +50,20 @@ const Dashboard = () => {
     }
   };
 
-  const { data: progressData, isLoading, isError } = useQuery('progress', async () => {
+  const fetchProgressData = async (): Promise<ProgressData[]> => {
     const { data, error } = await supabase
       .from('progress_tracking')
-      .select('*');
+      .select('id, total_volume, workout_duration, created_at');
 
     if (error) {
       throw new Error(error.message);
     }
-    return data;
+    return data || [];
+  };
+
+  const { data: progressData, isLoading, isError } = useQuery({
+    queryKey: ['progress'],
+    queryFn: fetchProgressData
   });
 
   if (isLoading) {
@@ -61,10 +74,12 @@ const Dashboard = () => {
     return <div>Error fetching data</div>;
   }
 
-  const totalWorkouts = progressData?.length || 0;
-  const totalVolume = progressData?.reduce((sum, record) => sum + (record.total_volume || 0), 0) || 0;
-  const averageDuration = totalWorkouts ? progressData?.reduce((sum, record) => sum + (record.workout_duration || 0), 0) / totalWorkouts : 0;
-  const consistencyStreak = 7;
+  const totalWorkouts = progressData.length;
+  const totalVolume = progressData.reduce((sum, record) => sum + (record.total_volume || 0), 0);
+  const averageDuration = totalWorkouts ? 
+    Math.round(progressData.reduce((sum, record) => sum + (record.workout_duration || 0), 0) / totalWorkouts) : 
+    0;
+  const consistencyStreak = 7; // This could be calculated based on workout dates
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50">
