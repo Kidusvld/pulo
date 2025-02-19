@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import type { Json } from "@/integrations/supabase/types";
 
 interface Profile {
   first_name: string | null;
