@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader2 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type { Json } from "@/integrations/supabase/types";
 
@@ -33,6 +33,7 @@ interface WorkoutPlan {
 }
 
 const Profile = () => {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [currentPlan, setCurrentPlan] = useState<WorkoutPlan | null>(null);
   const [loading, setLoading] = useState(false);
@@ -40,27 +41,71 @@ const Profile = () => {
   const [generationProgress, setGenerationProgress] = useState<string>('');
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (user) {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-
-        if (profileError) {
-          console.error("Error fetching profile:", profileError);
-          toast.error("Failed to load profile");
-        } else if (profileData) {
-          setProfile(profileData);
-        }
-      }
-    };
-
+    checkUser();
     fetchProfile();
   }, []);
+
+  const checkUser = async () => {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      console.error("Session error:", sessionError);
+      toast.error("Authentication error");
+      navigate("/auth");
+      return;
+    }
+
+    if (!session) {
+      navigate("/auth");
+      return;
+    }
+
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    
+    if (userError || !user) {
+      console.error("User error:", userError);
+      toast.error("Authentication error");
+      navigate("/auth");
+    }
+  };
+
+  const fetchProfile = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.user) {
+        navigate("/auth");
+        return;
+      }
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+
+      if (profileError) {
+        console.error("Error fetching profile:", profileError);
+        toast.error("Failed to load profile");
+      } else if (profileData) {
+        setProfile(profileData);
+      }
+    } catch (error) {
+      console.error("Error in fetchProfile:", error);
+      toast.error("Failed to load profile");
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      navigate("/auth");
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast.error("Error signing out");
+    }
+  };
 
   const generateWorkout = async () => {
     setLoading(true);
@@ -214,7 +259,7 @@ const Profile = () => {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold text-purple-600 mb-2">
-              Welcome, {profile?.first_name}! 👋
+              Welcome, {profile?.first_name || 'User'}! 👋
             </h1>
             <p className="text-gray-600">
               Track your fitness journey and achieve your goals
@@ -224,9 +269,7 @@ const Profile = () => {
             <Link to="/saved-workouts">
               <Button variant="outline">Saved Plans</Button>
             </Link>
-            <Link to="/auth">
-              <Button variant="outline">Sign Out</Button>
-            </Link>
+            <Button variant="outline" onClick={handleSignOut}>Sign Out</Button>
           </div>
         </div>
 
