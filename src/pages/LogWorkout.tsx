@@ -74,15 +74,7 @@ const LogWorkout = () => {
 
   const handleDeleteWorkout = async (id: string) => {
     try {
-      // First, delete the associated muscle group tracking record
-      const { error: muscleError } = await supabase
-        .from('muscle_group_tracking')
-        .delete()
-        .eq('progress_tracking_id', id);
-
-      if (muscleError) throw muscleError;
-
-      // Then, delete the progress tracking record
+      // With ON DELETE CASCADE, we only need to delete the progress_tracking record
       const { error: progressError } = await supabase
         .from('progress_tracking')
         .delete()
