@@ -8,6 +8,7 @@ import Onboarding from "@/pages/Onboarding";
 import SavedWorkouts from "@/pages/SavedWorkouts";
 import WorkoutLogs from "@/pages/WorkoutLogs";
 import NotFound from "@/pages/NotFound";
+import Dashboard from "@/pages/Dashboard";
 import { Toaster } from "sonner";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/onboarding" element={<Onboarding />} />
