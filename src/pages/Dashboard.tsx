@@ -11,6 +11,7 @@ import { WorkoutForm } from "@/components/progress/WorkoutForm";
 import { ProgressStats } from "@/components/progress/ProgressStats";
 import { MuscleGroupChart } from "@/components/progress/MuscleGroupChart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 interface WorkoutRequest {
   age: number;
   weight: number;
@@ -20,6 +21,7 @@ interface WorkoutRequest {
   intensityLevel: 'beginner' | 'intermediate' | 'advanced';
   numberOfDays: number;
 }
+
 interface WorkoutPlan {
   id: string;
   plan_data: {
@@ -39,6 +41,7 @@ interface WorkoutPlan {
   intensity_level: "beginner" | "intermediate" | "advanced";
   equipment: string[];
 }
+
 interface Profile {
   first_name: string;
   age: number;
@@ -48,6 +51,7 @@ interface Profile {
   intensity_level: "beginner" | "intermediate" | "advanced";
   equipment: string[];
 }
+
 interface SaveWorkoutPlan {
   user_id: string;
   plan_data: {
@@ -63,6 +67,7 @@ interface SaveWorkoutPlan {
   };
   name: string;
 }
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -85,6 +90,7 @@ const Dashboard = () => {
     muscle_group: string;
     total_volume: number;
   }>>([]);
+
   useEffect(() => {
     const checkSession = async () => {
       const {
@@ -112,6 +118,7 @@ const Dashboard = () => {
       subscription.unsubscribe();
     };
   }, [navigate]);
+
   const checkAuth = async () => {
     const {
       data: {
@@ -158,6 +165,7 @@ const Dashboard = () => {
       navigate("/auth");
     }
   };
+
   const fetchProgressStats = async () => {
     try {
       const {
@@ -198,6 +206,7 @@ const Dashboard = () => {
       toast.error("Failed to load progress statistics");
     }
   };
+
   const calculateStreak = (progressData: any[]) => {
     let streak = 0;
     const today = new Date();
@@ -215,6 +224,7 @@ const Dashboard = () => {
     }
     return streak;
   };
+
   const handleUpdateProfile = async () => {
     const {
       data: {
@@ -269,6 +279,7 @@ const Dashboard = () => {
       toast.error("Failed to update profile");
     }
   };
+
   const generateNewPlan = async () => {
     if (!profile) return;
     setGeneratingPlan(true);
@@ -350,6 +361,7 @@ const Dashboard = () => {
       setGeneratingPlan(false);
     }
   };
+
   const handleSaveWorkout = async () => {
     if (!workoutPlan) {
       toast.error("No workout plan to save");
@@ -378,6 +390,7 @@ const Dashboard = () => {
       toast.error("Failed to save workout plan");
     }
   };
+
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
@@ -387,11 +400,13 @@ const Dashboard = () => {
       toast.error("Failed to sign out");
     }
   };
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
       </div>;
   }
+
   return <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50">
       <div className="absolute inset-0 bg-grid-purple-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))] -z-10"></div>
       <div className="absolute h-64 w-64 rounded-full bg-purple-100/50 blur-3xl top-20 left-20 -z-10"></div>
@@ -408,7 +423,7 @@ const Dashboard = () => {
           <div className="flex gap-4">
             <Button variant="outline" onClick={() => navigate("/log-workout")} className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100 transition-all duration-200 text-base">
               <DumbbellIcon className="w-4 h-4 mr-2" />
-              Log Workout
+              Logged Workouts
             </Button>
             <Button variant="outline" onClick={() => navigate("/saved-workouts")} className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100 transition-all duration-200">
               Saved Plans
@@ -582,4 +597,5 @@ const Dashboard = () => {
       </div>
     </div>;
 };
+
 export default Dashboard;
