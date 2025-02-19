@@ -15,10 +15,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 interface WorkoutRequest {
   age: number;
   weight: number;
-  fitnessGoal: 'lose_weight' | 'build_muscle' | 'stay_fit';
+  fitnessGoal: 'lose_fat' | 'build_muscle' | 'increase_mobility';
   workoutLocation: 'home' | 'gym';
   equipment: string[];
   intensityLevel: 'beginner' | 'intermediate' | 'advanced';
+  numberOfDays: number;
 }
 
 interface WorkoutPlan {
@@ -35,7 +36,7 @@ interface WorkoutPlan {
     }>;
   };
   created_at: string;
-  fitness_goal: "lose_weight" | "build_muscle" | "stay_fit";
+  fitness_goal: "lose_fat" | "build_muscle" | "increase_mobility";
   workout_location: "home" | "gym";
   intensity_level: "beginner" | "intermediate" | "advanced";
   equipment: string[];
@@ -45,7 +46,7 @@ interface Profile {
   first_name: string;
   age: number;
   weight: number;
-  fitness_goal: "lose_weight" | "build_muscle" | "stay_fit";
+  fitness_goal: "lose_fat" | "build_muscle" | "increase_mobility";
   workout_location: "home" | "gym";
   intensity_level: "beginner" | "intermediate" | "advanced";
   equipment: string[];

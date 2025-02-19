@@ -283,7 +283,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      fitness_goal: "lose_weight" | "build_muscle" | "stay_fit"
+      fitness_goal: "build_muscle" | "lose_fat" | "increase_mobility"
       intensity_level: "beginner" | "intermediate" | "advanced"
       muscle_group:
         | "chest"
