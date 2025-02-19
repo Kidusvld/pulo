@@ -150,7 +150,7 @@ const Dashboard = () => {
         first_name: profileData.first_name,
         age: profileData.age,
         weight: profileData.weight,
-        fitness_goal: planData?.fitness_goal || "stay_fit",
+        fitness_goal: planData?.fitness_goal || "build_muscle",
         workout_location: planData?.workout_location || "home",
         intensity_level: planData?.intensity_level || "beginner",
         equipment: planData?.equipment || []
