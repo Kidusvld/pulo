@@ -9,6 +9,41 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      muscle_group_tracking: {
+        Row: {
+          created_at: string
+          id: string
+          muscle_group: Database["public"]["Enums"]["muscle_group"]
+          progress_tracking_id: string | null
+          sets_completed: number | null
+          total_weight: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          muscle_group: Database["public"]["Enums"]["muscle_group"]
+          progress_tracking_id?: string | null
+          sets_completed?: number | null
+          total_weight?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          muscle_group?: Database["public"]["Enums"]["muscle_group"]
+          progress_tracking_id?: string | null
+          sets_completed?: number | null
+          total_weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "muscle_group_tracking_progress_tracking_id_fkey"
+            columns: ["progress_tracking_id"]
+            isOneToOne: false
+            referencedRelation: "progress_tracking"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           age: number | null
@@ -65,28 +100,40 @@ export type Database = {
           completed_exercises: Json | null
           created_at: string
           date: string | null
+          energy_level: number | null
           id: string
+          mood: string | null
           notes: string | null
+          total_volume: number | null
           user_id: string
           weight: number | null
+          workout_duration: number | null
         }
         Insert: {
           completed_exercises?: Json | null
           created_at?: string
           date?: string | null
+          energy_level?: number | null
           id?: string
+          mood?: string | null
           notes?: string | null
+          total_volume?: number | null
           user_id: string
           weight?: number | null
+          workout_duration?: number | null
         }
         Update: {
           completed_exercises?: Json | null
           created_at?: string
           date?: string | null
+          energy_level?: number | null
           id?: string
+          mood?: string | null
           notes?: string | null
+          total_volume?: number | null
           user_id?: string
           weight?: number | null
+          workout_duration?: number | null
         }
         Relationships: [
           {
@@ -235,6 +282,15 @@ export type Database = {
     Enums: {
       fitness_goal: "lose_weight" | "build_muscle" | "stay_fit"
       intensity_level: "beginner" | "intermediate" | "advanced"
+      muscle_group:
+        | "chest"
+        | "back"
+        | "legs"
+        | "shoulders"
+        | "arms"
+        | "core"
+        | "full_body"
+        | "cardio"
       subscription_status: "free" | "premium"
       workout_location: "home" | "gym"
     }
