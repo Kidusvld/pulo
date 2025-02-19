@@ -24,49 +24,12 @@ serve(async (req) => {
   }
 
   try {
-    const { intensityLevel } = await req.json();
+    const { intensityLevel, fitnessGoal, workoutLocation, equipment } = await req.json();
 
-    const intensityGuidelines = {
-      beginner: `
-        - Keep exercises simple and focus on form
-        - Use bodyweight exercises or light weights
-        - Include longer rest periods (60-90 seconds)
-        - Focus on basic compound movements
-        - Sets should be 2-3 with 8-12 reps
-        - Include detailed form cues
-      `,
-      intermediate: `
-        - Mix of bodyweight and weighted exercises
-        - Moderate rest periods (45-60 seconds)
-        - Include some supersets
-        - Sets should be 3-4 with 10-15 reps
-        - Add some complex movements
-        - Include some HIIT elements
-      `,
-      advanced: `
-        - Complex exercise combinations
-        - Shorter rest periods (30-45 seconds)
-        - Include supersets and drop sets
-        - Sets should be 4-5 with 12-15 reps
-        - Advanced movement patterns
-        - High-intensity circuits
-        - Include compound exercises with progressive overload
-      `
-    };
+    const prompt = `Create a 3-day workout plan for a ${intensityLevel} level fitness enthusiast with a goal of ${fitnessGoal}, working out at ${workoutLocation}.
+    ${equipment ? `Available equipment: ${equipment.join(', ')}` : 'No specific equipment requirements.'}
 
-    const prompt = `Create a 3-day workout plan for a ${intensityLevel} level fitness enthusiast. 
-
-    Follow these ${intensityLevel} level guidelines:
-    ${intensityGuidelines[intensityLevel as keyof typeof intensityGuidelines]}
-
-    The plan should:
-    - Include different focus areas for each day (e.g., upper body, lower body, core)
-    - Create challenging but appropriate exercises for ${intensityLevel} level
-    - Include 3 exercises per day
-    - Consider proper exercise progression and form requirements
-    - Ensure the intensity matches the user's ${intensityLevel} level exactly
-
-    Return ONLY a JSON object with this exact structure:
+    Return a JSON object with this exact structure (no markdown, no explanations, just the JSON):
     {
       "workouts": [
         {
@@ -85,6 +48,8 @@ serve(async (req) => {
       ]
     }`;
 
+    console.log('Sending prompt to OpenAI:', prompt);
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -96,23 +61,41 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert fitness trainer with deep knowledge of exercise progression and proper form. You create personalized workout plans that perfectly match the user\'s fitness level. For beginners, you focus on form and fundamentals. For intermediate users, you add complexity and intensity. For advanced users, you create challenging, complex workouts with advanced techniques.'
+            content: 'You are a fitness expert that creates personalized workout plans. You always respond with valid JSON only, no explanations or markdown formatting.'
           },
           {
             role: 'user',
             content: prompt
           }
-        ]
+        ],
+        temperature: 0.7
       }),
     });
 
-    const data = await response.json();
-    const workoutPlan = JSON.parse(data.choices[0].message.content);
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('OpenAI API error:', error);
+      throw new Error('Failed to generate workout plan');
+    }
 
-    return new Response(
-      JSON.stringify(workoutPlan),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    const data = await response.json();
+    console.log('OpenAI response:', data);
+
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response from OpenAI');
+    }
+
+    try {
+      const workoutPlan = JSON.parse(data.choices[0].message.content);
+      return new Response(
+        JSON.stringify(workoutPlan),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (parseError) {
+      console.error('Error parsing OpenAI response:', parseError);
+      console.error('Raw content:', data.choices[0].message.content);
+      throw new Error('Invalid JSON in workout plan response');
+    }
   } catch (error) {
     console.error('Error:', error);
     return new Response(
