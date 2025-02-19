@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Dumbbell, Clock, Target, RotateCcw, BarChart } from "lucide-react";
 import { useEffect, useState, useCallback, useMemo } from "react";
@@ -219,11 +220,13 @@ export const ProgressStats = ({
         {statItems.map((stat) => (
           <Card key={stat.title} className="bg-white/900 backdrop-blur-sm border-purple-100">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-gray-500">{stat.title}</CardTitle>
+              <CardTitle className="text-sm font-semibold tracking-wide text-gray-600/90 uppercase">{stat.title}</CardTitle>
               <stat.icon className={`h-5 w-5 ${stat.color}`} />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+              <div className="text-2xl font-bold tracking-tight text-gray-900">
+                {stat.value}
+              </div>
             </CardContent>
           </Card>
         ))}
