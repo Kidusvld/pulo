@@ -17,6 +17,19 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+interface WorkoutData {
+  created_at: string;
+  workout_duration: number;
+  total_volume: number;
+}
+
+interface ProgressStats {
+  totalWorkouts: number;
+  totalVolume: number;
+  averageDuration: number;
+  consistencyStreak: number;
+}
+
 interface ProgressStatsProps {
   totalWorkouts: number;
   totalVolume: number;
@@ -30,49 +43,85 @@ export const ProgressStats = ({
   averageDuration, 
   consistencyStreak 
 }: ProgressStatsProps) => {
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<ProgressStats>({
     totalWorkouts: 0,
     totalVolume: 0,
     averageDuration: 0,
     consistencyStreak: 0
   });
 
-  const calculateStreak = useCallback((workouts: any[]) => {
-    if (!workouts.length) return 0;
+  /**
+   * Calculates the user's workout streak based on consecutive days with workouts
+   * @param workouts Array of workout data with timestamps
+   * @returns Number of consecutive days with workouts, counting backwards from the most recent
+   */
+  const calculateStreak = useCallback((workouts: WorkoutData[]): number => {
+    if (!workouts?.length) return 0;
 
-    // Get today's date at midnight in user's local timezone
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    try {
+      // Get today's date at midnight in user's local timezone
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-    // Sort workouts by date, most recent first
-    const sortedWorkouts = [...workouts].sort((a, b) => 
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
+      // Sort workouts by date, most recent first
+      const sortedWorkouts = [...workouts].sort((a, b) => {
+        const dateA = new Date(a.created_at);
+        const dateB = new Date(b.created_at);
+        
+        // Validate dates
+        if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
+          console.error('Invalid date found in workout data');
+          return 0;
+        }
 
-    // Convert workout dates to local midnight timestamps
-    const workoutDays = new Set(
-      sortedWorkouts.map(workout => {
-        const date = new Date(workout.created_at);
-        date.setHours(0, 0, 0, 0);
-        return date.getTime();
-      })
-    );
+        // Ignore future dates
+        if (dateA > today || dateB > today) {
+          return 0;
+        }
 
-    let streak = 0;
-    for (let i = 0; i < 30; i++) {  // Check last 30 days
-      const checkDate = new Date(today);
-      checkDate.setDate(today.getDate() - i);
-      checkDate.setHours(0, 0, 0, 0);
-      
-      if (workoutDays.has(checkDate.getTime())) {
-        streak++;
-      } else if (streak > 0) {
-        // Break streak on first missed day
-        break;
+        return dateB.getTime() - dateA.getTime();
+      });
+
+      // Convert workout dates to local midnight timestamps
+      const workoutDays = new Set(
+        sortedWorkouts
+          .map(workout => {
+            const date = new Date(workout.created_at);
+            if (isNaN(date.getTime())) {
+              console.error('Invalid date:', workout.created_at);
+              return null;
+            }
+            if (date > today) {
+              console.warn('Future date detected:', workout.created_at);
+              return null;
+            }
+            date.setHours(0, 0, 0, 0);
+            return date.getTime();
+          })
+          .filter((timestamp): timestamp is number => timestamp !== null)
+      );
+
+      let streak = 0;
+      const DAYS_TO_CHECK = 30;  // Check last 30 days
+
+      for (let i = 0; i < DAYS_TO_CHECK; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(today.getDate() - i);
+        checkDate.setHours(0, 0, 0, 0);
+        
+        if (workoutDays.has(checkDate.getTime())) {
+          streak++;
+        } else if (streak > 0) {
+          // Break streak on first missed day
+          break;
+        }
       }
-    }
 
-    return streak;
+      return streak;
+    } catch (error) {
+      console.error('Error calculating streak:', error);
+      return 0;
+    }
   }, []);
 
   const handleResetStats = async () => {
