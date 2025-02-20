@@ -23,16 +23,24 @@ export const SignInForm = ({ onSwitchMode }: SignInFormProps) => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
+      
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("age, weight, first_name")
+        .eq("id", (await supabase.auth.getUser()).data.user?.id)
+        .maybeSingle();
 
-      if (data.user) {
-        toast.success("Successfully signed in!");
-        // Directly navigate to dashboard for returning users
+      if (profileError) throw profileError;
+
+      if (!profile?.age || !profile?.weight || !profile?.first_name) {
+        navigate("/onboarding");
+      } else {
         navigate("/dashboard");
       }
     } catch (error) {

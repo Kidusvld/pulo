@@ -1,15 +1,14 @@
 
-import { Brain, DumbbellIcon, LogOut, Crown } from "lucide-react";
+import { Brain, DumbbellIcon, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 interface DashboardHeaderProps {
   firstName?: string;
   onSignOut: () => void;
-  subscriptionStatus?: "free" | "pro";
 }
 
-export const DashboardHeader = ({ firstName, onSignOut, subscriptionStatus }: DashboardHeaderProps) => {
+export const DashboardHeader = ({ firstName, onSignOut }: DashboardHeaderProps) => {
   const navigate = useNavigate();
 
   return (
@@ -23,12 +22,6 @@ export const DashboardHeader = ({ firstName, onSignOut, subscriptionStatus }: Da
             <Brain className="h-5 w-5 mr-2" />
             <span className="text-xl font-bold tracking-tight">PULO</span>
           </div>
-          {subscriptionStatus === "pro" && (
-            <div className="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
-              <Crown className="w-4 h-4" />
-              Pro Plan
-            </div>
-          )}
         </div>
         <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-700 to-purple-900 bg-clip-text text-transparent">
           Welcome{firstName ? `, ${firstName}` : ""}! 👋
@@ -36,20 +29,10 @@ export const DashboardHeader = ({ firstName, onSignOut, subscriptionStatus }: Da
         <p className="text-gray-600 mt-2">Track your fitness journey and achieve your goals</p>
       </div>
       <div className="flex gap-4">
-        {subscriptionStatus === "free" && (
-          <Button 
-            onClick={() => navigate("/subscription")} 
-            className="bg-purple-600 hover:bg-purple-700"
-          >
-            <Crown className="w-4 h-4 mr-2" />
-            Upgrade to Pro
-          </Button>
-        )}
         <Button 
           variant="outline" 
           onClick={() => navigate("/log-workout")} 
           className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100 transition-all duration-200 text-base"
-          disabled={subscriptionStatus === "free"}
         >
           <DumbbellIcon className="w-4 h-4 mr-2" />
           Logged Workouts
@@ -58,7 +41,6 @@ export const DashboardHeader = ({ firstName, onSignOut, subscriptionStatus }: Da
           variant="outline" 
           onClick={() => navigate("/saved-workouts")} 
           className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100 transition-all duration-200"
-          disabled={subscriptionStatus === "free"}
         >
           Saved Plans
         </Button>

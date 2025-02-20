@@ -1,132 +1,153 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
+
+interface WorkoutRequest {
+  age: number;
+  weight: number;
+  fitnessGoal: 'lose_fat' | 'build_muscle' | 'increase_mobility';
+  workoutLocation: 'home' | 'gym';
+  equipment: string[];
+  intensityLevel: 'beginner' | 'intermediate' | 'advanced';
+  numberOfDays: number;
+}
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, {
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers":
-          "authorization, x-client-info, apikey, content-type",
-      },
-    });
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
-    const { age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel, numberOfDays } = await req.json();
+    const { age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel, numberOfDays } = await req.json() as WorkoutRequest;
 
-    // Define exercise lists based on fitness goal, workout location, equipment, and intensity level
-    const buildMuscleExercises = [
-      'Bench Press', 'Squats', 'Deadlifts', 'Overhead Press', 'Barbell Rows',
-      'Pull-ups', 'Dips', 'Bicep Curls', 'Tricep Extensions', 'Lunges',
-      'Calf Raises', 'Plank', 'Russian Twists', 'Leg Press', 'Lat Pulldowns'
-    ];
-
-    const loseFatExercises = [
-      'Running', 'Cycling', 'Swimming', 'HIIT Workouts', 'Jumping Jacks',
-      'Burpees', 'Mountain Climbers', 'Battle Ropes', 'Kettlebell Swings',
-      'Elliptical Training', 'Stair Climbing', 'Rowing', 'Jump Rope', 'Dancing'
-    ];
-
-    const increaseMobilityExercises = [
-      'Yoga', 'Pilates', 'Foam Rolling', 'Dynamic Stretching', 'Static Stretching',
-      'Tai Chi', 'Bodyweight Exercises', 'Balance Training', 'Flexibility Drills'
-    ];
-
-    const homeEquipmentExercises = [
-      'Push-ups', 'Squats', 'Lunges', 'Plank', 'Crunches', 'Dumbbell Rows',
-      'Dumbbell Bench Press', 'Dumbbell Shoulder Press', 'Bicep Curls',
-      'Tricep Extensions', 'Calf Raises', 'Glute Bridges', 'Bird Dog Exercise'
-    ];
-
-    const gymEquipmentExercises = [
-      'Bench Press', 'Squats', 'Deadlifts', 'Leg Press', 'Lat Pulldowns',
-      'Cable Rows', 'Overhead Press', 'Bicep Curls', 'Tricep Pushdowns',
-      'Leg Extensions', 'Hamstring Curls', 'Calf Raises', 'Pull-ups', 'Dips'
-    ];
-
-    const beginnerExercises = [
-      'Walking', 'Light Jogging', 'Bodyweight Squats', 'Push-ups (on knees)',
-      'Plank (modified)', 'Dumbbell Rows (light weight)', 'Bicep Curls (light weight)',
-      'Overhead Press (light weight)', 'Calf Raises', 'Crunches'
-    ];
-
-    const intermediateExercises = [
-      'Running', 'Cycling', 'Bodyweight Squats', 'Push-ups', 'Plank',
-      'Dumbbell Rows', 'Bicep Curls', 'Overhead Press', 'Lunges', 'Deadlifts (light weight)'
-    ];
-
-    const advancedExercises = [
-      'Sprinting', 'Hill Sprints', 'Barbell Squats', 'Push-ups (variations)',
-      'Plank (variations)', 'Pull-ups', 'Dips', 'Deadlifts', 'Olympic Lifts', 'Muscle Ups'
-    ];
-
-    const mobilityExercises = [
-      'Cat-Cow Stretch',
-      'World\'s Greatest Stretch',
-      'Hip Opener Series',
-      'Joint Mobility'
-    ];
-
-    // Filter exercises based on criteria
-    let selectedExercises = [];
-
-    if (fitnessGoal === 'build_muscle') {
-      selectedExercises = buildMuscleExercises;
-    } else if (fitnessGoal === 'lose_fat') {
-      selectedExercises = loseFatExercises;
-    } else if (fitnessGoal === 'increase_mobility') {
-      selectedExercises = increaseMobilityExercises;
-    }
-
-    if (workoutLocation === 'home') {
-      selectedExercises = selectedExercises.filter(exercise => homeEquipmentExercises.includes(exercise));
-    } else if (workoutLocation === 'gym') {
-      selectedExercises = selectedExercises.filter(exercise => gymEquipmentExercises.includes(exercise));
-    }
-
-    if (intensityLevel === 'beginner') {
-      selectedExercises = selectedExercises.filter(exercise => beginnerExercises.includes(exercise));
-    } else if (intensityLevel === 'intermediate') {
-      selectedExercises = selectedExercises.filter(exercise => intermediateExercises.includes(exercise));
-    } else if (intensityLevel === 'advanced') {
-      selectedExercises = selectedExercises.filter(exercise => advancedExercises.includes(exercise));
-    }
-
-    // Generate workout plan
-    const workoutPlan = [];
-    for (let i = 1; i <= numberOfDays; i++) {
-      const dayExercises = [];
-      const numberOfExercises = Math.floor(Math.random() * 3) + 3; // Random number between 3 and 5
-
-      for (let j = 0; j < numberOfExercises; j++) {
-        const exerciseIndex = Math.floor(Math.random() * selectedExercises.length);
-        const exerciseName = selectedExercises[exerciseIndex];
-        dayExercises.push({
-          name: exerciseName,
-          sets: Math.floor(Math.random() * 2) + 3, // Random number between 3 and 4
-          reps: Math.floor(Math.random() * 8) + 8, // Random number between 8 and 15
-          rest: Math.floor(Math.random() * 60) + 60 // Random number between 60 and 120 seconds
-        });
-      }
-
-      workoutPlan.push({
-        day: i,
-        exercises: dayExercises
-      });
-    }
-
-    // Return workout plan
-    return new Response(
-      JSON.stringify({ workouts: workoutPlan }),
-      {
-        headers: { "Content-Type": "application/json" },
+    const exercises = {
+      gym: {
+        strength: ['Bench Press', 'Lat Pulldown', 'Leg Press', 'Cable Rows', 'Shoulder Press Machine'],
+        compound: ['Barbell Squats', 'Deadlifts', 'Military Press', 'Bent Over Rows'],
+        cardio: ['Treadmill Run', 'Rowing Machine', 'Stationary Bike', 'Elliptical', 'Stair Climber'],
+        mobility: ['Dynamic Stretching', 'Yoga Flow', 'Foam Rolling', 'Joint Mobility', 'Static Stretching']
       },
-    );
-  } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
+      home: {
+        strength: ['Push-ups', 'Diamond Push-ups', 'Bodyweight Squats', 'Lunges', 'Tricep Dips'],
+        compound: ['Pull-ups', 'Pike Push-ups', 'Bulgarian Split Squats', 'Step-ups'],
+        cardio: ['High Knees', 'Mountain Climbers', 'Jumping Jacks', 'Burpees', 'Jump Rope'],
+        mobility: ['Sun Salutation', 'Cat-Cow Stretch', 'World's Greatest Stretch', 'Hip Opener Series', 'Joint Mobility']
+      }
+    };
+
+    const getExercisesByGoal = (location: 'home' | 'gym', goal: string) => {
+      const locationExercises = exercises[location];
+      switch (goal) {
+        case 'build_muscle':
+          return [...locationExercises.compound, ...locationExercises.strength];
+        case 'lose_fat':
+          return [...locationExercises.cardio, ...locationExercises.compound];
+        case 'increase_mobility':
+          return [...locationExercises.mobility, ...locationExercises.compound];
+        default:
+          return [...Object.values(locationExercises)].flat();
+      }
+    };
+
+    const getExerciseParameters = (goal: string, exerciseType: string) => {
+      switch (goal) {
+        case 'build_muscle':
+          return {
+            sets: Math.floor(Math.random() * 2) + 2, // 2-3 sets
+            reps: Math.floor(Math.random() * 3) + 8, // 8-10 reps
+            rest: (Math.floor(Math.random() * 2) + 2) * 60 // 2-3 minutes
+          };
+        case 'lose_fat':
+          return {
+            sets: Math.floor(Math.random() * 2) + 2, // 2-3 sets
+            reps: Math.floor(Math.random() * 5) + 6, // 6-10 reps
+            rest: (Math.floor(Math.random() * 2) + 1) * 60 // 1-2 minutes
+          };
+        case 'increase_mobility':
+          return {
+            sets: 2, // Consistent 2 sets for mobility
+            reps: exerciseType.includes('Stretch') ? 30 : Math.floor(Math.random() * 5) + 6, // 30 seconds for stretches, 6-10 reps for others
+            rest: 60 // 1 minute rest for mobility
+          };
+        default:
+          return {
+            sets: Math.floor(Math.random() * 2) + 2,
+            reps: Math.floor(Math.random() * 5) + 6,
+            rest: (Math.floor(Math.random() * 2) + 2) * 60
+          };
+      }
+    };
+
+    const shuffleArray = <T>(array: T[]): T[] => {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    };
+
+    const getExercisesPerDay = () => {
+      switch (intensityLevel) {
+        case 'beginner':
+          return { min: 4, max: 6 };
+        case 'intermediate':
+          return { min: 6, max: 8 };
+        case 'advanced':
+          return { min: 8, max: 10 };
+        default:
+          return { min: 4, max: 6 };
+      }
+    };
+
+    const workouts = Array.from({ length: numberOfDays }, (_, i) => {
+      const exercisesCount = Math.floor(
+        Math.random() * 
+        (getExercisesPerDay().max - getExercisesPerDay().min + 1) + 
+        getExercisesPerDay().min
+      );
+
+      const poolType = workoutLocation as 'home' | 'gym';
+      const exercisePool = getExercisesByGoal(poolType, fitnessGoal);
+      const shuffledExercises = shuffleArray([...exercisePool]);
+      const selectedExercises = shuffledExercises.slice(0, exercisesCount);
+      
+      const dayExercises = selectedExercises.map(name => {
+        const params = getExerciseParameters(fitnessGoal, name);
+        return {
+          name,
+          ...params
+        };
+      });
+
+      return {
+        day: i + 1,
+        exercises: dayExercises
+      };
     });
+
+    console.log('Generated workout plan with goal-specific exercises:', { 
+      fitnessGoal,
+      workouts 
+    });
+
+    return new Response(
+      JSON.stringify({ workouts }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+
+  } catch (error) {
+    console.error('Error generating workout:', error);
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500 
+      }
+    )
   }
-});
+})
