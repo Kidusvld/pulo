@@ -69,7 +69,10 @@ const Auth = () => {
         {/* Logo and Branding */}
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
-            <div className="flex items-center justify-center px-3 py-2 rounded-xl bg-purple-600 text-white">
+            <div 
+              onClick={() => navigate("/")}
+              className="flex items-center justify-center px-3 py-2 rounded-xl bg-purple-600 text-white cursor-pointer hover:bg-purple-700 transition-colors duration-200"
+            >
               <Brain className="h-8 w-8 mr-2" />
               <span className="text-2xl font-bold tracking-tight">PULO</span>
             </div>
@@ -139,4 +142,3 @@ const Auth = () => {
 };
 
 export default Auth;
-
