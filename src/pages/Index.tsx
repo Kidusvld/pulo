@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Brain, BarChart3, Calendar } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -48,23 +48,28 @@ const Index = () => {
           <div className="py-20 md:py-28">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="text-left space-y-8">
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-purple-100 text-purple-700">
+                  <Brain className="w-4 h-4 mr-2" />
+                  <span className="text-sm font-medium">AI-Powered Workout Partner</span>
+                </div>
+                
                 <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
-                  Transform Your
-                  <span className="text-purple-600 block">Fitness Journey</span>
+                  Meet PULO, Your
+                  <span className="text-purple-600 block">Fitness Friend</span>
                 </h1>
                 
                 <p className="text-xl text-gray-600 max-w-lg">
-                  Your personalized AI workout companion that adapts to your goals, schedule, and progress. Get started today and unlock your full potential.
+                  Think of PULO as your supportive workout buddy who's always there to guide, motivate, and adapt to your unique fitness journey. No judgment, just personalized support that grows with you.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
                     size="lg" 
                     onClick={() => navigate("/auth?mode=signup")}
-                    className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg h-auto"
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg h-auto group transition-all duration-300"
                   >
                     Start Your Journey
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
                   <Button 
                     variant="outline"
@@ -83,24 +88,24 @@ const Index = () => {
                     <img 
                       src="https://images.unsplash.com/photo-1549576490-b0b4831ef60a?auto=format&fit=crop&q=80" 
                       alt="Person exercising" 
-                      className="rounded-lg shadow-lg h-48 w-full object-cover"
+                      className="rounded-lg shadow-lg h-48 w-full object-cover transform hover:scale-105 transition-transform duration-300"
                     />
                     <img 
                       src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&q=80" 
                       alt="Workout equipment" 
-                      className="rounded-lg shadow-lg h-64 w-full object-cover"
+                      className="rounded-lg shadow-lg h-64 w-full object-cover transform hover:scale-105 transition-transform duration-300"
                     />
                   </div>
                   <div className="space-y-4 pt-8">
                     <img 
                       src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80" 
                       alt="Yoga pose" 
-                      className="rounded-lg shadow-lg h-64 w-full object-cover"
+                      className="rounded-lg shadow-lg h-64 w-full object-cover transform hover:scale-105 transition-transform duration-300"
                     />
                     <img 
                       src="https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&q=80" 
                       alt="Weight training" 
-                      className="rounded-lg shadow-lg h-48 w-full object-cover"
+                      className="rounded-lg shadow-lg h-48 w-full object-cover transform hover:scale-105 transition-transform duration-300"
                     />
                   </div>
                 </div>
@@ -111,34 +116,28 @@ const Index = () => {
           {/* Features Section */}
           <div className="py-16 border-t border-gray-200">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center p-6">
-                <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
+              <div className="text-center p-6 group hover:bg-white hover:shadow-lg rounded-xl transition-all duration-300">
+                <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                  <Brain className="w-8 h-8 text-purple-600 group-hover:text-white transition-colors" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Personalized Plans</h3>
-                <p className="text-gray-600">AI-driven workout plans tailored to your specific goals and fitness level</p>
+                <h3 className="text-xl font-semibold mb-2">Smart Adaptation</h3>
+                <p className="text-gray-600">Just like a friend who knows your style, PULO learns and adjusts your workouts as you progress</p>
               </div>
 
-              <div className="text-center p-6">
-                <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
+              <div className="text-center p-6 group hover:bg-white hover:shadow-lg rounded-xl transition-all duration-300">
+                <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                  <BarChart3 className="w-8 h-8 text-purple-600 group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Track Progress</h3>
-                <p className="text-gray-600">Monitor your improvements and celebrate your achievements</p>
+                <p className="text-gray-600">Watch your journey unfold with clear, motivating insights that celebrate every achievement</p>
               </div>
 
-              <div className="text-center p-6">
-                <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+              <div className="text-center p-6 group hover:bg-white hover:shadow-lg rounded-xl transition-all duration-300">
+                <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                  <Calendar className="w-8 h-8 text-purple-600 group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Flexible Schedule</h3>
-                <p className="text-gray-600">Workouts that fit your lifestyle and available time</p>
+                <p className="text-gray-600">Life gets busy - PULO adapts to your schedule, not the other way around</p>
               </div>
             </div>
           </div>
@@ -149,3 +148,4 @@ const Index = () => {
 };
 
 export default Index;
+
