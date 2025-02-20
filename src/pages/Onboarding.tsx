@@ -47,11 +47,6 @@ const Onboarding = () => {
     }
 
     try {
-      await supabase
-        .from("workout_plans")
-        .update({ is_active: false })
-        .eq("user_id", session.user.id);
-
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
@@ -66,6 +61,13 @@ const Onboarding = () => {
         throw new Error("Error saving profile");
       }
 
+      // First, deactivate all existing workout plans
+      await supabase
+        .from("workout_plans")
+        .update({ is_active: false })
+        .eq("user_id", session.user.id);
+
+      // Then create the new workout plan
       const { error: planError } = await supabase
         .from("workout_plans")
         .insert({
@@ -83,8 +85,8 @@ const Onboarding = () => {
         throw new Error("Error creating workout plan");
       }
 
-      toast.success("Profile completed!");
-      navigate("/dashboard"); // Navigate to dashboard after completing onboarding
+      toast.success("Profile completed successfully!");
+      navigate("/dashboard");
     } catch (error) {
       console.error('Error saving data:', error);
       toast.error(error instanceof Error ? error.message : "Error saving data");
@@ -274,8 +276,17 @@ const Onboarding = () => {
                       disabled={!canProceed() || loading}
                       className="ml-auto bg-purple-600 hover:bg-purple-700"
                     >
-                      Complete Profile
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      {loading ? (
+                        <div className="flex items-center">
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                          Processing...
+                        </div>
+                      ) : (
+                        <>
+                          Complete Profile
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </>
+                      )}
                     </Button>
                   )}
                 </div>
