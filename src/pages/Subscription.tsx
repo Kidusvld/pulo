@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -61,7 +60,7 @@ const PricingTier = ({
 const SubscriptionPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [currentPlan, setCurrentPlan] = useState<"free" | "pro">("free");
+  const [currentPlan, setCurrentPlan] = useState<"free" | "premium">("free");
 
   useEffect(() => {
     checkSubscription();
@@ -83,8 +82,7 @@ const SubscriptionPage = () => {
 
       if (error) throw error;
 
-      // Ensure we're using the correct type
-      setCurrentPlan(profile.subscription_status === "pro" ? "pro" : "free");
+      setCurrentPlan(profile.subscription_status || "free");
     } catch (error) {
       console.error("Error checking subscription:", error);
       toast.error("Failed to load subscription status");
@@ -93,7 +91,7 @@ const SubscriptionPage = () => {
     }
   };
 
-  const handleSubscribe = async (plan: "free" | "pro") => {
+  const handleSubscribe = async (plan: "free" | "premium") => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -112,7 +110,7 @@ const SubscriptionPage = () => {
         toast.success("Free plan activated!");
         navigate("/onboarding");
       } else {
-        // For pro plan, create Stripe checkout session
+        // For premium plan, create Stripe checkout session
         const { data: { url }, error } = await supabase.functions.invoke("create-checkout-session", {
           body: { 
             priceId: "your_stripe_price_id", // Replace with your actual Stripe price ID
@@ -184,7 +182,7 @@ const SubscriptionPage = () => {
             current={currentPlan === "free"}
           />
           <PricingTier
-            title="Pro"
+            title="Premium"
             price="$9.99"
             features={[
               "Everything in Free",
@@ -196,8 +194,8 @@ const SubscriptionPage = () => {
               "Priority support"
             ]}
             isPopular
-            onSubscribe={() => handleSubscribe("pro")}
-            current={currentPlan === "pro"}
+            onSubscribe={() => handleSubscribe("premium")}
+            current={currentPlan === "premium"}
           />
         </div>
       </div>
