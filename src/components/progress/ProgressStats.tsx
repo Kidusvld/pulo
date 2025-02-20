@@ -40,24 +40,34 @@ export const ProgressStats = ({
   const calculateStreak = useCallback((workouts: any[]) => {
     if (!workouts.length) return 0;
 
+    // Get today's date at midnight in user's local timezone
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const workoutDates = new Set(
-      workouts.map(workout => 
-        new Date(workout.created_at).toISOString().split('T')[0]
-      )
+    // Sort workouts by date, most recent first
+    const sortedWorkouts = [...workouts].sort((a, b) => 
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+    // Convert workout dates to local midnight timestamps
+    const workoutDays = new Set(
+      sortedWorkouts.map(workout => {
+        const date = new Date(workout.created_at);
+        date.setHours(0, 0, 0, 0);
+        return date.getTime();
+      })
     );
 
     let streak = 0;
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 30; i++) {  // Check last 30 days
       const checkDate = new Date(today);
       checkDate.setDate(today.getDate() - i);
-      const dateStr = checkDate.toISOString().split('T')[0];
-
-      if (workoutDates.has(dateStr)) {
+      checkDate.setHours(0, 0, 0, 0);
+      
+      if (workoutDays.has(checkDate.getTime())) {
         streak++;
       } else if (streak > 0) {
+        // Break streak on first missed day
         break;
       }
     }
