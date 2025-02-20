@@ -1,6 +1,6 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
+import { rateLimit } from "https://deno.land/x/oak_rate_limit/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,13 +17,31 @@ interface WorkoutRequest {
   numberOfDays: number;
 }
 
-serve(async (req) => {
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+
+serve(async (req: Request) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Apply rate limiting
+    const clientIP = req.headers.get("x-forwarded-for") || "unknown";
+    const rateLimitResult = await limiter.check(req, clientIP);
+    
+    if (!rateLimitResult.success) {
+      return new Response(JSON.stringify({
+        error: "Too many requests, please try again later."
+      }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
     const { age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel, numberOfDays } = await req.json() as WorkoutRequest;
 
     // Define exercise pools based on location and equipment
@@ -82,16 +100,12 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Error in generate-workout function:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { 
-        status: 500,
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
+    console.error("Error processing request:", error);
+    return new Response(JSON.stringify({
+      error: "Internal server error"
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
+    });
   }
 });
