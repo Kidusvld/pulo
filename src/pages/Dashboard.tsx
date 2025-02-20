@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowRight, DumbbellIcon, Trophy, Calendar, LogOut, BarChart } from "lucide-react";
+import { ArrowRight, DumbbellIcon, Trophy, Calendar, LogOut, BarChart, Brain } from "lucide-react";
 import { WorkoutForm } from "@/components/progress/WorkoutForm";
 import { ProgressStats } from "@/components/progress/ProgressStats";
 import { MuscleGroupChart } from "@/components/progress/MuscleGroupChart";
@@ -402,19 +402,26 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
+    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 via-white to-purple-50">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
       </div>;
   }
 
-  return <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50">
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50">
       <div className="absolute inset-0 bg-grid-purple-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))] -z-10"></div>
       <div className="absolute h-64 w-64 rounded-full bg-purple-100/50 blur-3xl top-20 left-20 -z-10"></div>
-      <div className="absolute h-64 w-64 rounded-full bg-blue-100/50 blur-3xl bottom-20 right-20 -z-10"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-100/50 blur-3xl bottom-20 right-20 -z-10"></div>
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="flex items-center justify-center px-3 py-2 rounded-xl bg-purple-600 text-white">
+                <Brain className="h-5 w-5 mr-2" />
+                <span className="text-xl font-bold tracking-tight">PULO</span>
+              </div>
+            </div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-700 to-purple-900 bg-clip-text text-transparent">
               Welcome{profile?.first_name ? `, ${profile.first_name}` : ""}! 👋
             </h1>
@@ -436,12 +443,12 @@ const Dashboard = () => {
         </div>
 
         <Tabs defaultValue="workout" className="space-y-6">
-          <TabsList className="grid grid-cols-2 w-[400px] mb-6">
-            <TabsTrigger value="workout" className="flex items-center gap-2">
+          <TabsList className="grid grid-cols-2 w-[400px] mb-6 bg-white/80 border border-purple-100">
+            <TabsTrigger value="workout" className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
               <DumbbellIcon className="h-4 w-4" />
               Workout Plan
             </TabsTrigger>
-            <TabsTrigger value="progress" className="flex items-center gap-2">
+            <TabsTrigger value="progress" className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
               <BarChart className="h-4 w-4" />
               Progress
             </TabsTrigger>
@@ -559,28 +566,36 @@ const Dashboard = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                {workoutPlan?.plan_data?.workouts ? <div className="space-y-6">
-                    {workoutPlan.plan_data.workouts.map((workout, index) => <div key={index} className="space-y-4">
+                {workoutPlan?.plan_data?.workouts ? (
+                  <div className="space-y-6">
+                    {workoutPlan.plan_data.workouts.map((workout, index) => (
+                      <div key={index} className="space-y-4">
                         <h3 className="font-semibold flex items-center gap-2 text-purple-900">
                           <Calendar className="h-4 w-4 text-purple-600" />
                           Day {workout.day}
                         </h3>
                         <div className="grid gap-4">
-                          {workout.exercises.map((exercise, exerciseIndex) => <div key={exerciseIndex} className="bg-purple-50/50 p-4 rounded-lg border border-purple-100 hover:bg-purple-50 transition-colors duration-200">
+                          {workout.exercises.map((exercise, exerciseIndex) => (
+                            <div key={exerciseIndex} className="bg-purple-50/50 p-4 rounded-lg border border-purple-100 hover:bg-purple-50 transition-colors duration-200">
                               <p className="font-medium text-purple-900">{exercise.name}</p>
                               <p className="text-sm text-purple-600 mt-1">
                                 {exercise.sets} sets × {exercise.reps} reps
                                 (Rest: {Math.floor(exercise.rest / 60)} min)
                               </p>
-                            </div>)}
+                            </div>
+                          ))}
                         </div>
-                      </div>)}
-                  </div> : <div className="text-center py-12">
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
                     <DumbbellIcon className="h-16 w-16 text-purple-200 mx-auto mb-4" />
                     <p className="text-gray-500">
                       No workout plan generated yet. Click the button above to create one!
                     </p>
-                  </div>}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -595,7 +610,8 @@ const Dashboard = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default Dashboard;
