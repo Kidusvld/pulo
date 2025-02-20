@@ -92,11 +92,11 @@ const Onboarding = () => {
   const canProceed = () => {
     switch (step) {
       case 1:
-        return formData.first_name.trim() && formData.last_name.trim();
+        return Boolean(formData.first_name.trim() && formData.last_name.trim());
       case 2:
-        return formData.age && formData.weight;
+        return Boolean(formData.age && formData.weight);
       case 3:
-        return formData.fitness_goal && formData.workout_location && formData.intensity_level;
+        return Boolean(formData.fitness_goal && formData.workout_location && formData.intensity_level);
       default:
         return false;
     }
