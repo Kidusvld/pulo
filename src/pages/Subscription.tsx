@@ -82,7 +82,9 @@ const SubscriptionPage = () => {
         .single();
 
       if (error) throw error;
-      setCurrentPlan(profile.subscription_status);
+
+      // Ensure we're using the correct type
+      setCurrentPlan(profile.subscription_status === "pro" ? "pro" : "free");
     } catch (error) {
       console.error("Error checking subscription:", error);
       toast.error("Failed to load subscription status");
@@ -99,11 +101,21 @@ const SubscriptionPage = () => {
         return;
       }
 
-      if (plan === "pro") {
-        // Create Stripe checkout session
+      if (plan === "free") {
+        const { error } = await supabase
+          .from("profiles")
+          .update({ subscription_status: "free" })
+          .eq("id", session.user.id);
+
+        if (error) throw error;
+        
+        toast.success("Free plan activated!");
+        navigate("/onboarding");
+      } else {
+        // For pro plan, create Stripe checkout session
         const { data: { url }, error } = await supabase.functions.invoke("create-checkout-session", {
           body: { 
-            priceId: "your_stripe_price_id", // You'll need to replace this with your actual Stripe price ID
+            priceId: "your_stripe_price_id", // Replace with your actual Stripe price ID
             userId: session.user.id,
           }
         });
@@ -112,8 +124,8 @@ const SubscriptionPage = () => {
         window.location.href = url;
       }
     } catch (error) {
-      console.error("Error creating checkout session:", error);
-      toast.error("Failed to start subscription process");
+      console.error("Error in subscription process:", error);
+      toast.error("Failed to process subscription");
     }
   };
 
