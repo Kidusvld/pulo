@@ -103,7 +103,7 @@ const SubscriptionPage = () => {
         // Create Stripe checkout session
         const { data: { url }, error } = await supabase.functions.invoke("create-checkout-session", {
           body: { 
-            priceId: "your_stripe_price_id", // You'll need to replace this with your actual Stripe price ID
+            priceId: "your_stripe_price_id", // Replace with your actual Stripe price ID
             userId: session.user.id,
           }
         });
