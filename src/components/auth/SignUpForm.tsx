@@ -38,7 +38,7 @@ export const SignUpForm = ({ onSwitchMode }: SignUpFormProps) => {
         if (profileError) throw profileError;
 
         toast.success("Account created successfully!");
-        navigate("/onboarding");
+        navigate("/onboarding"); // Always go to onboarding first for new users
       }
     } catch (error) {
       console.error('Auth error:', error);

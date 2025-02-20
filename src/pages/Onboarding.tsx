@@ -84,7 +84,7 @@ const Onboarding = () => {
       }
 
       toast.success("Profile completed!");
-      navigate("/dashboard");
+      navigate("/dashboard"); // Navigate to dashboard after completing onboarding
     } catch (error) {
       console.error('Error saving data:', error);
       toast.error(error instanceof Error ? error.message : "Error saving data");
