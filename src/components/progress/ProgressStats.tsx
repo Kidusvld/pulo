@@ -1,5 +1,4 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, Dumbbell, Clock, Target, RotateCcw, BarChart } from "lucide-react";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,26 +15,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
-interface WorkoutData {
-  created_at: string;
-  workout_duration: number;
-  total_volume: number;
-}
-
-interface ProgressStats {
-  totalWorkouts: number;
-  totalVolume: number;
-  averageDuration: number;
-  consistencyStreak: number;
-}
-
-interface ProgressStatsProps {
-  totalWorkouts: number;
-  totalVolume: number;
-  averageDuration: number;
-  consistencyStreak: number;
-}
+import { StatCard } from "./StatCard";
+import { calculateStreak } from "./utils/calculateStreak";
+import { ProgressStats as ProgressStatsType, ProgressStatsProps, WorkoutData } from "./types";
 
 export const ProgressStats = ({ 
   totalWorkouts, 
@@ -43,86 +25,12 @@ export const ProgressStats = ({
   averageDuration, 
   consistencyStreak 
 }: ProgressStatsProps) => {
-  const [stats, setStats] = useState<ProgressStats>({
+  const [stats, setStats] = useState<ProgressStatsType>({
     totalWorkouts: 0,
     totalVolume: 0,
     averageDuration: 0,
     consistencyStreak: 0
   });
-
-  /**
-   * Calculates the user's workout streak based on consecutive days with workouts
-   * @param workouts Array of workout data with timestamps
-   * @returns Number of consecutive days with workouts, counting backwards from the most recent
-   */
-  const calculateStreak = useCallback((workouts: WorkoutData[]): number => {
-    if (!workouts?.length) return 0;
-
-    try {
-      // Get today's date at midnight in user's local timezone
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      // Sort workouts by date, most recent first
-      const sortedWorkouts = [...workouts].sort((a, b) => {
-        const dateA = new Date(a.created_at);
-        const dateB = new Date(b.created_at);
-        
-        // Validate dates
-        if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
-          console.error('Invalid date found in workout data');
-          return 0;
-        }
-
-        // Ignore future dates
-        if (dateA > today || dateB > today) {
-          return 0;
-        }
-
-        return dateB.getTime() - dateA.getTime();
-      });
-
-      // Convert workout dates to local midnight timestamps
-      const workoutDays = new Set(
-        sortedWorkouts
-          .map(workout => {
-            const date = new Date(workout.created_at);
-            if (isNaN(date.getTime())) {
-              console.error('Invalid date:', workout.created_at);
-              return null;
-            }
-            if (date > today) {
-              console.warn('Future date detected:', workout.created_at);
-              return null;
-            }
-            date.setHours(0, 0, 0, 0);
-            return date.getTime();
-          })
-          .filter((timestamp): timestamp is number => timestamp !== null)
-      );
-
-      let streak = 0;
-      const DAYS_TO_CHECK = 30;  // Check last 30 days
-
-      for (let i = 0; i < DAYS_TO_CHECK; i++) {
-        const checkDate = new Date(today);
-        checkDate.setDate(today.getDate() - i);
-        checkDate.setHours(0, 0, 0, 0);
-        
-        if (workoutDays.has(checkDate.getTime())) {
-          streak++;
-        } else if (streak > 0) {
-          // Break streak on first missed day
-          break;
-        }
-      }
-
-      return streak;
-    } catch (error) {
-      console.error('Error calculating streak:', error);
-      return 0;
-    }
-  }, []);
 
   const handleResetStats = async () => {
     try {
@@ -173,7 +81,7 @@ export const ProgressStats = ({
 
       const totalWorkouts = workouts?.length || 0;
       const averageDuration = totalWorkouts > 0 ? Math.round(totalDuration / totalWorkouts) : 0;
-      const streak = calculateStreak(workouts || []);
+      const streak = calculateStreak(workouts as WorkoutData[] || []);
 
       setStats({
         totalWorkouts,
@@ -185,7 +93,7 @@ export const ProgressStats = ({
       console.error('Error fetching stats:', error);
       toast.error('Failed to load workout statistics');
     }
-  }, [calculateStreak]);
+  }, []);
 
   useEffect(() => {
     fetchStats();
@@ -277,17 +185,7 @@ export const ProgressStats = ({
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {statItems.map((stat) => (
-          <Card key={stat.title} className="bg-white/900 backdrop-blur-sm border-purple-100">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-semibold tracking-wide text-gray-600/90 uppercase">{stat.title}</CardTitle>
-              <stat.icon className={`h-5 w-5 ${stat.color}`} />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold tracking-tight text-gray-900">
-                {stat.value}
-              </div>
-            </CardContent>
-          </Card>
+          <StatCard key={stat.title} {...stat} />
         ))}
       </div>
     </div>
