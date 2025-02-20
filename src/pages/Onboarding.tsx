@@ -47,6 +47,7 @@ const Onboarding = () => {
     }
 
     try {
+      // Update profile information
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
@@ -58,16 +59,20 @@ const Onboarding = () => {
         .eq("id", session.user.id);
 
       if (profileError) {
-        throw new Error("Error saving profile");
+        throw new Error("Error saving profile: " + profileError.message);
       }
 
-      // First, deactivate all existing workout plans
-      await supabase
+      // Deactivate all existing workout plans
+      const { error: deactivateError } = await supabase
         .from("workout_plans")
         .update({ is_active: false })
         .eq("user_id", session.user.id);
 
-      // Then create the new workout plan
+      if (deactivateError) {
+        throw new Error("Error deactivating existing plans: " + deactivateError.message);
+      }
+
+      // Create new workout plan
       const { error: planError } = await supabase
         .from("workout_plans")
         .insert({
@@ -82,15 +87,15 @@ const Onboarding = () => {
         });
 
       if (planError) {
-        throw new Error("Error creating workout plan");
+        throw new Error("Error creating workout plan: " + planError.message);
       }
 
-      toast.success("Profile completed successfully!");
+      // Show success message and redirect to dashboard
+      toast.success("Profile completed! Redirecting to dashboard...");
       navigate("/dashboard");
     } catch (error) {
       console.error('Error saving data:', error);
       toast.error(error instanceof Error ? error.message : "Error saving data");
-    } finally {
       setLoading(false);
     }
   };
