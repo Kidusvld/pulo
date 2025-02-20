@@ -5,13 +5,33 @@ import { Features } from "@/components/landing/Features";
 import { Testimonials } from "@/components/landing/Testimonials";
 import { Comparison } from "@/components/landing/Comparison";
 import { CallToAction } from "@/components/landing/CallToAction";
+import { useEffect, useState } from "react";
 
 const Index = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    // Preload critical background image
+    const bgImage = new Image();
+    bgImage.src = "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80";
+    bgImage.onload = () => setIsLoaded(true);
+
+    // Add cache control headers for static assets
+    if ('caches' in window) {
+      caches.open('static-assets').then(cache => {
+        cache.addAll([
+          '/favicon.ico',
+          '/og-image.png',
+          bgImage.src
+        ]);
+      });
+    }
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className={`min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       <Navigation />
       
-      {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div 
           className="absolute inset-0 z-0 bg-cover bg-center opacity-10"
