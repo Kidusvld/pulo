@@ -16,6 +16,10 @@ import {
 const Index = () => {
   const navigate = useNavigate();
 
+  const handleGetStarted = () => {
+    navigate("/auth?mode=signup");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       {/* Navigation */}
@@ -35,7 +39,7 @@ const Index = () => {
                 Sign In
               </Button>
               <Button 
-                onClick={() => navigate("/auth?mode=signup")}
+                onClick={handleGetStarted}
                 className="bg-purple-600 hover:bg-purple-700"
               >
                 Get Started
@@ -75,7 +79,7 @@ const Index = () => {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
                     size="lg" 
-                    onClick={() => navigate("/auth?mode=signup")}
+                    onClick={handleGetStarted}
                     className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg h-auto group transition-all duration-300"
                   >
                     Start Your Journey
@@ -312,7 +316,7 @@ const Index = () => {
             <p className="text-xl text-gray-600 mb-8">Join PULO today and experience the future of personalized fitness training</p>
             <Button 
               size="lg" 
-              onClick={() => navigate("/auth?mode=signup")}
+              onClick={handleGetStarted}
               className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg h-auto group transition-all duration-300"
             >
               Start Your Free Trial
