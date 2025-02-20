@@ -7,12 +7,33 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Dumbbell, Timer, Weight, Dices, Smile } from "lucide-react";
+import { z } from "zod";
 
 type MuscleGroup = "chest" | "back" | "legs" | "shoulders" | "arms" | "core" | "full_body" | "cardio";
 
 interface WorkoutFormProps {
   onSuccess?: () => void;
 }
+
+// Input validation schemas
+const workoutSchema = z.object({
+  duration: z.string()
+    .min(1, "Duration is required")
+    .transform(val => parseInt(val))
+    .refine(val => val > 0 && val <= 480, "Duration must be between 1 and 480 minutes"),
+  mood: z.string()
+    .min(1, "Mood is required")
+    .max(100, "Mood description too long")
+    .transform(val => val.trim()),
+  energyLevel: z.string()
+    .transform(val => parseInt(val))
+    .refine(val => val >= 1 && val <= 5, "Energy level must be between 1 and 5"),
+  muscleGroup: z.enum(["chest", "back", "legs", "shoulders", "arms", "core", "full_body", "cardio"] as const),
+  volume: z.string()
+    .min(1, "Volume is required")
+    .transform(val => parseInt(val))
+    .refine(val => val > 0 && val <= 100000, "Volume must be between 1 and 100,000 lbs"),
+});
 
 export const WorkoutForm = ({ onSuccess }: WorkoutFormProps) => {
   const [loading, setLoading] = useState(false);
@@ -22,11 +43,26 @@ export const WorkoutForm = ({ onSuccess }: WorkoutFormProps) => {
   const [muscleGroup, setMuscleGroup] = useState<MuscleGroup | "">("");
   const [volume, setVolume] = useState("");
 
+  const sanitizeInput = (input: string): string => {
+    return input
+      .replace(/[<>]/g, '') // Remove potential HTML tags
+      .trim(); // Remove leading/trailing whitespace
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Validate and sanitize input
+      const validatedData = workoutSchema.parse({
+        duration,
+        mood: sanitizeInput(mood),
+        energyLevel,
+        muscleGroup,
+        volume,
+      });
+
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session?.user) {
@@ -40,10 +76,10 @@ export const WorkoutForm = ({ onSuccess }: WorkoutFormProps) => {
           .from("progress_tracking")
           .insert({
             user_id: session.user.id,
-            workout_duration: parseInt(duration),
-            mood,
-            energy_level: parseInt(energyLevel),
-            total_volume: parseInt(volume),
+            workout_duration: validatedData.duration,
+            mood: validatedData.mood,
+            energy_level: validatedData.energyLevel,
+            total_volume: validatedData.volume,
           })
           .select()
           .single(),
@@ -51,13 +87,13 @@ export const WorkoutForm = ({ onSuccess }: WorkoutFormProps) => {
 
       if (progressResult.error) throw progressResult.error;
 
-      if (progressResult.data && muscleGroup) {
+      if (progressResult.data && validatedData.muscleGroup) {
         const { error: muscleError } = await supabase
           .from("muscle_group_tracking")
           .insert({
             progress_tracking_id: progressResult.data.id,
-            muscle_group: muscleGroup as MuscleGroup,
-            total_weight: parseInt(volume),
+            muscle_group: validatedData.muscleGroup,
+            total_weight: validatedData.volume,
           });
 
         if (muscleError) throw muscleError;
@@ -72,7 +108,11 @@ export const WorkoutForm = ({ onSuccess }: WorkoutFormProps) => {
       onSuccess?.();
     } catch (error) {
       console.error("Error logging workout:", error);
-      toast.error("Failed to log workout");
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else {
+        toast.error("Failed to log workout");
+      }
     } finally {
       setLoading(false);
     }

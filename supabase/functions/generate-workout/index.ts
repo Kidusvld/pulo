@@ -1,25 +1,20 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
-import { rateLimit } from "https://deno.land/x/oak_rate_limit/mod.ts";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Max-Age': '86400',
 };
 
-interface WorkoutRequest {
-  age: number;
-  weight: number;
-  fitnessGoal: 'build_muscle' | 'lose_fat' | 'increase_mobility';
-  workoutLocation: 'home' | 'gym';
-  equipment: string[];
-  intensityLevel: 'beginner' | 'intermediate' | 'advanced';
-  numberOfDays: number;
-}
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+// Input validation schema
+const WorkoutRequestSchema = z.object({
+  userId: z.string().uuid(),
+  fitnessGoal: z.enum(['build_muscle', 'lose_fat', 'increase_mobility']),
+  workoutLocation: z.enum(['home', 'gym']),
+  intensityLevel: z.enum(['beginner', 'intermediate', 'advanced']),
 });
 
 serve(async (req: Request) => {
@@ -29,20 +24,47 @@ serve(async (req: Request) => {
   }
 
   try {
-    // Apply rate limiting
-    const clientIP = req.headers.get("x-forwarded-for") || "unknown";
-    const rateLimitResult = await limiter.check(req, clientIP);
-    
-    if (!rateLimitResult.success) {
-      return new Response(JSON.stringify({
-        error: "Too many requests, please try again later."
-      }), {
-        status: 429,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      });
+    // Validate request method
+    if (req.method !== 'POST') {
+      throw new Error('Method not allowed');
     }
 
-    const { age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel, numberOfDays } = await req.json() as WorkoutRequest;
+    // Parse and validate request body
+    const body = await req.json();
+    const validatedData = WorkoutRequestSchema.parse(body);
+
+    // Extract authorization header
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('Missing authorization header');
+    }
+
+    // Create Supabase client
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+          detectSessionInUrl: false,
+        },
+      }
+    );
+
+    // Verify JWT token
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(
+      authHeader.replace('Bearer ', '')
+    );
+
+    if (authError || !user) {
+      throw new Error('Unauthorized');
+    }
+
+    // Verify user matches request
+    if (user.id !== validatedData.userId) {
+      throw new Error('User ID mismatch');
+    }
 
     // Define exercise pools based on location and equipment
     const homeExercises = [
@@ -58,17 +80,17 @@ serve(async (req: Request) => {
     ];
 
     // Select exercise pool based on location
-    const exercisePool = workoutLocation === 'home' ? homeExercises : gymExercises;
+    const exercisePool = validatedData.workoutLocation === 'home' ? homeExercises : gymExercises;
 
     // Generate workout plan
     const workouts = [];
-    for (let day = 1; day <= numberOfDays; day++) {
+    for (let day = 1; day <= validatedData.numberOfDays; day++) {
       // Number of exercises based on intensity
       const exercisesPerDay = {
         beginner: 4,
         intermediate: 6,
         advanced: 8
-      }[intensityLevel];
+      }[validatedData.intensityLevel];
 
       // Select random exercises for the day
       const dayExercises = [];
@@ -76,9 +98,9 @@ serve(async (req: Request) => {
       for (let i = 0; i < exercisesPerDay; i++) {
         const exercise = {
           name: shuffled[i],
-          sets: intensityLevel === 'beginner' ? 3 : intensityLevel === 'intermediate' ? 4 : 5,
-          reps: fitnessGoal === 'build_muscle' ? 8 : fitnessGoal === 'lose_fat' ? 15 : 12,
-          rest: fitnessGoal === 'build_muscle' ? 90 : fitnessGoal === 'lose_fat' ? 30 : 60
+          sets: validatedData.intensityLevel === 'beginner' ? 3 : validatedData.intensityLevel === 'intermediate' ? 4 : 5,
+          reps: validatedData.fitnessGoal === 'build_muscle' ? 8 : validatedData.fitnessGoal === 'lose_fat' ? 15 : 12,
+          rest: validatedData.fitnessGoal === 'build_muscle' ? 90 : validatedData.fitnessGoal === 'lose_fat' ? 30 : 60
         };
         dayExercises.push(exercise);
       }
@@ -100,12 +122,23 @@ serve(async (req: Request) => {
     );
 
   } catch (error) {
-    console.error("Error processing request:", error);
-    return new Response(JSON.stringify({
-      error: "Internal server error"
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" }
-    });
+    console.error('Error:', error.message);
+    
+    // Return appropriate error response
+    const status = error.message === 'Unauthorized' ? 401 :
+                  error.message === 'Method not allowed' ? 405 :
+                  error instanceof z.ZodError ? 400 : 500;
+    
+    return new Response(
+      JSON.stringify({
+        error: error instanceof z.ZodError ? 
+          'Invalid request data' : 
+          error.message
+      }),
+      {
+        status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    );
   }
 });
