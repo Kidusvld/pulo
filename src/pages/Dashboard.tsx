@@ -1,25 +1,24 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowRight, DumbbellIcon, Trophy, Calendar, LogOut, BarChart, Brain } from "lucide-react";
-import { WorkoutForm } from "@/components/progress/WorkoutForm";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BarChart, DumbbellIcon } from "lucide-react";
 import { ProgressStats } from "@/components/progress/ProgressStats";
 import { MuscleGroupChart } from "@/components/progress/MuscleGroupChart";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { WorkoutForm } from "@/components/progress/WorkoutForm";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { ProfileCard } from "@/components/dashboard/ProfileCard";
+import { WorkoutPlanCard } from "@/components/dashboard/WorkoutPlanCard";
 
-interface WorkoutRequest {
+interface Profile {
+  first_name: string;
   age: number;
   weight: number;
-  fitnessGoal: 'lose_fat' | 'build_muscle' | 'increase_mobility';
-  workoutLocation: 'home' | 'gym';
+  fitness_goal: "lose_fat" | "build_muscle" | "increase_mobility";
+  workout_location: "home" | "gym";
+  intensity_level: "beginner" | "intermediate" | "advanced";
   equipment: string[];
-  intensityLevel: 'beginner' | 'intermediate' | 'advanced';
-  numberOfDays: number;
 }
 
 interface WorkoutPlan {
@@ -40,32 +39,6 @@ interface WorkoutPlan {
   workout_location: "home" | "gym";
   intensity_level: "beginner" | "intermediate" | "advanced";
   equipment: string[];
-}
-
-interface Profile {
-  first_name: string;
-  age: number;
-  weight: number;
-  fitness_goal: "lose_fat" | "build_muscle" | "increase_mobility";
-  workout_location: "home" | "gym";
-  intensity_level: "beginner" | "intermediate" | "advanced";
-  equipment: string[];
-}
-
-interface SaveWorkoutPlan {
-  user_id: string;
-  plan_data: {
-    workouts: Array<{
-      day: number;
-      exercises: Array<{
-        name: string;
-        sets: number;
-        reps: number;
-        rest: number;
-      }>;
-    }>;
-  };
-  name: string;
 }
 
 const Dashboard = () => {
@@ -402,9 +375,11 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 via-white to-purple-50">
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 via-white to-purple-50">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-      </div>;
+      </div>
+    );
   }
 
   return (
@@ -414,33 +389,10 @@ const Dashboard = () => {
       <div className="absolute h-64 w-64 rounded-full bg-purple-100/50 blur-3xl bottom-20 right-20 -z-10"></div>
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="flex items-center justify-center px-3 py-2 rounded-xl bg-purple-600 text-white">
-                <Brain className="h-5 w-5 mr-2" />
-                <span className="text-xl font-bold tracking-tight">PULO</span>
-              </div>
-            </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-700 to-purple-900 bg-clip-text text-transparent">
-              Welcome{profile?.first_name ? `, ${profile.first_name}` : ""}! 👋
-            </h1>
-            <p className="text-gray-600 mt-2">Track your fitness journey and achieve your goals</p>
-          </div>
-          <div className="flex gap-4">
-            <Button variant="outline" onClick={() => navigate("/log-workout")} className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100 transition-all duration-200 text-base">
-              <DumbbellIcon className="w-4 h-4 mr-2" />
-              Logged Workouts
-            </Button>
-            <Button variant="outline" onClick={() => navigate("/saved-workouts")} className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100 transition-all duration-200">
-              Saved Plans
-            </Button>
-            <Button variant="outline" onClick={handleSignOut} className="bg-white/80 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all duration-200">
-              <LogOut className="w-4 h-4 mr-2" />
-              Sign Out
-            </Button>
-          </div>
-        </div>
+        <DashboardHeader 
+          firstName={profile?.first_name} 
+          onSignOut={handleSignOut}
+        />
 
         <Tabs defaultValue="workout" className="space-y-6">
           <TabsList className="grid grid-cols-2 w-[400px] mb-6 bg-white/80 border border-purple-100">
@@ -455,149 +407,35 @@ const Dashboard = () => {
           </TabsList>
 
           <TabsContent value="workout" className="space-y-6">
-            <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-xl shadow-purple-100/20">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-xl font-semibold flex items-center gap-2 text-purple-900">
-                  <Trophy className="h-5 w-5 text-purple-600" />
-                  Your Profile
-                </CardTitle>
-                <Button variant="outline" onClick={() => {
-                if (isEditing) {
-                  handleUpdateProfile();
-                } else {
-                  setEditedWeight(profile?.weight?.toString() || "");
-                  setEditedIntensity(profile?.intensity_level || "beginner");
-                  setEditedFitnessGoal(profile?.fitness_goal || "build_muscle");
-                  setEditedWorkoutLocation(profile?.workout_location || "home");
-                  setIsEditing(true);
-                }
-              }} className="bg-white hover:bg-purple-50 hover:text-purple-600 border-purple-100 transition-all duration-200">
-                  {isEditing ? "Save Changes" : "Edit Profile"}
-                  {!isEditing && <ArrowRight className="ml-2 h-4 w-4" />}
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="bg-purple-50/50 rounded-lg p-4 border border-purple-100">
-                    <p className="text-sm text-purple-600 font-medium">Age</p>
-                    <p className="text-lg font-semibold text-purple-900">{profile?.age} years</p>
-                  </div>
-                  <div className="bg-purple-50/50 rounded-lg p-4 border border-purple-100">
-                    <p className="text-sm text-purple-600 font-medium">Weight</p>
-                    {isEditing ? <Input type="number" value={editedWeight} onChange={e => setEditedWeight(e.target.value)} placeholder="Enter weight in lbs" className="mt-1 bg-white border-purple-100" /> : <p className="text-lg font-semibold text-purple-900">{profile?.weight} lbs</p>}
-                  </div>
-                  <div className="col-span-2 bg-purple-50/50 rounded-lg p-4 border border-purple-100">
-                    <p className="text-sm text-purple-600 font-medium">Fitness Goal</p>
-                    {isEditing ? <Select value={editedFitnessGoal} onValueChange={(value: "build_muscle" | "lose_fat" | "increase_mobility") => setEditedFitnessGoal(value)}>
-                        <SelectTrigger className="mt-1 bg-white border-purple-100">
-                          <SelectValue placeholder="Select fitness goal" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="build_muscle">Build Muscle</SelectItem>
-                          <SelectItem value="lose_fat">Lose Fat</SelectItem>
-                          <SelectItem value="increase_mobility">Increase Mobility</SelectItem>
-                        </SelectContent>
-                      </Select> : <p className="text-lg font-semibold text-purple-900 capitalize">
-                        {profile?.fitness_goal?.replace(/_/g, ' ')}
-                      </p>}
-                  </div>
-                  <div className="col-span-2 bg-purple-50/50 rounded-lg p-4 border border-purple-100">
-                    <p className="text-sm text-purple-600 font-medium">Workout Intensity</p>
-                    {isEditing ? <Select value={editedIntensity} onValueChange={(value: "beginner" | "intermediate" | "advanced") => setEditedIntensity(value)}>
-                        <SelectTrigger className="mt-1 bg-white border-purple-100">
-                          <SelectValue placeholder="Select intensity" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="beginner">Beginner</SelectItem>
-                          <SelectItem value="intermediate">Intermediate</SelectItem>
-                          <SelectItem value="advanced">Advanced</SelectItem>
-                        </SelectContent>
-                      </Select> : <p className="text-lg font-semibold text-purple-900 capitalize">
-                        {profile?.intensity_level}
-                      </p>}
-                  </div>
-                  <div className="col-span-2 bg-purple-50/50 rounded-lg p-4 border border-purple-100">
-                    <p className="text-sm text-purple-600 font-medium">Workout Location</p>
-                    {isEditing ? <Select value={editedWorkoutLocation} onValueChange={(value: "home" | "gym") => setEditedWorkoutLocation(value)}>
-                        <SelectTrigger className="mt-1 bg-white border-purple-100">
-                          <SelectValue placeholder="Select workout location" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="home">Home</SelectItem>
-                          <SelectItem value="gym">Gym</SelectItem>
-                        </SelectContent>
-                      </Select> : <p className="text-lg font-semibold text-purple-900 capitalize">
-                        {profile?.workout_location}
-                      </p>}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ProfileCard 
+              profile={profile}
+              isEditing={isEditing}
+              editedWeight={editedWeight}
+              editedIntensity={editedIntensity}
+              editedFitnessGoal={editedFitnessGoal}
+              editedWorkoutLocation={editedWorkoutLocation}
+              onEditToggle={() => {
+                setEditedWeight(profile?.weight?.toString() || "");
+                setEditedIntensity(profile?.intensity_level || "beginner");
+                setEditedFitnessGoal(profile?.fitness_goal || "build_muscle");
+                setEditedWorkoutLocation(profile?.workout_location || "home");
+                setIsEditing(true);
+              }}
+              onEditWeight={setEditedWeight}
+              onEditIntensity={setEditedIntensity}
+              onEditFitnessGoal={setEditedFitnessGoal}
+              onEditWorkoutLocation={setEditedWorkoutLocation}
+              onUpdateProfile={handleUpdateProfile}
+            />
 
-            <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-xl shadow-purple-100/20">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-xl font-semibold flex items-center gap-2 text-purple-900">
-                  <DumbbellIcon className="h-5 w-5 text-purple-600" />
-                  Your Workout Plan
-                </CardTitle>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <label htmlFor="days" className="text-sm text-purple-600 font-medium">Days:</label>
-                    <Select value={numberOfDays.toString()} onValueChange={value => setNumberOfDays(parseInt(value))}>
-                      <SelectTrigger className="w-[100px] bg-white border-purple-100">
-                        <SelectValue placeholder="Days" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[1, 2, 3, 4, 5, 6, 7].map(num => <SelectItem key={num} value={num.toString()}>
-                            {num} {num === 1 ? 'day' : 'days'}
-                          </SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex gap-2">
-                    {workoutPlan && <Button variant="outline" onClick={handleSaveWorkout} className="bg-white hover:bg-purple-50 hover:text-purple-600 border-purple-100">
-                        Save Plan
-                      </Button>}
-                    <Button onClick={generateNewPlan} disabled={generatingPlan} className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white transition-all duration-200">
-                      {generatingPlan ? "Generating..." : "Generate New Plan"}
-                      {!generatingPlan && <ArrowRight className="ml-2 h-4 w-4" />}
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {workoutPlan?.plan_data?.workouts ? (
-                  <div className="space-y-6">
-                    {workoutPlan.plan_data.workouts.map((workout, index) => (
-                      <div key={index} className="space-y-4">
-                        <h3 className="font-semibold flex items-center gap-2 text-purple-900">
-                          <Calendar className="h-4 w-4 text-purple-600" />
-                          Day {workout.day}
-                        </h3>
-                        <div className="grid gap-4">
-                          {workout.exercises.map((exercise, exerciseIndex) => (
-                            <div key={exerciseIndex} className="bg-purple-50/50 p-4 rounded-lg border border-purple-100 hover:bg-purple-50 transition-colors duration-200">
-                              <p className="font-medium text-purple-900">{exercise.name}</p>
-                              <p className="text-sm text-purple-600 mt-1">
-                                {exercise.sets} sets × {exercise.reps} reps
-                                (Rest: {Math.floor(exercise.rest / 60)} min)
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <DumbbellIcon className="h-16 w-16 text-purple-200 mx-auto mb-4" />
-                    <p className="text-gray-500">
-                      No workout plan generated yet. Click the button above to create one!
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <WorkoutPlanCard 
+              workoutPlan={workoutPlan}
+              numberOfDays={numberOfDays}
+              generatingPlan={generatingPlan}
+              onDaysChange={setNumberOfDays}
+              onGeneratePlan={generateNewPlan}
+              onSavePlan={handleSaveWorkout}
+            />
           </TabsContent>
 
           <TabsContent value="progress" className="space-y-6">
