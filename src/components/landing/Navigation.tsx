@@ -14,7 +14,7 @@ export const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center px-3 h-10 rounded-xl bg-purple-600 text-white cursor-pointer" onClick={() => navigate("/")}>
+            <div className="flex items-center justify-center px-3 h-10 rounded-xl bg-purple-600 text-white">
               <span className="text-xl font-bold tracking-tight">PULO</span>
             </div>
           </div>

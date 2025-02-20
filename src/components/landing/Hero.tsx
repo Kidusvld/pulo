@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Brain } from "lucide-react";
@@ -12,14 +13,20 @@ export const Hero = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
       <div className="text-left space-y-8">
-        <div className="space-y-4">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-purple-800">
-            Unlock Your Fitness Potential with AI
-          </h1>
-          <p className="text-gray-600 text-lg sm:text-xl">
-            PULO is your AI-powered personal trainer, crafting workouts tailored to your unique goals and fitness level.
-          </p>
+        <div className="inline-flex items-center px-4 py-2 rounded-full bg-purple-100 text-purple-700">
+          <Brain className="w-4 h-4 mr-2" />
+          <span className="text-sm font-medium">AI-Powered Workout Partner</span>
         </div>
+        
+        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
+          Meet PULO, Your
+          <span className="text-purple-600 block">Fitness Friend</span>
+        </h1>
+        
+        <p className="text-xl text-gray-600 max-w-lg">
+          Think of PULO as your supportive workout buddy who's always there to guide, motivate, and adapt to your unique fitness journey. No judgment, just personalized support that grows with you.
+        </p>
+
         <div className="flex flex-col sm:flex-row gap-4">
           <Button 
             size="lg" 
@@ -39,27 +46,34 @@ export const Hero = () => {
           </Button>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <img
-          src="https://images.unsplash.com/photo-1607617958474-5a5533ca99b6?auto=format&fit=crop&q=80&w=2070&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Fitness 1"
-          className="rounded-2xl shadow-lg object-cover aspect-[4/3]"
-        />
-        <img
-          src="https://images.unsplash.com/photo-1540496978398-dc06d70e5495?auto=format&fit=crop&q=80&w=2070&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Fitness 2"
-          className="rounded-2xl shadow-lg object-cover aspect-[4/3]"
-        />
-        <img
-          src="https://images.unsplash.com/photo-1583454110551-4515c1934342?auto=format&fit=crop&q=80&w=2070&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Fitness 3"
-          className="rounded-2xl shadow-lg object-cover aspect-[4/3]"
-        />
-        <img
-          src="https://images.unsplash.com/photo-1532667449560-72a95c8d38ca?auto=format&fit=crop&q=80&w=2070&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Fitness 4"
-          className="rounded-2xl shadow-lg object-cover aspect-[4/3]"
-        />
+
+      <div className="hidden md:block relative">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
+            <img 
+              src="https://images.unsplash.com/photo-1549576490-b0b4831ef60a?auto=format&fit=crop&q=80" 
+              alt="Person exercising" 
+              className="rounded-lg shadow-lg h-48 w-full object-cover transform hover:scale-105 transition-transform duration-300"
+            />
+            <img 
+              src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&q=80" 
+              alt="Workout equipment" 
+              className="rounded-lg shadow-lg h-64 w-full object-cover transform hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+          <div className="space-y-4 pt-8">
+            <img 
+              src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80" 
+              alt="Yoga pose" 
+              className="rounded-lg shadow-lg h-64 w-full object-cover transform hover:scale-105 transition-transform duration-300"
+            />
+            <img 
+              src="https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&q=80" 
+              alt="Weight training" 
+              className="rounded-lg shadow-lg h-48 w-full object-cover transform hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
