@@ -15,7 +15,10 @@ export const DashboardHeader = ({ firstName, onSignOut }: DashboardHeaderProps) 
     <div className="flex justify-between items-center mb-8">
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <div className="flex items-center justify-center px-3 py-2 rounded-xl bg-purple-600 text-white">
+          <div 
+            onClick={() => navigate("/")} 
+            className="flex items-center justify-center px-3 py-2 rounded-xl bg-purple-600 text-white cursor-pointer hover:bg-purple-700 transition-colors duration-200"
+          >
             <Brain className="h-5 w-5 mr-2" />
             <span className="text-xl font-bold tracking-tight">PULO</span>
           </div>
