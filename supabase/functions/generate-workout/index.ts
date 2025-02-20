@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
@@ -11,13 +12,18 @@ const corsHeaders = {
 
 // Input validation schema
 const WorkoutRequestSchema = z.object({
-  userId: z.string().uuid(),
+  age: z.number().min(13).max(100),
+  weight: z.number().min(30).max(500),
   fitnessGoal: z.enum(['build_muscle', 'lose_fat', 'increase_mobility']),
   workoutLocation: z.enum(['home', 'gym']),
+  equipment: z.array(z.string()),
   intensityLevel: z.enum(['beginner', 'intermediate', 'advanced']),
+  numberOfDays: z.number().min(1).max(7)
 });
 
 serve(async (req: Request) => {
+  console.log("Received request to generate workout");
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -31,40 +37,8 @@ serve(async (req: Request) => {
 
     // Parse and validate request body
     const body = await req.json();
+    console.log("Request body:", body);
     const validatedData = WorkoutRequestSchema.parse(body);
-
-    // Extract authorization header
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      throw new Error('Missing authorization header');
-    }
-
-    // Create Supabase client
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-          detectSessionInUrl: false,
-        },
-      }
-    );
-
-    // Verify JWT token
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(
-      authHeader.replace('Bearer ', '')
-    );
-
-    if (authError || !user) {
-      throw new Error('Unauthorized');
-    }
-
-    // Verify user matches request
-    if (user.id !== validatedData.userId) {
-      throw new Error('User ID mismatch');
-    }
 
     // Define exercise pools based on location and equipment
     const homeExercises = [
@@ -111,6 +85,8 @@ serve(async (req: Request) => {
       });
     }
 
+    console.log("Generated workouts successfully");
+
     return new Response(
       JSON.stringify({ workouts }),
       { 
@@ -125,8 +101,7 @@ serve(async (req: Request) => {
     console.error('Error:', error.message);
     
     // Return appropriate error response
-    const status = error.message === 'Unauthorized' ? 401 :
-                  error.message === 'Method not allowed' ? 405 :
+    const status = error.message === 'Method not allowed' ? 405 :
                   error instanceof z.ZodError ? 400 : 500;
     
     return new Response(
