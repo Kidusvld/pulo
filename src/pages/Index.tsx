@@ -1,7 +1,17 @@
-
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Brain, BarChart3, Calendar } from "lucide-react";
+import { 
+  ArrowRight, 
+  Brain, 
+  BarChart3, 
+  Calendar, 
+  CheckCircle2, 
+  Star,
+  Users,
+  Award,
+  Timer,
+  TrendingUp
+} from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -143,9 +153,176 @@ const Index = () => {
           </div>
         </div>
       </div>
+
+      {/* Social Proof Section */}
+      <div className="bg-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900">Trusted by Fitness Enthusiasts</h2>
+            <p className="mt-4 text-lg text-gray-600">Join thousands of people transforming their fitness journey with PULO</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <div className="text-center">
+              <div className="text-4xl font-bold text-purple-600 mb-2">10k+</div>
+              <p className="text-gray-600">Active Users</p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-purple-600 mb-2">95%</div>
+              <p className="text-gray-600">Success Rate</p>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold text-purple-600 mb-2">50k+</div>
+              <p className="text-gray-600">Workouts Completed</p>
+            </div>
+          </div>
+
+          {/* Testimonials */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Sarah M.",
+                role: "Software Developer",
+                content: "PULO understands my busy schedule and adapts perfectly. It's like having a personal trainer who's always available!",
+                rating: 5
+              },
+              {
+                name: "Mike R.",
+                role: "Business Owner",
+                content: "The AI-powered recommendations are spot-on. I've seen more progress in 3 months than in my past year of solo training.",
+                rating: 5
+              },
+              {
+                name: "Lisa K.",
+                role: "Graphic Designer",
+                content: "Finally, a fitness app that actually understands and grows with me. The personalization is incredible!",
+                rating: 5
+              }
+            ].map((testimonial, index) => (
+              <div key={index} className="bg-white p-6 rounded-xl shadow-lg">
+                <div className="flex gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-gray-600 mb-4">{testimonial.content}</p>
+                <div className="font-semibold">{testimonial.name}</div>
+                <div className="text-sm text-gray-500">{testimonial.role}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Why PULO Section */}
+      <div className="bg-purple-50 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900">Why Choose PULO?</h2>
+            <p className="mt-4 text-lg text-gray-600">See how PULO compares to traditional fitness solutions</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="bg-white p-8 rounded-xl shadow-lg">
+              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <Users className="text-purple-600" />
+                Traditional Personal Training
+              </h3>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
+                  <span className="text-gray-600">Professional guidance</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
+                  <span className="text-gray-600">Personalized workouts</span>
+                </li>
+                <li className="flex items-start gap-2 opacity-50">
+                  <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
+                  <span className="text-gray-600">24/7 availability</span>
+                </li>
+                <li className="flex items-start gap-2 opacity-50">
+                  <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
+                  <span className="text-gray-600">Affordable pricing</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-purple-600 p-8 rounded-xl shadow-lg transform lg:scale-105">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 px-4 py-1 rounded-full text-sm font-semibold">
+                Recommended
+              </div>
+              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-white">
+                <Brain className="text-white" />
+                PULO AI Training
+              </h3>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-white mt-1" />
+                  <span className="text-white">AI-powered personalization</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-white mt-1" />
+                  <span className="text-white">Available 24/7</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-white mt-1" />
+                  <span className="text-white">Adaptive programming</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-white mt-1" />
+                  <span className="text-white">Affordable monthly subscription</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-white p-8 rounded-xl shadow-lg">
+              <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <Award className="text-purple-600" />
+                Generic Fitness Apps
+              </h3>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
+                  <span className="text-gray-600">Workout tracking</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
+                  <span className="text-gray-600">Exercise library</span>
+                </li>
+                <li className="flex items-start gap-2 opacity-50">
+                  <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
+                  <span className="text-gray-600">Real personalization</span>
+                </li>
+                <li className="flex items-start gap-2 opacity-50">
+                  <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
+                  <span className="text-gray-600">Adaptive programming</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Final CTA Section */}
+      <div className="bg-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Transform Your Fitness Journey?</h2>
+            <p className="text-xl text-gray-600 mb-8">Join PULO today and experience the future of personalized fitness training</p>
+            <Button 
+              size="lg" 
+              onClick={() => navigate("/auth?mode=signup")}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg h-auto group transition-all duration-300"
+            >
+              Start Your Free Trial
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default Index;
-
