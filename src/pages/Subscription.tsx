@@ -99,8 +99,19 @@ const SubscriptionPage = () => {
         return;
       }
 
-      if (plan === "pro") {
-        // Create Stripe checkout session
+      if (plan === "free") {
+        // For free plan, just update the profile and redirect to onboarding
+        const { error } = await supabase
+          .from("profiles")
+          .update({ subscription_status: "free" })
+          .eq("id", session.user.id);
+
+        if (error) throw error;
+        
+        toast.success("Free plan activated!");
+        navigate("/onboarding");
+      } else {
+        // For pro plan, create Stripe checkout session
         const { data: { url }, error } = await supabase.functions.invoke("create-checkout-session", {
           body: { 
             priceId: "your_stripe_price_id", // Replace with your actual Stripe price ID
@@ -112,8 +123,8 @@ const SubscriptionPage = () => {
         window.location.href = url;
       }
     } catch (error) {
-      console.error("Error creating checkout session:", error);
-      toast.error("Failed to start subscription process");
+      console.error("Error in subscription process:", error);
+      toast.error("Failed to process subscription");
     }
   };
 
@@ -148,14 +159,6 @@ const SubscriptionPage = () => {
               Select the perfect plan for your fitness journey
             </p>
           </div>
-          <Button 
-            variant="outline" 
-            onClick={() => navigate("/dashboard")} 
-            className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
-          </Button>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
