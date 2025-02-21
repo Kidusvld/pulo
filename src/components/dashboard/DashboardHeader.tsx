@@ -16,12 +16,13 @@ export const DashboardHeader = ({ firstName, onSignOut, subscriptionStatus }: Da
     <div className="flex justify-between items-center mb-8">
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <img 
-            src="/lovable-uploads/909957ea-fca3-4bb3-bdc5-dc90b7bd1779.png"
-            alt="PULO"
-            className="h-10 w-auto cursor-pointer"
-            onClick={() => navigate("/")}
-          />
+          <div className="bg-purple-600 p-2 rounded-xl cursor-pointer hover:bg-purple-700 transition-colors duration-200" onClick={() => navigate("/")}>
+            <img 
+              src="/lovable-uploads/909957ea-fca3-4bb3-bdc5-dc90b7bd1779.png"
+              alt="PULO"
+              className="h-8 w-auto"
+            />
+          </div>
           {subscriptionStatus === "pro" && (
             <div className="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
               <Crown className="w-4 h-4" />
