@@ -15,7 +15,7 @@ export const Navigation = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-2">
             <div 
-              style={{ backgroundColor: '#9B30E6' }}
+              style={{ backgroundColor: '#9747FF' }}
               className="p-2 rounded-xl cursor-pointer hover:opacity-90 transition-all duration-200" 
               onClick={() => navigate("/")}
             >
@@ -35,7 +35,7 @@ export const Navigation = () => {
             </Button>
             <Button 
               onClick={handleGetStarted}
-              style={{ backgroundColor: '#9B30E6' }}
+              style={{ backgroundColor: '#9747FF' }}
               className="hover:opacity-90"
             >
               Get Started
