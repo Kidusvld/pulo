@@ -14,9 +14,12 @@ export const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center px-3 h-10 rounded-xl bg-purple-600 text-white">
-              <span className="text-xl font-bold tracking-tight">PULO</span>
-            </div>
+            <img 
+              src="/lovable-uploads/909957ea-fca3-4bb3-bdc5-dc90b7bd1779.png"
+              alt="PULO"
+              className="h-10 w-auto cursor-pointer"
+              onClick={() => navigate("/")}
+            />
           </div>
           <div className="flex gap-4">
             <Button 
