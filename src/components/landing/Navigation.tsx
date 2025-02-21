@@ -23,7 +23,7 @@ export const Navigation = () => {
             />
             <div className="bg-purple-50 text-purple-600 px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-2">
               <Smartphone className="w-4 h-4" />
-              <span>PULO is launching soon on the App Store & Google Play!</span>
+              <span>PULO is launching soon on the App Store & Google Play! Be the first to experience the future of fitness!</span>
               <Dumbbell className="w-4 h-4" />
             </div>
           </div>
