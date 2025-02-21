@@ -16,9 +16,13 @@ export const DashboardHeader = ({ firstName, onSignOut, subscriptionStatus }: Da
     <div className="flex justify-between items-center mb-8">
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <div className="bg-purple-600 p-2 rounded-xl cursor-pointer hover:bg-purple-700 transition-colors duration-200" onClick={() => navigate("/")}>
+          <div 
+            style={{ backgroundColor: '#9B30E6' }}
+            className="p-2 rounded-xl cursor-pointer hover:opacity-90 transition-all duration-200" 
+            onClick={() => navigate("/")}
+          >
             <img 
-              src="/lovable-uploads/909957ea-fca3-4bb3-bdc5-dc90b7bd1779.png"
+              src="/lovable-uploads/ebb2902b-eed7-4a5b-a869-b3176c23abcd.png"
               alt="PULO"
               className="h-8 w-auto"
             />
@@ -39,7 +43,8 @@ export const DashboardHeader = ({ firstName, onSignOut, subscriptionStatus }: Da
         {subscriptionStatus === "free" && (
           <Button 
             onClick={() => navigate("/subscription")} 
-            className="bg-purple-600 hover:bg-purple-700"
+            style={{ backgroundColor: '#9B30E6' }}
+            className="hover:opacity-90"
           >
             <Crown className="w-4 h-4 mr-2" />
             Upgrade to Pro
