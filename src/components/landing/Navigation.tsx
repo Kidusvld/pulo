@@ -48,56 +48,32 @@ export const Navigation = () => {
       </nav>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-4 px-6 bg-purple-50 rounded-xl mt-4 mb-2">
-          <div className="flex items-center gap-2 text-purple-600 font-medium mb-4">
-            <MonitorCheck className="w-5 h-5" />
-            <span className="text-lg">PULO is built for desktop to give you the best workout tracking experience.</span>
+        <div className="py-3 px-4 bg-purple-50/70 rounded-lg mt-3 mb-2">
+          <div className="flex items-center gap-2 text-purple-600 text-sm mb-2">
+            <MonitorCheck className="w-4 h-4" />
+            <span>PULO is built for desktop to give you the best workout tracking experience</span>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex items-start gap-3">
-              <div className="mt-1 text-purple-600">
-                <MonitorCheck className="w-5 h-5" />
-              </div>
-              <div className="text-purple-700">
-                <span className="font-semibold">Bigger Screen, Better Control</span>
-                <p className="text-purple-600 mt-1">Easily navigate progress stats and workout plans.</p>
-              </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+            <div className="flex items-center gap-2">
+              <MonitorCheck className="w-3.5 h-3.5 text-purple-500" />
+              <span className="text-purple-600">Bigger screen for better control</span>
             </div>
             
-            <div className="flex items-start gap-3">
-              <div className="mt-1 text-purple-600">
-                <SplitSquareHorizontal className="w-5 h-5" />
-              </div>
-              <div className="text-purple-700">
-                <span className="font-semibold">Multitask Like a Pro</span>
-                <p className="text-purple-600 mt-1">Watch tutorials, track progress, and plan workouts side by side.</p>
-              </div>
+            <div className="flex items-center gap-2">
+              <SplitSquareHorizontal className="w-3.5 h-3.5 text-purple-500" />
+              <span className="text-purple-600">Multitask like a pro</span>
             </div>
             
-            <div className="flex items-start gap-3">
-              <div className="mt-1 text-purple-600">
-                <LineChart className="w-5 h-5" />
-              </div>
-              <div className="text-purple-700">
-                <span className="font-semibold">Detailed Insights</span>
-                <p className="text-purple-600 mt-1">Full-screen analytics for a clearer view of your fitness journey.</p>
-              </div>
+            <div className="flex items-center gap-2">
+              <LineChart className="w-3.5 h-3.5 text-purple-500" />
+              <span className="text-purple-600">Detailed insights</span>
             </div>
             
-            <div className="flex items-start gap-3">
-              <div className="mt-1 text-purple-600">
-                <Focus className="w-5 h-5" />
-              </div>
-              <div className="text-purple-700">
-                <span className="font-semibold">Stay Focused</span>
-                <p className="text-purple-600 mt-1">No mobile distractions, just pure commitment to your goals.</p>
-              </div>
+            <div className="flex items-center gap-2">
+              <Focus className="w-3.5 h-3.5 text-purple-500" />
+              <span className="text-purple-600">Stay focused on goals</span>
             </div>
-          </div>
-
-          <div className="text-center mt-6 text-purple-700 font-semibold flex items-center justify-center gap-2">
-            <span>🚀 Designed for those serious about progress</span>
           </div>
         </div>
       </div>
