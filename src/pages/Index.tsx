@@ -6,11 +6,9 @@ import { Testimonials } from "@/components/landing/Testimonials";
 import { Comparison } from "@/components/landing/Comparison";
 import { CallToAction } from "@/components/landing/CallToAction";
 import { useEffect, useState } from "react";
-import { AssetGenerator } from "@/components/admin/AssetGenerator";
 
 const Index = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [showAssetGenerator, setShowAssetGenerator] = useState(false);
 
   useEffect(() => {
     // Preload critical background image
@@ -28,9 +26,6 @@ const Index = () => {
         ]);
       });
     }
-
-    // Only show asset generator in development
-    setShowAssetGenerator(process.env.NODE_ENV === 'development');
   }, []);
 
   return (
@@ -56,12 +51,6 @@ const Index = () => {
       <Testimonials />
       <Comparison />
       <CallToAction />
-
-      {showAssetGenerator && (
-        <div className="max-w-4xl mx-auto my-20">
-          <AssetGenerator />
-        </div>
-      )}
     </div>
   );
 };
