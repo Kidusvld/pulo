@@ -3,6 +3,7 @@ import { ArrowRight, Calendar, DumbbellIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
 interface Exercise {
   name: string;
@@ -39,6 +40,15 @@ export const WorkoutPlanCard = ({
   onGeneratePlan,
   onSavePlan,
 }: WorkoutPlanCardProps) => {
+  const handleGeneratePlan = async () => {
+    try {
+      onGeneratePlan();
+    } catch (error) {
+      console.error('Error generating workout plan:', error);
+      toast.error("Failed to generate workout plan. Please try again.");
+    }
+  };
+
   return (
     <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-xl shadow-purple-100/20">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -73,7 +83,7 @@ export const WorkoutPlanCard = ({
               </Button>
             )}
             <Button 
-              onClick={onGeneratePlan} 
+              onClick={handleGeneratePlan} 
               disabled={generatingPlan} 
               className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white transition-all duration-200"
             >
