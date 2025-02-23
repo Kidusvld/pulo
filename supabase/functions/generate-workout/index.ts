@@ -10,18 +10,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface Exercise {
-  name: string;
-  sets: number;
-  reps: number;
-  rest: number;
-}
-
-interface Workout {
-  day: number;
-  exercises: Exercise[];
-}
-
 const requestSchema = z.object({
   age: z.number().min(13).max(100),
   weight: z.number().min(30).max(500),
@@ -33,7 +21,6 @@ const requestSchema = z.object({
 });
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -41,26 +28,16 @@ serve(async (req) => {
   try {
     const { age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel, numberOfDays } = await req.json();
 
-    // Validate the request data
     try {
       requestSchema.parse({
-        age,
-        weight,
-        fitnessGoal,
-        workoutLocation,
-        equipment,
-        intensityLevel,
-        numberOfDays
+        age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel, numberOfDays
       });
     } catch (validationError) {
       console.error('Validation error:', validationError);
       return new Response(
         JSON.stringify({
           error: 'Invalid input data',
-          details: validationError.errors.map((err: any) => ({
-            field: err.path.join('.'),
-            message: err.message
-          }))
+          details: validationError.errors
         }),
         {
           status: 400,
@@ -69,23 +46,35 @@ serve(async (req) => {
       );
     }
 
-    // Create prompt for OpenAI
-    const systemPrompt = `You are a professional fitness trainer. Create a workout plan that matches these criteria:
+    // Create a dynamic system prompt based on user profile
+    const systemPrompt = `As an expert fitness trainer, create a personalized ${numberOfDays}-day workout plan for someone with these characteristics:
+
+PROFILE:
+- Weight: ${weight} lbs (adjust exercise intensity and modifications accordingly)
 - Age: ${age} years
-- Weight: ${weight} lbs
-- Fitness Goal: ${fitnessGoal}
-- Location: ${workoutLocation}
-- Available Equipment: ${equipment.join(', ')}
-- Intensity Level: ${intensityLevel}
-- Number of Days: ${numberOfDays}
+- Fitness Goal: ${fitnessGoal.replace(/_/g, ' ')}
+- Experience Level: ${intensityLevel}
+- Workout Location: ${workoutLocation}
+- Available Equipment: ${equipment.length ? equipment.join(', ') : 'bodyweight exercises only'}
 
-For each day, provide 3-5 exercises. Each exercise should include:
-1. Exercise name
-2. Number of sets (2-5)
-3. Number of reps (8-20)
-4. Rest time in seconds (30-120)
+REQUIREMENTS:
+1. For each day, provide 3-5 exercises that:
+   - Match the fitness goal
+   - Are appropriate for their weight and fitness level
+   - Can be performed with available equipment
+   - Include progressive overload principles
+2. Each exercise must include:
+   - Descriptive name
+   - Sets (${intensityLevel === 'beginner' ? '2-3' : intensityLevel === 'intermediate' ? '3-4' : '4-5'} based on level)
+   - Reps (8-15 range, adjusted for goal)
+   - Rest periods (in seconds)
+3. Add variety to prevent repetitive workouts
+4. Include a mix of:
+   ${fitnessGoal === 'build_muscle' ? '- Compound movements for muscle growth\n- Progressive overload exercises\n- Both push and pull movements' :
+      fitnessGoal === 'lose_fat' ? '- High-intensity exercises\n- Compound movements for calorie burn\n- Cardio-strength hybrid exercises' :
+      '- Dynamic stretching exercises\n- Range of motion movements\n- Stability-focused exercises'}
 
-Format the response as a JSON object with this structure:
+Format the response as a JSON object matching this structure exactly:
 {
   "workouts": [
     {
@@ -102,8 +91,7 @@ Format the response as a JSON object with this structure:
   ]
 }`;
 
-    // Call OpenAI API
-    console.log('Calling OpenAI API...');
+    console.log('Calling OpenAI API with prompt...');
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -113,10 +101,16 @@ Format the response as a JSON object with this structure:
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: 'Generate the workout plan following the specified format.' }
+          { 
+            role: 'system', 
+            content: systemPrompt 
+          },
+          { 
+            role: 'user', 
+            content: 'Generate a unique and personalized workout plan following the specified format.' 
+          }
         ],
-        temperature: 0.7,
+        temperature: 0.8, // Increased for more variety in responses
       }),
     });
 
@@ -128,10 +122,21 @@ Format the response as a JSON object with this structure:
     const aiData = await openAIResponse.json();
     console.log('OpenAI response received');
 
-    // Parse the AI response
     try {
       const workoutPlan = JSON.parse(aiData.choices[0].message.content);
-      return new Response(JSON.stringify(workoutPlan), {
+      
+      // Validate the workout plan structure
+      const workouts = workoutPlan.workouts.map(workout => ({
+        day: workout.day,
+        exercises: workout.exercises.map(exercise => ({
+          name: exercise.name,
+          sets: Math.min(Math.max(exercise.sets, 2), 5), // Ensure sets are between 2-5
+          reps: Math.min(Math.max(exercise.reps, 8), 15), // Ensure reps are between 8-15
+          rest: Math.min(Math.max(exercise.rest, 30), 120) // Ensure rest is between 30-120 seconds
+        }))
+      }));
+
+      return new Response(JSON.stringify({ workouts }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       });

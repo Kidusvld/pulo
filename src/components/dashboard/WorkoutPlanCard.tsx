@@ -87,8 +87,17 @@ export const WorkoutPlanCard = ({
               disabled={generatingPlan} 
               className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white transition-all duration-200"
             >
-              {generatingPlan ? "Generating..." : "Generate New Plan"}
-              {!generatingPlan && <ArrowRight className="ml-2 h-4 w-4" />}
+              {generatingPlan ? (
+                <>
+                  <span className="animate-pulse">Generating your plan...</span>
+                  <div className="ml-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                </>
+              ) : (
+                <>
+                  Generate New Plan
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -111,7 +120,7 @@ export const WorkoutPlanCard = ({
                       <p className="font-medium text-purple-900">{exercise.name}</p>
                       <p className="text-sm text-purple-600 mt-1">
                         {exercise.sets} sets × {exercise.reps} reps
-                        (Rest: {Math.floor(exercise.rest / 60)} min)
+                        (Rest: {Math.floor(exercise.rest / 60)} min {exercise.rest % 60 > 0 ? `${exercise.rest % 60} sec` : ''})
                       </p>
                     </div>
                   ))}
