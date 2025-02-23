@@ -106,34 +106,28 @@ const Dashboard = () => {
       const {
         data: profileData,
         error: profileError
-      } = await supabase.from("profiles").select("first_name, age, weight, fitness_goal, workout_location, intensity_level, equipment").eq("id", session.user.id).single();
-      
+      } = await supabase.from("profiles").select("first_name, age, weight").eq("id", session.user.id).single();
       if (profileError || !profileData?.age || !profileData?.weight || !profileData?.first_name) {
         navigate("/onboarding");
         return;
       }
-      
       const {
         data: planData,
         error: planError
       } = await supabase.from("workout_plans").select("*").eq("user_id", session.user.id).eq("is_active", true).maybeSingle();
-      
       if (planError) {
-        console.error('Error fetching workout plan:', planError);
         navigate("/onboarding");
         return;
       }
-
       setProfile({
         first_name: profileData.first_name,
         age: profileData.age,
         weight: profileData.weight,
-        fitness_goal: profileData.fitness_goal || "build_muscle",
-        workout_location: profileData.workout_location || "home",
-        intensity_level: profileData.intensity_level || "beginner",
-        equipment: profileData.equipment || []
+        fitness_goal: planData?.fitness_goal || "build_muscle",
+        workout_location: planData?.workout_location || "home",
+        intensity_level: planData?.intensity_level || "beginner",
+        equipment: planData?.equipment || []
       });
-
       if (planData) {
         setWorkoutPlan(planData as WorkoutPlan);
       }
@@ -262,6 +256,16 @@ const Dashboard = () => {
   const generateNewPlan = async () => {
     if (!profile) return;
     setGeneratingPlan(true);
+    const {
+      data: {
+        session
+      }
+    } = await supabase.auth.getSession();
+    if (!session) {
+      toast.error("Session expired. Please sign in again.");
+      navigate("/auth");
+      return;
+    }
     try {
       const {
         data: aiResponse,
@@ -277,31 +281,31 @@ const Dashboard = () => {
           numberOfDays: numberOfDays
         }
       });
-
-      if (aiError) {
-        console.error('Error calling generate-workout function:', aiError);
-        throw new Error(aiError.message);
+      if (aiError || !aiResponse) {
+        throw new Error(aiError?.message || 'Failed to generate workout plan');
       }
-
-      if (!aiResponse || aiResponse.error) {
-        console.error('Error in AI response:', aiResponse?.error);
-        throw new Error(aiResponse?.error || 'Failed to generate workout plan');
+      if (aiResponse.error) {
+        throw new Error(aiResponse.error);
       }
-
+      if (!aiResponse.workouts || !Array.isArray(aiResponse.workouts)) {
+        throw new Error('Invalid workout plan structure received from AI');
+      }
+      console.log('Saving workout plan:', {
+        userId: session.user.id,
+        fitnessGoal: profile.fitness_goal,
+        workoutLocation: profile.workout_location,
+        intensityLevel: profile.intensity_level,
+        equipment: profile.equipment,
+        planData: aiResponse
+      });
       const {
-        data: {
-          session
-        }
-      } = await supabase.auth.getSession();
-      if (!session) {
-        throw new Error('No active session');
+        error: deactivateError
+      } = await supabase.from("workout_plans").update({
+        is_active: false
+      }).eq("user_id", session.user.id);
+      if (deactivateError) {
+        throw new Error('Failed to deactivate existing workout plans');
       }
-
-      await supabase.from("workout_plans")
-        .update({ is_active: false })
-        .eq("user_id", session.user.id)
-        .eq("is_active", true);
-
       const {
         data: plan,
         error: createError
@@ -311,20 +315,21 @@ const Dashboard = () => {
         workout_location: profile.workout_location,
         intensity_level: profile.intensity_level,
         equipment: profile.equipment,
-        plan_data: { workouts: aiResponse.workouts },
+        plan_data: aiResponse,
         is_active: true,
         workout_frequency: numberOfDays
       }]).select().single();
-
       if (createError) {
-        throw createError;
+        throw new Error('Failed to save new workout plan');
       }
-
+      if (!plan) {
+        throw new Error('No workout plan returned after save');
+      }
       setWorkoutPlan(plan as WorkoutPlan);
-      toast.success("New workout plan generated successfully!");
+      toast.success("New workout plan generated!");
     } catch (error) {
       console.error('Error generating workout plan:', error);
-      toast.error(error.message || "Failed to generate workout plan. Please try again.");
+      toast.error(error instanceof Error ? error.message : "Failed to generate workout plan");
     } finally {
       setGeneratingPlan(false);
     }

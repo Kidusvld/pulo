@@ -3,7 +3,6 @@ import { ArrowRight, Calendar, DumbbellIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { toast } from "sonner";
 
 interface Exercise {
   name: string;
@@ -40,15 +39,6 @@ export const WorkoutPlanCard = ({
   onGeneratePlan,
   onSavePlan,
 }: WorkoutPlanCardProps) => {
-  const handleGeneratePlan = async () => {
-    try {
-      onGeneratePlan();
-    } catch (error) {
-      console.error('Error generating workout plan:', error);
-      toast.error("Failed to generate workout plan. Please try again.");
-    }
-  };
-
   return (
     <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-xl shadow-purple-100/20">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -83,21 +73,12 @@ export const WorkoutPlanCard = ({
               </Button>
             )}
             <Button 
-              onClick={handleGeneratePlan} 
+              onClick={onGeneratePlan} 
               disabled={generatingPlan} 
               className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white transition-all duration-200"
             >
-              {generatingPlan ? (
-                <>
-                  <span className="animate-pulse">Generating your plan...</span>
-                  <div className="ml-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                </>
-              ) : (
-                <>
-                  Generate New Plan
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </>
-              )}
+              {generatingPlan ? "Generating..." : "Generate New Plan"}
+              {!generatingPlan && <ArrowRight className="ml-2 h-4 w-4" />}
             </Button>
           </div>
         </div>
@@ -120,7 +101,7 @@ export const WorkoutPlanCard = ({
                       <p className="font-medium text-purple-900">{exercise.name}</p>
                       <p className="text-sm text-purple-600 mt-1">
                         {exercise.sets} sets × {exercise.reps} reps
-                        (Rest: {Math.floor(exercise.rest / 60)} min {exercise.rest % 60 > 0 ? `${exercise.rest % 60} sec` : ''})
+                        (Rest: {Math.floor(exercise.rest / 60)} min)
                       </p>
                     </div>
                   ))}
