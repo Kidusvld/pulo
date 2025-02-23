@@ -1,7 +1,9 @@
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
 import { z } from 'https://deno.land/x/zod@v3.16.1/mod.ts';
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
+
+const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -57,7 +59,7 @@ serve(async (req) => {
           error: 'Invalid input data',
           details: validationError.errors.map((err: any) => ({
             field: err.path.join('.'),
-            message: err.message.replace('Number', 'Weight').replace('30', '30 lbs')
+            message: err.message
           }))
         }),
         {
@@ -67,85 +69,79 @@ serve(async (req) => {
       );
     }
 
-    // Generate exercise templates based on fitness goal and intensity
-    const exerciseTemplates = {
-      build_muscle: {
-        beginner: [
-          { name: "Bodyweight Squats", sets: 3, reps: 12, rest: 60 },
-          { name: "Push-Ups", sets: 3, reps: 10, rest: 60 },
-          { name: "Dumbbell Rows", sets: 3, reps: 12, rest: 60 }
-        ],
-        intermediate: [
-          { name: "Barbell Squats", sets: 4, reps: 10, rest: 90 },
-          { name: "Bench Press", sets: 4, reps: 10, rest: 90 },
-          { name: "Bent Over Rows", sets: 4, reps: 10, rest: 90 }
-        ],
-        advanced: [
-          { name: "Romanian Deadlifts", sets: 5, reps: 8, rest: 120 },
-          { name: "Overhead Press", sets: 5, reps: 8, rest: 120 },
-          { name: "Pull-Ups", sets: 5, reps: 8, rest: 120 }
-        ]
-      },
-      lose_fat: {
-        beginner: [
-          { name: "Mountain Climbers", sets: 3, reps: 15, rest: 45 },
-          { name: "Jumping Jacks", sets: 3, reps: 20, rest: 45 },
-          { name: "Bodyweight Lunges", sets: 3, reps: 12, rest: 45 }
-        ],
-        intermediate: [
-          { name: "Burpees", sets: 4, reps: 12, rest: 60 },
-          { name: "Jump Squats", sets: 4, reps: 15, rest: 60 },
-          { name: "High Knees", sets: 4, reps: 20, rest: 60 }
-        ],
-        advanced: [
-          { name: "Box Jumps", sets: 5, reps: 10, rest: 75 },
-          { name: "Kettlebell Swings", sets: 5, reps: 15, rest: 75 },
-          { name: "Sprint Intervals", sets: 5, reps: 30, rest: 75 }
-        ]
-      },
-      increase_mobility: {
-        beginner: [
-          { name: "Cat-Cow Stretch", sets: 2, reps: 10, rest: 30 },
-          { name: "Hip Circles", sets: 2, reps: 10, rest: 30 },
-          { name: "Shoulder Rolls", sets: 2, reps: 10, rest: 30 }
-        ],
-        intermediate: [
-          { name: "Dynamic Lunges", sets: 3, reps: 12, rest: 45 },
-          { name: "Arm Circles", sets: 3, reps: 15, rest: 45 },
-          { name: "World's Greatest Stretch", sets: 3, reps: 8, rest: 45 }
-        ],
-        advanced: [
-          { name: "Spider-Man Stretch", sets: 4, reps: 10, rest: 60 },
-          { name: "Inchworm Walk", sets: 4, reps: 8, rest: 60 },
-          { name: "Dynamic Pigeon Pose", sets: 4, reps: 8, rest: 60 }
-        ]
-      }
-    };
+    // Create prompt for OpenAI
+    const systemPrompt = `You are a professional fitness trainer. Create a workout plan that matches these criteria:
+- Age: ${age} years
+- Weight: ${weight} lbs
+- Fitness Goal: ${fitnessGoal}
+- Location: ${workoutLocation}
+- Available Equipment: ${equipment.join(', ')}
+- Intensity Level: ${intensityLevel}
+- Number of Days: ${numberOfDays}
 
-    // Generate workouts based on number of days
-    const workouts: Workout[] = [];
-    for (let day = 1; day <= numberOfDays; day++) {
-      const exercises = exerciseTemplates[fitnessGoal][intensityLevel].map(exercise => ({
-        ...exercise,
-        // Adjust reps and sets based on the user's profile
-        reps: Math.max(8, exercise.reps - (age > 50 ? 2 : 0)),
-        sets: Math.min(5, exercise.sets + (age < 30 ? 1 : 0))
-      }));
+For each day, provide 3-5 exercises. Each exercise should include:
+1. Exercise name
+2. Number of sets (2-5)
+3. Number of reps (8-20)
+4. Rest time in seconds (30-120)
 
-      workouts.push({
-        day,
-        exercises
-      });
+Format the response as a JSON object with this structure:
+{
+  "workouts": [
+    {
+      "day": number,
+      "exercises": [
+        {
+          "name": string,
+          "sets": number,
+          "reps": number,
+          "rest": number
+        }
+      ]
+    }
+  ]
+}`;
+
+    // Call OpenAI API
+    console.log('Calling OpenAI API...');
+    const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openAIApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: 'Generate the workout plan following the specified format.' }
+        ],
+        temperature: 0.7,
+      }),
+    });
+
+    if (!openAIResponse.ok) {
+      console.error('OpenAI API error:', await openAIResponse.text());
+      throw new Error('Failed to generate workout plan');
     }
 
-    const response = {
-      workouts
-    };
+    const aiData = await openAIResponse.json();
+    console.log('OpenAI response received');
 
-    return new Response(JSON.stringify(response), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 200,
-    });
+    // Parse the AI response
+    try {
+      const workoutPlan = JSON.parse(aiData.choices[0].message.content);
+      return new Response(JSON.stringify(workoutPlan), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      });
+    } catch (parseError) {
+      console.error('Error parsing OpenAI response:', parseError);
+      return new Response(JSON.stringify({ error: 'Failed to parse workout plan' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      });
+    }
 
   } catch (error) {
     console.error('Error:', error);
