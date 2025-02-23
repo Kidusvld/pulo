@@ -26,12 +26,22 @@ serve(async (req) => {
   }
 
   try {
-    const { age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel, numberOfDays } = await req.json();
+    if (!openAIApiKey) {
+      console.error('OpenAI API key is not set');
+      return new Response(
+        JSON.stringify({ error: 'OpenAI API key is not configured' }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    const requestData = await req.json();
+    console.log('Received request data:', JSON.stringify(requestData));
 
     try {
-      requestSchema.parse({
-        age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel, numberOfDays
-      });
+      requestSchema.parse(requestData);
     } catch (validationError) {
       console.error('Validation error:', validationError);
       return new Response(
@@ -46,11 +56,12 @@ serve(async (req) => {
       );
     }
 
-    // Create a dynamic system prompt based on user profile
+    const { age, weight, fitnessGoal, workoutLocation, equipment, intensityLevel, numberOfDays } = requestData;
+
     const systemPrompt = `As an expert fitness trainer, create a personalized ${numberOfDays}-day workout plan for someone with these characteristics:
 
 PROFILE:
-- Weight: ${weight} lbs (adjust exercise intensity and modifications accordingly)
+- Weight: ${weight} lbs
 - Age: ${age} years
 - Fitness Goal: ${fitnessGoal.replace(/_/g, ' ')}
 - Experience Level: ${intensityLevel}
@@ -62,17 +73,11 @@ REQUIREMENTS:
    - Match the fitness goal
    - Are appropriate for their weight and fitness level
    - Can be performed with available equipment
-   - Include progressive overload principles
 2. Each exercise must include:
    - Descriptive name
-   - Sets (${intensityLevel === 'beginner' ? '2-3' : intensityLevel === 'intermediate' ? '3-4' : '4-5'} based on level)
-   - Reps (8-15 range, adjusted for goal)
-   - Rest periods (in seconds)
-3. Add variety to prevent repetitive workouts
-4. Include a mix of:
-   ${fitnessGoal === 'build_muscle' ? '- Compound movements for muscle growth\n- Progressive overload exercises\n- Both push and pull movements' :
-      fitnessGoal === 'lose_fat' ? '- High-intensity exercises\n- Compound movements for calorie burn\n- Cardio-strength hybrid exercises' :
-      '- Dynamic stretching exercises\n- Range of motion movements\n- Stability-focused exercises'}
+   - Sets (2-5)
+   - Reps (8-15)
+   - Rest periods (30-120 seconds)
 
 Format the response as a JSON object matching this structure exactly:
 {
@@ -91,7 +96,7 @@ Format the response as a JSON object matching this structure exactly:
   ]
 }`;
 
-    console.log('Calling OpenAI API with prompt...');
+    console.log('Calling OpenAI API...');
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -101,58 +106,89 @@ Format the response as a JSON object matching this structure exactly:
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          { 
-            role: 'system', 
-            content: systemPrompt 
-          },
-          { 
-            role: 'user', 
-            content: 'Generate a unique and personalized workout plan following the specified format.' 
-          }
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: 'Generate a workout plan following the specified format.' }
         ],
-        temperature: 0.8, // Increased for more variety in responses
+        temperature: 0.7,
       }),
     });
 
     if (!openAIResponse.ok) {
-      console.error('OpenAI API error:', await openAIResponse.text());
-      throw new Error('Failed to generate workout plan');
+      const errorText = await openAIResponse.text();
+      console.error('OpenAI API error:', errorText);
+      return new Response(
+        JSON.stringify({ error: 'Failed to generate workout plan', details: errorText }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     const aiData = await openAIResponse.json();
-    console.log('OpenAI response received');
+    console.log('OpenAI response received:', JSON.stringify(aiData));
+
+    if (!aiData.choices?.[0]?.message?.content) {
+      console.error('Invalid OpenAI response structure:', aiData);
+      return new Response(
+        JSON.stringify({ error: 'Invalid response from OpenAI' }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
 
     try {
       const workoutPlan = JSON.parse(aiData.choices[0].message.content);
       
       // Validate the workout plan structure
+      if (!workoutPlan.workouts || !Array.isArray(workoutPlan.workouts)) {
+        throw new Error('Invalid workout plan structure');
+      }
+
       const workouts = workoutPlan.workouts.map(workout => ({
         day: workout.day,
         exercises: workout.exercises.map(exercise => ({
           name: exercise.name,
-          sets: Math.min(Math.max(exercise.sets, 2), 5), // Ensure sets are between 2-5
-          reps: Math.min(Math.max(exercise.reps, 8), 15), // Ensure reps are between 8-15
-          rest: Math.min(Math.max(exercise.rest, 30), 120) // Ensure rest is between 30-120 seconds
+          sets: Math.min(Math.max(exercise.sets, 2), 5),
+          reps: Math.min(Math.max(exercise.reps, 8), 15),
+          rest: Math.min(Math.max(exercise.rest, 30), 120)
         }))
       }));
 
-      return new Response(JSON.stringify({ workouts }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      });
+      return new Response(
+        JSON.stringify({ workouts }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+        }
+      );
     } catch (parseError) {
       console.error('Error parsing OpenAI response:', parseError);
-      return new Response(JSON.stringify({ error: 'Failed to parse workout plan' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
-      });
+      return new Response(
+        JSON.stringify({ 
+          error: 'Failed to parse workout plan',
+          details: parseError.message 
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500,
+        }
+      );
     }
 
   } catch (error) {
-    console.error('Error:', error);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500,
-    });
+    console.error('Unexpected error:', error);
+    return new Response(
+      JSON.stringify({ 
+        error: 'Internal server error',
+        details: error.message 
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      }
+    );
   }
 });
