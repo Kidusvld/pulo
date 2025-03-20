@@ -9,7 +9,10 @@ export const FeedbackButton = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
+      <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-md text-purple-700 text-sm font-medium animate-pulse">
+        Share your thoughts with us!
+      </div>
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>
           <Button
