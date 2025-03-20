@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { FeedbackButton } from "./components/feedback/FeedbackButton";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/log-workout" element={<LogWorkout />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <FeedbackButton />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
