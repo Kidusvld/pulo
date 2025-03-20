@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,15 +16,25 @@ const Auth = () => {
   const currentMode = searchParams.get("mode") as AuthMode || "signin";
 
   useEffect(() => {
-    checkSession();
-  }, []);
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("first_name")
+          .eq("id", session.user.id)
+          .single();
+        
+        if (profile?.first_name) {
+          navigate("/dashboard");
+        } else {
+          navigate("/onboarding");
+        }
+      }
+    };
 
-  const checkSession = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      navigate("/dashboard");
-    }
-  };
+    checkSession();
+  }, [navigate]);
 
   const handleSwitchMode = (mode: AuthMode) => {
     setSearchParams({ mode }, { replace: true });

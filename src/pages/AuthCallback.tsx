@@ -35,8 +35,20 @@ const AuthCallback = () => {
           // For password reset, redirect to the recovery page regardless of session
           navigate("/auth?mode=recovery");
         } else if (session) {
-          // For other auth flows (like OAuth), redirect to the next page
-          navigate(next);
+          // For other auth flows (like OAuth), check if user has completed onboarding
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("first_name")
+            .eq("id", session.user.id)
+            .maybeSingle();
+          
+          if (profile?.first_name) {
+            // User has completed onboarding, redirect to dashboard
+            navigate("/dashboard");
+          } else {
+            // User needs to complete onboarding
+            navigate("/onboarding");
+          }
         } else {
           // If no session and not password reset, go to sign in
           navigate("/auth?mode=signin");

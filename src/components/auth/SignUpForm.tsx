@@ -23,6 +23,7 @@ export const SignUpForm = ({ onSwitchMode }: SignUpFormProps) => {
     setLoading(true);
 
     try {
+      // Sign up the user with Supabase
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -31,14 +32,37 @@ export const SignUpForm = ({ onSwitchMode }: SignUpFormProps) => {
       if (error) throw error;
 
       if (data.user) {
-        const { error: profileError } = await supabase
+        // Check if a profile already exists to avoid duplicate inserts
+        const { count, error: countError } = await supabase
           .from("profiles")
-          .insert([{ id: data.user.id, email: data.user.email }]);
+          .select("id", { count: "exact", head: true })
+          .eq("id", data.user.id);
 
-        if (profileError) throw profileError;
+        // If profile doesn't exist yet, create one
+        if (countError || count === 0) {
+          const { error: profileError } = await supabase
+            .from("profiles")
+            .insert([{ id: data.user.id, email: data.user.email }]);
 
-        toast.success("Account created successfully!");
-        navigate("/onboarding"); // Always go to onboarding first for new users
+          if (profileError) {
+            console.error('Profile creation error:', profileError);
+            // Continue anyway since the user was created successfully
+          }
+        }
+
+        toast.success("Account created successfully! Redirecting to onboarding...");
+        
+        // Get the session to ensure the user is logged in
+        const { data: sessionData } = await supabase.auth.getSession();
+        
+        if (sessionData.session) {
+          // If we have a valid session, redirect to onboarding
+          navigate("/onboarding");
+        } else {
+          // If there's no session yet, redirect to signin
+          toast.info("Please sign in with your new account");
+          onSwitchMode("signin");
+        }
       }
     } catch (error) {
       console.error('Auth error:', error);
