@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Smartphone, Dumbbell, MonitorCheck, SplitSquareHorizontal, LineChart, Focus } from "lucide-react";
+import { Smartphone, Dumbbell } from "lucide-react";
 
 export const Navigation = () => {
   const navigate = useNavigate();
@@ -46,37 +46,6 @@ export const Navigation = () => {
           </div>
         </div>
       </nav>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-3 px-4 bg-purple-50/70 rounded-lg mt-3 mb-2">
-          <div className="flex items-center gap-2 text-purple-600 text-sm mb-2">
-            <MonitorCheck className="w-4 h-4" />
-            <span>PULO is built for desktop to give you the best workout tracking experience</span>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-            <div className="flex items-center gap-2">
-              <MonitorCheck className="w-3.5 h-3.5 text-purple-500" />
-              <span className="text-purple-600">Bigger screen for better control</span>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <SplitSquareHorizontal className="w-3.5 h-3.5 text-purple-500" />
-              <span className="text-purple-600">Multitask like a pro</span>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <LineChart className="w-3.5 h-3.5 text-purple-500" />
-              <span className="text-purple-600">Detailed insights</span>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Focus className="w-3.5 h-3.5 text-purple-500" />
-              <span className="text-purple-600">Stay focused on goals</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
