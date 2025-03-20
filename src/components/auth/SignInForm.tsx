@@ -23,14 +23,29 @@ export const SignInForm = ({ onSwitchMode }: SignInFormProps) => {
     setLoading(true);
 
     try {
+      console.log("Attempting to sign in with:", { email });
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Auth error:', error);
+        if (error.status === 400) {
+          toast.error("Invalid email or password. Please try again.");
+        } else if (error.status === 422) {
+          toast.error("Email or password format is invalid.");
+        } else if (error.status >= 500) {
+          toast.error("Authentication service is currently unavailable. Please try again later.");
+        } else {
+          toast.error(error.message || "Failed to sign in. Please try again.");
+        }
+        return;
+      }
 
       if (data.user) {
+        console.log("Successfully signed in:", data.user.id);
         toast.success("Successfully signed in!");
         // Directly navigate to dashboard for returning users
         navigate("/dashboard");
