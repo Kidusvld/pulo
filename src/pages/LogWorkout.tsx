@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -115,94 +116,89 @@ const LogWorkout = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      <div className="relative overflow-hidden">
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center opacity-10"
-          style={{ 
-            backgroundImage: 'url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80")',
-          }}
-        />
+    <div className="min-h-screen bg-gradient-to-br from-deep-purple-900 via-deep-purple-800 to-deep-purple-900">
+      <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] -z-10"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-500/10 blur-3xl top-20 left-20 -z-10"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-600/10 blur-3xl bottom-20 right-20 -z-10"></div>
         
-        <div className="relative z-10 max-w-4xl mx-auto px-4 py-8">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Log Workout</h1>
-            <Button 
-              variant="outline"
-              onClick={() => navigate("/dashboard")}
-              className="hover:bg-purple-50 hover:text-purple-600"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
-            </Button>
-          </div>
+      <div className="relative z-10 max-w-4xl mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-white">Log Workout</h1>
+          <Button 
+            variant="outline"
+            onClick={() => navigate("/dashboard")}
+            className="bg-white/10 hover:bg-white/20 text-white border-purple-300/20"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Dashboard
+          </Button>
+        </div>
 
-          <div className="space-y-8">
-            <WorkoutForm onSuccess={fetchWorkouts} />
+        <div className="space-y-8">
+          <WorkoutForm onSuccess={fetchWorkouts} />
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-lg border border-purple-100 p-6">
-              <h2 className="text-xl font-semibold text-purple-900 mb-4">Workout History</h2>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Duration (min)</TableHead>
-                      <TableHead>Volume (lbs)</TableHead>
-                      <TableHead>Muscle Group</TableHead>
-                      <TableHead>Energy (1-5)</TableHead>
-                      <TableHead>Mood</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {workouts.map((workout) => (
-                      <TableRow key={workout.id}>
-                        <TableCell>
-                          {format(new Date(workout.created_at), 'MMM d, yyyy')}
-                        </TableCell>
-                        <TableCell>{workout.workout_duration}</TableCell>
-                        <TableCell>{workout.total_volume}</TableCell>
-                        <TableCell className="capitalize">{workout.muscle_group || '-'}</TableCell>
-                        <TableCell>{workout.energy_level}</TableCell>
-                        <TableCell>{workout.mood}</TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50"
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg border border-purple-300/20 p-6">
+            <h2 className="text-xl font-semibold text-white mb-4">Workout History</h2>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-purple-300/20">
+                    <TableHead className="text-purple-200">Date</TableHead>
+                    <TableHead className="text-purple-200">Duration (min)</TableHead>
+                    <TableHead className="text-purple-200">Volume (lbs)</TableHead>
+                    <TableHead className="text-purple-200">Muscle Group</TableHead>
+                    <TableHead className="text-purple-200">Energy (1-5)</TableHead>
+                    <TableHead className="text-purple-200">Mood</TableHead>
+                    <TableHead className="text-purple-200">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {workouts.map((workout) => (
+                    <TableRow key={workout.id} className="border-purple-300/20">
+                      <TableCell className="text-purple-100">
+                        {format(new Date(workout.created_at), 'MMM d, yyyy')}
+                      </TableCell>
+                      <TableCell className="text-purple-100">{workout.workout_duration}</TableCell>
+                      <TableCell className="text-purple-100">{workout.total_volume}</TableCell>
+                      <TableCell className="text-purple-100 capitalize">{workout.muscle_group || '-'}</TableCell>
+                      <TableCell className="text-purple-100">{workout.energy_level}</TableCell>
+                      <TableCell className="text-purple-100">{workout.mood}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-red-300 hover:text-red-200 hover:bg-red-900/30"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className="bg-deep-purple-900/90 backdrop-blur-lg border-purple-500/20 text-white">
+                              <AlertDialogHeader>
+                                <AlertDialogTitle className="text-white">Delete Workout</AlertDialogTitle>
+                                <AlertDialogDescription className="text-purple-200">
+                                  Are you sure you want to delete this workout? This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel className="bg-white/10 text-white hover:bg-white/20 border-purple-300/20">Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeleteWorkout(workout.id)}
+                                  className="bg-red-600/80 hover:bg-red-700/80 text-white"
                                 >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Delete Workout</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to delete this workout? This action cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => handleDeleteWorkout(workout.id)}
-                                    className="bg-red-600 hover:bg-red-700 text-white"
-                                  >
-                                    Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </div>
         </div>
