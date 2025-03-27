@@ -132,12 +132,18 @@ export const ProfileCard = ({
                 className="mt-1 bg-white border-purple-100" 
               />
             ) : (
-              <div className="flex items-center">
-                <p className="text-lg font-semibold text-purple-900">{profile?.weight} lbs</p>
-                {profile && <PuloFitIndex age={profile.age} weight={profile.weight} minimal={true} />}
-              </div>
+              <p className="text-lg font-semibold text-purple-900">{profile?.weight} lbs</p>
             )}
           </div>
+
+          {!isEditing && profile && (
+            <div className="bg-purple-50/50 rounded-lg p-4 border border-purple-100 col-span-2">
+              <div className="flex items-center">
+                <p className="text-sm text-purple-600 font-medium">PULO Fit Index</p>
+                <PuloFitIndex age={profile.age} weight={profile.weight} minimal={true} />
+              </div>
+            </div>
+          )}
 
           <div className="col-span-2 bg-purple-50/50 rounded-lg p-4 border border-purple-100">
             <p className="text-sm text-purple-600 font-medium mb-2">Fitness Goal</p>
