@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -199,6 +198,33 @@ const Dashboard = () => {
     return streak;
   };
 
+  const mapToLegacyIntensity = (intensity: string): "beginner" | "intermediate" | "advanced" => {
+    switch(intensity) {
+      case "easy": return "beginner";
+      case "moderate": return "intermediate";
+      case "hard": 
+      case "intense": return "advanced";
+      // If it's already a legacy value, return it as is
+      case "beginner": return "beginner";
+      case "intermediate": return "intermediate";
+      case "advanced": return "advanced";
+      default: return "intermediate";
+    }
+  };
+
+  const mapToLegacyFitnessGoal = (goal: string): "build_muscle" | "lose_fat" | "increase_mobility" => {
+    // stay_active is not supported in the database, map it to a supported value
+    if (goal === "stay_active") return "build_muscle";
+    
+    // If it's already a valid database value, return it
+    if (goal === "build_muscle" || goal === "lose_fat" || goal === "increase_mobility") {
+      return goal as "build_muscle" | "lose_fat" | "increase_mobility";
+    }
+    
+    // Default fallback
+    return "build_muscle";
+  };
+
   const handleUpdateProfile = async () => {
     const {
       data: {
@@ -223,14 +249,16 @@ const Dashboard = () => {
       }).eq("id", session.user.id);
       if (profileError) throw profileError;
       
-      // Convert intensity level to database format if needed
-      let intensityToSave = editedIntensity;
+      // Convert intensity level to database format
+      const intensityToSave = mapToLegacyIntensity(editedIntensity);
+      // Convert fitness goal to database format
+      const fitnessGoalToSave = mapToLegacyFitnessGoal(editedFitnessGoal);
       
       const {
         error: planError
       } = await supabase.from("workout_plans").update({
         intensity_level: intensityToSave,
-        fitness_goal: editedFitnessGoal,
+        fitness_goal: fitnessGoalToSave,
         workout_location: editedWorkoutLocation,
         is_active: true
       }).eq("user_id", session.user.id).eq("is_active", true);
@@ -247,8 +275,8 @@ const Dashboard = () => {
       if (workoutPlan) {
         setWorkoutPlan({
           ...workoutPlan,
-          intensity_level: editedIntensity as any,
-          fitness_goal: editedFitnessGoal as any,
+          intensity_level: intensityToSave as any,
+          fitness_goal: fitnessGoalToSave as any,
           workout_location: editedWorkoutLocation as any
         });
       }
@@ -275,6 +303,11 @@ const Dashboard = () => {
       return;
     }
     try {
+      // Use mapToLegacyIntensity to ensure we're using the correct enum value
+      const intensityToUse = mapToLegacyIntensity(profile.intensity_level || "intermediate");
+      // Use mapToLegacyFitnessGoal to ensure we're using the correct enum value
+      const fitnessGoalToUse = mapToLegacyFitnessGoal(profile.fitness_goal || "build_muscle");
+      
       const {
         data: aiResponse,
         error: aiError
@@ -282,10 +315,10 @@ const Dashboard = () => {
         body: {
           age: profile.age,
           weight: profile.weight,
-          fitnessGoal: profile.fitness_goal,
+          fitnessGoal: fitnessGoalToUse,
           workoutLocation: profile.workout_location,
           equipment: profile.equipment,
-          intensityLevel: profile.intensity_level,
+          intensityLevel: intensityToUse,
           numberOfDays: numberOfDays
         }
       });
@@ -300,9 +333,9 @@ const Dashboard = () => {
       }
       console.log('Saving workout plan:', {
         userId: session.user.id,
-        fitnessGoal: profile.fitness_goal,
+        fitnessGoal: fitnessGoalToUse,
         workoutLocation: profile.workout_location,
-        intensityLevel: profile.intensity_level,
+        intensityLevel: intensityToUse,
         equipment: profile.equipment,
         planData: aiResponse
       });
@@ -319,9 +352,9 @@ const Dashboard = () => {
         error: createError
       } = await supabase.from("workout_plans").insert([{
         user_id: session.user.id,
-        fitness_goal: profile.fitness_goal,
+        fitness_goal: fitnessGoalToUse,
         workout_location: profile.workout_location,
-        intensity_level: profile.intensity_level,
+        intensity_level: intensityToUse,
         equipment: profile.equipment,
         plan_data: aiResponse,
         is_active: true,

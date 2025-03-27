@@ -66,6 +66,17 @@ export const ProfileCard = ({
     }
   };
 
+  // Map new intensity levels to legacy ones for database
+  const mapToLegacyIntensity = (intensity: string): string => {
+    switch(intensity) {
+      case "easy": return "beginner";
+      case "moderate": return "intermediate";
+      case "hard": 
+      case "intense": return "advanced";
+      default: return "intermediate";
+    }
+  };
+
   // Map legacy fitness goal values if needed
   const mapLegacyFitnessGoal = (goal: string | undefined): string => {
     if (!goal) return "build_muscle";
@@ -76,6 +87,13 @@ export const ProfileCard = ({
     }
     
     return goal === "increase_mobility" ? "increase_mobility" : goal;
+  };
+
+  // Map new fitness goal to database compatible value
+  const mapToLegacyFitnessGoal = (goal: string): string => {
+    // stay_active is not supported in the database, map it to a supported value
+    if (goal === "stay_active") return "build_muscle";
+    return goal;
   };
 
   const displayIntensity = mapLegacyIntensity(profile?.intensity_level);
