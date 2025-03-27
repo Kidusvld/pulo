@@ -33,32 +33,32 @@ export const PreferencesStep = ({
             value="build_muscle" 
             className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors"
           >
-            <Dumbbell className="h-8 w-8" />
-            <span className="font-railway font-bold">Build Muscle</span>
+            <Dumbbell className="h-8 w-8 text-white" />
+            <span className="font-railway font-bold text-white">Build Muscle</span>
           </ToggleGroupItem>
           
           <ToggleGroupItem 
             value="lose_fat" 
             className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors"
           >
-            <Flame className="h-8 w-8" />
-            <span className="font-railway font-bold">Lose Fat</span>
+            <Flame className="h-8 w-8 text-white" />
+            <span className="font-railway font-bold text-white">Lose Fat</span>
           </ToggleGroupItem>
           
           <ToggleGroupItem 
             value="increase_mobility" 
             className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors"
           >
-            <Leaf className="h-8 w-8" />
-            <span className="font-railway font-bold">Get More Flexible</span>
+            <Leaf className="h-8 w-8 text-white" />
+            <span className="font-railway font-bold text-white">Get More Flexible</span>
           </ToggleGroupItem>
           
           <ToggleGroupItem 
             value="stay_active" 
             className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors"
           >
-            <Activity className="h-8 w-8" />
-            <span className="font-railway font-bold">Stay Active</span>
+            <Activity className="h-8 w-8 text-white" />
+            <span className="font-railway font-bold text-white">Stay Active</span>
           </ToggleGroupItem>
         </ToggleGroup>
       </div>
