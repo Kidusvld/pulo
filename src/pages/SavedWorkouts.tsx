@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Calendar, ArrowLeft, DumbbellIcon, Trash2 } from "lucide-react";
+import { Calendar, ArrowLeft, DumbbellIcon, Trash2, Barbell, Bike, Running, Stretching } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -25,6 +25,26 @@ interface SavedWorkout {
   saved_at: string;
   name: string | null;
 }
+
+// Helper function to determine the appropriate icon for an exercise
+const getExerciseIcon = (exerciseName: string) => {
+  const name = exerciseName.toLowerCase();
+  
+  if (name.includes("dumbbell") || name.includes("curl") || name.includes("press") || name.includes("fly")) {
+    return <DumbbellIcon className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+  } else if (name.includes("barbell") || name.includes("deadlift") || name.includes("bench") || name.includes("squat")) {
+    return <Barbell className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+  } else if (name.includes("bike") || name.includes("cycling")) {
+    return <Bike className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+  } else if (name.includes("run") || name.includes("sprint") || name.includes("jog")) {
+    return <Running className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+  } else if (name.includes("stretch") || name.includes("yoga") || name.includes("mobility")) {
+    return <Stretching className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+  } else {
+    // Default icon for other exercises
+    return <DumbbellIcon className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+  }
+};
 
 const SavedWorkouts = () => {
   const navigate = useNavigate();
@@ -151,8 +171,11 @@ const SavedWorkouts = () => {
                                 key={exerciseIndex}
                                 className="bg-purple-50/50 p-4 rounded-lg border border-purple-100"
                               >
-                                <p className="font-medium text-gray-900">{exercise.name}</p>
-                                <p className="text-sm text-gray-600">
+                                <p className="font-medium text-gray-900 flex items-center">
+                                  {getExerciseIcon(exercise.name)}
+                                  {exercise.name}
+                                </p>
+                                <p className="text-sm text-gray-600 ml-6">
                                   {exercise.sets} sets × {exercise.reps} reps
                                   (Rest: {exercise.rest}s)
                                 </p>
