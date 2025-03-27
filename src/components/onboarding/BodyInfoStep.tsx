@@ -28,7 +28,7 @@ export const BodyInfoStep = ({ age, weight, onUpdateForm }: BodyInfoStepProps) =
           <Slider
             id="age"
             defaultValue={[ageValue]}
-            max={70}
+            max={100}
             min={18}
             step={1}
             onValueChange={handleAgeChange}
@@ -36,7 +36,7 @@ export const BodyInfoStep = ({ age, weight, onUpdateForm }: BodyInfoStepProps) =
           />
           <div className="flex justify-between mt-2 text-sm text-gray-500 font-inter">
             <span>18</span>
-            <span>65+</span>
+            <span>100</span>
           </div>
         </div>
       </div>
