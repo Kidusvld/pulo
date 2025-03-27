@@ -20,7 +20,7 @@ export const PreferencesStep = ({
   return (
     <div className="space-y-8">
       <div className="space-y-4">
-        <Label className="text-lg font-medium">What's your goal today?</Label>
+        <Label className="text-lg font-medium font-railway">What's your goal today?</Label>
         <ToggleGroup 
           type="single" 
           className="grid grid-cols-2 gap-4"
@@ -34,7 +34,7 @@ export const PreferencesStep = ({
             className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors"
           >
             <Dumbbell className="h-8 w-8" />
-            <span className="font-medium">Build Muscle 💪</span>
+            <span className="font-railway font-bold">Build Muscle</span>
           </ToggleGroupItem>
           
           <ToggleGroupItem 
@@ -42,7 +42,7 @@ export const PreferencesStep = ({
             className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors"
           >
             <Flame className="h-8 w-8" />
-            <span className="font-medium">Lose Fat 🔥</span>
+            <span className="font-railway font-bold">Lose Fat</span>
           </ToggleGroupItem>
           
           <ToggleGroupItem 
@@ -50,7 +50,7 @@ export const PreferencesStep = ({
             className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors"
           >
             <Leaf className="h-8 w-8" />
-            <span className="font-medium">Get More Flexible 🧘</span>
+            <span className="font-railway font-bold">Get More Flexible</span>
           </ToggleGroupItem>
           
           <ToggleGroupItem 
@@ -58,13 +58,13 @@ export const PreferencesStep = ({
             className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors"
           >
             <Activity className="h-8 w-8" />
-            <span className="font-medium">Stay Active 🏃</span>
+            <span className="font-railway font-bold">Stay Active</span>
           </ToggleGroupItem>
         </ToggleGroup>
       </div>
 
       <div className="space-y-4">
-        <Label className="text-lg font-medium">How hard do you want to push today?</Label>
+        <Label className="text-lg font-medium font-railway">How hard do you want to push today?</Label>
         <RadioGroup 
           value={intensityLevel} 
           onValueChange={(value) => onUpdateForm("intensity_level", value)}
@@ -84,7 +84,7 @@ export const PreferencesStep = ({
               />
               <Label
                 htmlFor={intensity.value}
-                className="flex items-center justify-center h-16 rounded-lg border-2 border-transparent bg-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-purple-700 peer-data-[state=checked]:border-white transition-all font-medium"
+                className="flex items-center justify-center h-16 rounded-lg border-2 border-transparent bg-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-purple-700 peer-data-[state=checked]:border-white transition-all font-railway font-bold"
               >
                 {intensity.label}
               </Label>
@@ -94,7 +94,7 @@ export const PreferencesStep = ({
       </div>
 
       <div className="space-y-4">
-        <Label className="text-lg font-medium">Workout Location</Label>
+        <Label className="text-lg font-medium font-railway">Workout Location</Label>
         <RadioGroup 
           value={workoutLocation}
           onValueChange={(value) => onUpdateForm("workout_location", value)}
@@ -112,7 +112,7 @@ export const PreferencesStep = ({
               />
               <Label
                 htmlFor={`location-${location.value}`}
-                className="flex items-center justify-center h-16 rounded-lg border-2 border-transparent bg-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-purple-700 peer-data-[state=checked]:border-white transition-all font-medium"
+                className="flex items-center justify-center h-16 rounded-lg border-2 border-transparent bg-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-purple-700 peer-data-[state=checked]:border-white transition-all font-railway font-bold"
               >
                 {location.label}
               </Label>
