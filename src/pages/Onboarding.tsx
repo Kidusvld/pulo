@@ -167,7 +167,7 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-purple-100">
+    <div className="min-h-screen bg-gradient-to-b from-purple-100 to-purple-200">
       <div className="relative overflow-hidden">
         <div 
           className="absolute inset-0 z-0 bg-cover bg-center opacity-10"
@@ -176,12 +176,12 @@ const Onboarding = () => {
           }}
         />
         <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-          <Card className="w-full max-w-lg bg-white/95 backdrop-blur-sm shadow-xl">
-            <CardHeader>
+          <Card className="w-full max-w-lg bg-white/95 backdrop-blur-sm shadow-xl border-purple-300">
+            <CardHeader className="pb-8">
               <CardTitle className="text-3xl font-bold text-center text-purple-900">
                 {step === 1 ? "Welcome to PULO" : `Step ${step} of 3`}
               </CardTitle>
-              <div className="w-full bg-gray-200 h-3 rounded-full mt-4">
+              <div className="w-full bg-gray-200 h-3 rounded-full mt-4 overflow-hidden">
                 <div 
                   className="bg-purple-600 h-3 rounded-full transition-all duration-300"
                   style={{ width: `${(step / 3) * 100}%` }}

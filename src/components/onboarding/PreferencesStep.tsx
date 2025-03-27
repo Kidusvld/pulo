@@ -31,33 +31,33 @@ export const PreferencesStep = ({
         >
           <ToggleGroupItem 
             value="build_muscle" 
-            className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-purple-600 data-[state=on]:bg-purple-50 rounded-xl"
+            className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors"
           >
-            <Dumbbell className="h-8 w-8 text-purple-600" />
+            <Dumbbell className="h-8 w-8" />
             <span className="font-medium">Build Muscle 💪</span>
           </ToggleGroupItem>
           
           <ToggleGroupItem 
             value="lose_fat" 
-            className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-purple-600 data-[state=on]:bg-purple-50 rounded-xl"
+            className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors"
           >
-            <Flame className="h-8 w-8 text-orange-500" />
+            <Flame className="h-8 w-8" />
             <span className="font-medium">Lose Fat 🔥</span>
           </ToggleGroupItem>
           
           <ToggleGroupItem 
             value="increase_mobility" 
-            className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-purple-600 data-[state=on]:bg-purple-50 rounded-xl"
+            className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors"
           >
-            <Leaf className="h-8 w-8 text-green-500" />
+            <Leaf className="h-8 w-8" />
             <span className="font-medium">Get More Flexible 🧘</span>
           </ToggleGroupItem>
           
           <ToggleGroupItem 
             value="stay_active" 
-            className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-purple-600 data-[state=on]:bg-purple-50 rounded-xl"
+            className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors"
           >
-            <Activity className="h-8 w-8 text-blue-500" />
+            <Activity className="h-8 w-8" />
             <span className="font-medium">Stay Active 🏃</span>
           </ToggleGroupItem>
         </ToggleGroup>
@@ -71,10 +71,10 @@ export const PreferencesStep = ({
           className="grid grid-cols-2 gap-4"
         >
           {[
-            { value: "easy", label: "Easy", color: "bg-green-100 border-green-300 text-green-800" },
-            { value: "moderate", label: "Moderate", color: "bg-blue-100 border-blue-300 text-blue-800" },
-            { value: "hard", label: "Hard", color: "bg-orange-100 border-orange-300 text-orange-800" },
-            { value: "intense", label: "Intense", color: "bg-red-100 border-red-300 text-red-800" }
+            { value: "easy", label: "Easy" },
+            { value: "moderate", label: "Moderate" },
+            { value: "hard", label: "Hard" },
+            { value: "intense", label: "Intense" }
           ].map((intensity) => (
             <div key={intensity.value} className="relative">
               <RadioGroupItem 
@@ -84,9 +84,9 @@ export const PreferencesStep = ({
               />
               <Label
                 htmlFor={intensity.value}
-                className={`flex items-center justify-center h-16 rounded-lg border-2 cursor-pointer ${intensity.color} peer-data-[state=checked]:ring-2 peer-data-[state=checked]:ring-purple-600 peer-data-[state=checked]:border-purple-600 transition-all`}
+                className="flex items-center justify-center h-16 rounded-lg border-2 border-transparent bg-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-purple-700 peer-data-[state=checked]:border-white transition-all font-medium"
               >
-                <span className="text-lg font-medium">{intensity.label}</span>
+                {intensity.label}
               </Label>
             </div>
           ))}
@@ -112,9 +112,9 @@ export const PreferencesStep = ({
               />
               <Label
                 htmlFor={`location-${location.value}`}
-                className="flex items-center justify-center h-16 rounded-lg border-2 border-purple-200 bg-purple-50 cursor-pointer peer-data-[state=checked]:bg-purple-100 peer-data-[state=checked]:border-purple-600 transition-all"
+                className="flex items-center justify-center h-16 rounded-lg border-2 border-transparent bg-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-purple-700 peer-data-[state=checked]:border-white transition-all font-medium"
               >
-                <span className="text-lg font-medium">{location.label}</span>
+                {location.label}
               </Label>
             </div>
           ))}
