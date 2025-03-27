@@ -29,7 +29,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className={`min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`min-h-screen bg-purple-100 transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       <Navigation />
       
       <div className="relative overflow-hidden">
