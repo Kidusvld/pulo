@@ -11,25 +11,25 @@ export const fitnessCategoryMap: Record<string, FitnessCategory> = {
     name: "Getting Started",
     color: "yellow",
     emoji: "🟡",
-    message: "You're just beginning your fitness journey — we're here to help you build momentum!"
+    message: "You're just beginning your fitness journey — we're here to help you build momentum with PULO!"
   },
   "in_the_zone": {
     name: "In the Zone",
     color: "green",
     emoji: "🟢",
-    message: "Based on your age and weight — let's keep moving forward 💪"
+    message: "Your PULO Fit metrics look good — let's keep moving forward together 💪"
   },
   "leveling_up": {
     name: "Leveling Up",
     color: "orange",
     emoji: "🟠",
-    message: "You're making progress on your fitness journey — keep pushing yourself!"
+    message: "You're making progress on your PULO fitness journey — keep pushing yourself!"
   },
   "time_to_lock_in": {
     name: "Time to Lock In",
     color: "red",
     emoji: "🔴",
-    message: "Now's the perfect time to commit to your fitness goals — you've got this!"
+    message: "Now's the perfect time to commit to your PULO fitness goals — you've got this!"
   }
 };
 

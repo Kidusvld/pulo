@@ -1,3 +1,4 @@
+
 import { fitnessCategoryMap, calculatePuloFitIndex } from "@/utils/fitnessIndex";
 
 interface PuloFitIndexProps {
@@ -14,33 +15,38 @@ export const PuloFitIndex = ({ age, weight, minimal = false }: PuloFitIndexProps
     switch (color) {
       case "yellow":
         return {
-          bg: "bg-yellow-50/70",
+          bg: "bg-yellow-50/80",
           border: "border-yellow-200",
           text: "text-yellow-700",
+          ring: "ring-yellow-200/50"
         };
       case "green":
         return {
-          bg: "bg-green-50/70",
+          bg: "bg-green-50/80",
           border: "border-green-200",
           text: "text-green-700",
+          ring: "ring-green-200/50"
         };
       case "orange":
         return {
-          bg: "bg-orange-50/70",
+          bg: "bg-orange-50/80",
           border: "border-orange-200",
           text: "text-orange-700",
+          ring: "ring-orange-200/50"
         };
       case "red":
         return {
-          bg: "bg-red-50/70",
+          bg: "bg-red-50/80",
           border: "border-red-200",
           text: "text-red-700",
+          ring: "ring-red-200/50"
         };
       default:
         return {
-          bg: "bg-purple-50/70",
+          bg: "bg-purple-50/80",
           border: "border-purple-100",
           text: "text-purple-700",
+          ring: "ring-purple-100/50"
         };
     }
   };
@@ -50,10 +56,10 @@ export const PuloFitIndex = ({ age, weight, minimal = false }: PuloFitIndexProps
   if (minimal) {
     return (
       <div className="inline-flex items-center gap-1 ml-2">
-        <div className={`rounded-full px-2 py-0.5 ${colorClasses.bg} ${colorClasses.border}`}>
+        <div className={`rounded-full px-2 py-0.5 ${colorClasses.bg} ${colorClasses.border} shadow-sm ring-1 ${colorClasses.ring} transition-all duration-200`}>
           <div className="flex items-center gap-1">
             <span className="text-sm">{category.emoji}</span>
-            <span className={`text-xs font-semibold ${colorClasses.text}`}>{category.name}</span>
+            <span className={`text-xs font-semibold font-poppins ${colorClasses.text}`}>{category.name}</span>
           </div>
         </div>
       </div>
@@ -63,18 +69,18 @@ export const PuloFitIndex = ({ age, weight, minimal = false }: PuloFitIndexProps
   return (
     <div className="mt-2 rounded-lg border p-4 bg-white/90 backdrop-blur-sm border-purple-100 shadow-lg shadow-purple-100/20">
       <div className="mb-2">
-        <span className="text-sm text-purple-600 font-medium">PULO Fit Index</span>
+        <span className="text-sm text-purple-600 font-medium font-poppins">PULO Fit Index</span>
       </div>
       
-      <div className={`rounded-lg p-4 ${colorClasses.bg} ${colorClasses.border} mb-2`}>
+      <div className={`rounded-lg p-4 ${colorClasses.bg} ${colorClasses.border} mb-2 shadow-sm ring-1 ${colorClasses.ring} transition-all duration-200`}>
         <div className="flex items-center gap-2 mb-1">
           <span className="text-xl">{category.emoji}</span>
-          <h3 className={`text-lg font-bold ${colorClasses.text}`}>{category.name}</h3>
+          <h3 className={`text-lg font-bold font-poppins ${colorClasses.text}`}>{category.name}</h3>
         </div>
-        <p className="text-sm text-purple-700">{category.message}</p>
+        <p className="text-sm text-purple-700 font-inter">{category.message}</p>
       </div>
       
-      <p className="text-xs text-purple-500/70 italic">
+      <p className="text-xs text-purple-500/70 italic font-inter">
         Based on your age and weight profile
       </p>
     </div>
