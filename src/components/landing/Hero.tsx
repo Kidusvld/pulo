@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Brain } from "lucide-react";
+import { ArrowRight, Brain, Dumbbell, Flame, Activity, Zap } from "lucide-react";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 export const Hero = () => {
@@ -49,46 +49,29 @@ export const Hero = () => {
       </div>
 
       <div className="hidden md:block relative">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-4">
-            <AspectRatio ratio={4/3} className="bg-gray-100">
-              <img 
-                src="https://images.unsplash.com/photo-1549576490-b0b4831ef60a?auto=format&fit=crop&q=80" 
-                alt="Person exercising" 
-                className="rounded-lg shadow-lg w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
-                loading="lazy"
-                decoding="async"
-              />
-            </AspectRatio>
-            <AspectRatio ratio={4/3} className="bg-gray-100">
-              <img 
-                src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&q=80" 
-                alt="Workout equipment" 
-                className="rounded-lg shadow-lg w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
-                loading="lazy"
-                decoding="async"
-              />
-            </AspectRatio>
+        <div className="grid grid-cols-2 grid-rows-2 gap-6 h-full">
+          <div className="bg-purple-100 rounded-lg flex flex-col items-center justify-center p-6 transform hover:scale-105 transition-transform duration-300 shadow-lg">
+            <Dumbbell className="w-16 h-16 text-purple-600 mb-4" />
+            <h3 className="text-xl font-semibold text-purple-800">Strength Training</h3>
+            <p className="text-purple-700 text-center mt-2">Personalized resistance workouts</p>
           </div>
-          <div className="space-y-4 pt-8">
-            <AspectRatio ratio={4/3} className="bg-gray-100">
-              <img 
-                src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80" 
-                alt="Yoga pose" 
-                className="rounded-lg shadow-lg w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
-                loading="lazy"
-                decoding="async"
-              />
-            </AspectRatio>
-            <AspectRatio ratio={4/3} className="bg-gray-100">
-              <img 
-                src="https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&q=80" 
-                alt="Weight training" 
-                className="rounded-lg shadow-lg w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
-                loading="lazy"
-                decoding="async"
-              />
-            </AspectRatio>
+          
+          <div className="bg-purple-100 rounded-lg flex flex-col items-center justify-center p-6 transform hover:scale-105 transition-transform duration-300 shadow-lg">
+            <Activity className="w-16 h-16 text-purple-600 mb-4" />
+            <h3 className="text-xl font-semibold text-purple-800">Cardio & HIIT</h3>
+            <p className="text-purple-700 text-center mt-2">Heart-pumping interval training</p>
+          </div>
+          
+          <div className="bg-purple-100 rounded-lg flex flex-col items-center justify-center p-6 transform hover:scale-105 transition-transform duration-300 shadow-lg">
+            <Flame className="w-16 h-16 text-purple-600 mb-4" />
+            <h3 className="text-xl font-semibold text-purple-800">Calorie Burning</h3>
+            <p className="text-purple-700 text-center mt-2">Maximize your workout efficiency</p>
+          </div>
+          
+          <div className="bg-purple-100 rounded-lg flex flex-col items-center justify-center p-6 transform hover:scale-105 transition-transform duration-300 shadow-lg">
+            <Zap className="w-16 h-16 text-purple-600 mb-4" />
+            <h3 className="text-xl font-semibold text-purple-800">Energy Boosting</h3>
+            <p className="text-purple-700 text-center mt-2">Revitalize your daily routine</p>
           </div>
         </div>
       </div>
