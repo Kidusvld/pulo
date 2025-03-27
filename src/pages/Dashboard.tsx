@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -259,7 +260,7 @@ const Dashboard = () => {
       } = await supabase.from("workout_plans").update({
         intensity_level: intensityToSave,
         fitness_goal: fitnessGoalToSave,
-        workout_location: editedWorkoutLocation,
+        workout_location: editedWorkoutLocation as "home" | "gym",
         is_active: true
       }).eq("user_id", session.user.id).eq("is_active", true);
       if (planError) throw planError;
@@ -267,17 +268,17 @@ const Dashboard = () => {
       setProfile({
         ...profile,
         weight,
-        intensity_level: editedIntensity,
-        fitness_goal: editedFitnessGoal as any,
-        workout_location: editedWorkoutLocation as any
+        intensity_level: editedIntensity as "easy" | "moderate" | "hard" | "intense" | "beginner" | "intermediate" | "advanced",
+        fitness_goal: editedFitnessGoal as "build_muscle" | "lose_fat" | "increase_mobility" | "stay_active",
+        workout_location: editedWorkoutLocation as "home" | "gym"
       });
       
       if (workoutPlan) {
         setWorkoutPlan({
           ...workoutPlan,
-          intensity_level: intensityToSave as any,
-          fitness_goal: fitnessGoalToSave as any,
-          workout_location: editedWorkoutLocation as any
+          intensity_level: intensityToSave as "beginner" | "intermediate" | "advanced",
+          fitness_goal: fitnessGoalToSave as "build_muscle" | "lose_fat" | "increase_mobility",
+          workout_location: editedWorkoutLocation as "home" | "gym"
         });
       }
       
