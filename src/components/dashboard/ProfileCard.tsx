@@ -1,3 +1,4 @@
+
 import { ArrowRight, Trophy, Dumbbell, Flame, Leaf, Activity, Zap, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -136,23 +137,23 @@ export const ProfileCard = ({
             {isEditing ? <ToggleGroup type="single" className="grid grid-cols-2 gap-4" value={editedFitnessGoal} onValueChange={value => {
             if (value) onEditFitnessGoal(value);
           }}>
-                <ToggleGroupItem value="build_muscle" className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors">
-                  <Dumbbell className="h-6 w-6 text-white" />
+                <ToggleGroupItem value="build_muscle" className="flex flex-col items-center gap-3 py-6 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors">
+                  <Dumbbell className="h-7 w-7 text-white" />
                   <span className="font-poppins font-bold text-white">Build Muscle</span>
                 </ToggleGroupItem>
                 
-                <ToggleGroupItem value="lose_fat" className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors">
-                  <Flame className="h-6 w-6 text-white" />
+                <ToggleGroupItem value="lose_fat" className="flex flex-col items-center gap-3 py-6 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors">
+                  <Flame className="h-7 w-7 text-white" />
                   <span className="font-poppins font-bold text-white">Lose Fat</span>
                 </ToggleGroupItem>
                 
-                <ToggleGroupItem value="increase_mobility" className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors">
-                  <Leaf className="h-6 w-6 text-white" />
+                <ToggleGroupItem value="increase_mobility" className="flex flex-col items-center gap-3 py-6 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors">
+                  <Leaf className="h-7 w-7 text-white" />
                   <span className="font-poppins font-bold text-white">Get More Flexible</span>
                 </ToggleGroupItem>
                 
-                <ToggleGroupItem value="stay_active" className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors">
-                  <Activity className="h-6 w-6 text-white" />
+                <ToggleGroupItem value="stay_active" className="flex flex-col items-center gap-3 py-6 border-2 data-[state=on]:border-white data-[state=on]:bg-purple-700 bg-purple-600 text-white rounded-xl transition-colors">
+                  <Activity className="h-7 w-7 text-white" />
                   <span className="font-poppins font-bold text-white">Stay Active</span>
                 </ToggleGroupItem>
               </ToggleGroup> : <div className="flex items-center gap-2 text-lg font-semibold text-purple-900 capitalize">
