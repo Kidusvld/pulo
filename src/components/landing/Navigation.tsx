@@ -22,7 +22,7 @@ export const Navigation = () => {
                 className="h-12 w-auto rounded-xl cursor-pointer hover:opacity-90 transition-all duration-200" 
                 onClick={() => navigate("/")}
               />
-              <div className="bg-purple-50 text-purple-600 px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-2">
+              <div className="bg-purple-50 text-purple-600 px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 font-inter">
                 <Smartphone className="w-4 h-4" />
                 <span>PULO is launching soon on the App Store. Be the first to experience the future of fitness!</span>
                 <Dumbbell className="w-4 h-4" />
@@ -32,13 +32,14 @@ export const Navigation = () => {
               <Button 
                 variant="ghost" 
                 onClick={() => navigate("/auth?mode=signin")}
+                className="font-inter"
               >
                 Sign In
               </Button>
               <Button 
                 onClick={handleGetStarted}
                 style={{ backgroundColor: '#9747FF' }}
-                className="hover:opacity-90"
+                className="hover:opacity-90 font-poppins"
               >
                 Get Started
               </Button>

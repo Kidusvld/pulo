@@ -26,7 +26,7 @@ export const StepNavigation = ({
           variant="outline"
           onClick={onPrevious}
           disabled={loading}
-          className="flex items-center"
+          className="flex items-center font-inter"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Previous
@@ -36,7 +36,7 @@ export const StepNavigation = ({
         <Button
           onClick={onNext}
           disabled={!canProceed || loading}
-          className="ml-auto bg-purple-600 hover:bg-purple-700"
+          className="ml-auto bg-purple-600 hover:bg-purple-700 font-inter"
         >
           Next
           <ArrowRight className="ml-2 h-4 w-4" />
@@ -45,7 +45,7 @@ export const StepNavigation = ({
         <Button
           onClick={onComplete}
           disabled={!canProceed || loading}
-          className="ml-auto bg-purple-600 hover:bg-purple-700"
+          className="ml-auto bg-purple-600 hover:bg-purple-700 font-poppins"
         >
           {loading ? (
             <div className="flex items-center">

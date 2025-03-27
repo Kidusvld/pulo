@@ -21,8 +21,8 @@ export const BodyInfoStep = ({ age, weight, onUpdateForm }: BodyInfoStepProps) =
     <div className="space-y-8">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <Label htmlFor="age" className="text-lg font-medium">Your Age</Label>
-          <span className="text-xl font-bold text-purple-700">{ageValue}</span>
+          <Label htmlFor="age" className="text-lg font-medium font-poppins">Your Age</Label>
+          <span className="text-xl font-bold text-purple-700 font-poppins">{ageValue}</span>
         </div>
         <div className="px-1 py-4">
           <Slider
@@ -34,7 +34,7 @@ export const BodyInfoStep = ({ age, weight, onUpdateForm }: BodyInfoStepProps) =
             onValueChange={handleAgeChange}
             className="bg-purple-100"
           />
-          <div className="flex justify-between mt-2 text-sm text-gray-500">
+          <div className="flex justify-between mt-2 text-sm text-gray-500 font-inter">
             <span>18</span>
             <span>65+</span>
           </div>
@@ -42,15 +42,15 @@ export const BodyInfoStep = ({ age, weight, onUpdateForm }: BodyInfoStepProps) =
       </div>
 
       <div className="space-y-4">
-        <Label htmlFor="weight" className="text-lg font-medium">Your Weight Range</Label>
+        <Label htmlFor="weight" className="text-lg font-medium font-poppins">Your Weight Range</Label>
         <Select
           value={weight}
           onValueChange={(value) => onUpdateForm("weight", value)}
         >
-          <SelectTrigger id="weight" className="bg-white text-center h-12 text-lg">
+          <SelectTrigger id="weight" className="bg-white text-center h-12 text-lg font-inter">
             <SelectValue placeholder="Select your weight range" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="font-inter">
             <SelectItem value="under_120">Under 120 lbs</SelectItem>
             <SelectItem value="120_160">120–160 lbs</SelectItem>
             <SelectItem value="160_200">160–200 lbs</SelectItem>

@@ -178,7 +178,7 @@ const Onboarding = () => {
         <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
           <Card className="w-full max-w-lg bg-white/95 backdrop-blur-sm shadow-xl border-purple-300">
             <CardHeader className="pb-8">
-              <CardTitle className="text-3xl font-bold text-center text-purple-900">
+              <CardTitle className="text-3xl font-bold text-center text-purple-900 font-poppins">
                 {step === 1 ? "Welcome to PULO" : `Step ${step} of 3`}
               </CardTitle>
               <div className="w-full bg-gray-200 h-3 rounded-full mt-4 overflow-hidden">
@@ -188,7 +188,7 @@ const Onboarding = () => {
                 />
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="font-inter">
               <div className="space-y-8">
                 {renderStep()}
                 <StepNavigation
