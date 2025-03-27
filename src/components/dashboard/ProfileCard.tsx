@@ -160,7 +160,7 @@ export const ProfileCard = ({
                 {displayFitnessGoal === "lose_fat" && <Flame className="h-5 w-5 text-purple-600" />}
                 {displayFitnessGoal === "increase_mobility" && <Leaf className="h-5 w-5 text-purple-600" />}
                 {displayFitnessGoal === "stay_active" && <Activity className="h-5 w-5 text-purple-600" />}
-                {displayFitnessGoal?.replace(/_/g, ' ')}
+                {displayFitnessGoal === "increase_mobility" ? "Get More Flexible" : displayFitnessGoal?.replace(/_/g, ' ')}
               </div>}
           </div>
 
