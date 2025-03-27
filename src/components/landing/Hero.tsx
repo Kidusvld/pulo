@@ -50,25 +50,25 @@ export const Hero = () => {
 
       <div className="hidden md:block relative">
         <div className="grid grid-cols-2 grid-rows-2 gap-6 h-full">
-          <div className="bg-purple-100 rounded-lg flex flex-col items-center justify-center p-6 transform hover:scale-105 transition-transform duration-300 shadow-lg">
+          <div className="bg-purple-100/70 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center p-6 transform hover:scale-105 transition-transform duration-300 shadow-lg">
             <Dumbbell className="w-16 h-16 text-purple-600 mb-4" />
             <h3 className="text-xl font-semibold text-purple-800">Strength Training</h3>
             <p className="text-purple-700 text-center mt-2">Personalized resistance workouts</p>
           </div>
           
-          <div className="bg-purple-100 rounded-lg flex flex-col items-center justify-center p-6 transform hover:scale-105 transition-transform duration-300 shadow-lg">
+          <div className="bg-purple-100/70 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center p-6 transform hover:scale-105 transition-transform duration-300 shadow-lg">
             <Activity className="w-16 h-16 text-purple-600 mb-4" />
             <h3 className="text-xl font-semibold text-purple-800">Cardio & HIIT</h3>
             <p className="text-purple-700 text-center mt-2">Heart-pumping interval training</p>
           </div>
           
-          <div className="bg-purple-100 rounded-lg flex flex-col items-center justify-center p-6 transform hover:scale-105 transition-transform duration-300 shadow-lg">
+          <div className="bg-purple-100/70 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center p-6 transform hover:scale-105 transition-transform duration-300 shadow-lg">
             <Flame className="w-16 h-16 text-purple-600 mb-4" />
             <h3 className="text-xl font-semibold text-purple-800">Calorie Burning</h3>
             <p className="text-purple-700 text-center mt-2">Maximize your workout efficiency</p>
           </div>
           
-          <div className="bg-purple-100 rounded-lg flex flex-col items-center justify-center p-6 transform hover:scale-105 transition-transform duration-300 shadow-lg">
+          <div className="bg-purple-100/70 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center p-6 transform hover:scale-105 transition-transform duration-300 shadow-lg">
             <Zap className="w-16 h-16 text-purple-600 mb-4" />
             <h3 className="text-xl font-semibold text-purple-800">Energy Boosting</h3>
             <p className="text-purple-700 text-center mt-2">Revitalize your daily routine</p>
