@@ -1,4 +1,4 @@
-import { ArrowRight, Trophy, Dumbbell, Flame, Leaf, Activity, Zap, Walking, Home, Gym } from "lucide-react";
+import { ArrowRight, Trophy, Dumbbell, Flame, Leaf, Activity, Zap, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -169,7 +169,7 @@ export const ProfileCard = ({
             {isEditing ? <RadioGroup value={editedIntensity} onValueChange={onEditIntensity} className="grid grid-cols-2 gap-4">
                 {[
                   { value: "easy", label: "Easy", icon: <Leaf className="h-5 w-5 mb-1" /> },
-                  { value: "moderate", label: "Moderate", icon: <Walking className="h-5 w-5 mb-1" /> },
+                  { value: "moderate", label: "Moderate", icon: <Activity className="h-5 w-5 mb-1" /> },
                   { value: "hard", label: "Hard", icon: <Dumbbell className="h-5 w-5 mb-1" /> }, 
                   { value: "intense", label: "Intense", icon: <Zap className="h-5 w-5 mb-1" /> }
                 ].map(intensity => <div key={intensity.value} className="relative">
@@ -181,7 +181,7 @@ export const ProfileCard = ({
                   </div>)}
               </RadioGroup> : <div className="flex items-center gap-2 text-lg font-semibold text-purple-900 capitalize">
                 {displayIntensity === "easy" && <Leaf className="h-5 w-5 text-purple-600" />}
-                {displayIntensity === "moderate" && <Walking className="h-5 w-5 text-purple-600" />}
+                {displayIntensity === "moderate" && <Activity className="h-5 w-5 text-purple-600" />}
                 {displayIntensity === "hard" && <Dumbbell className="h-5 w-5 text-purple-600" />}
                 {displayIntensity === "intense" && <Zap className="h-5 w-5 text-purple-600" />}
                 {displayIntensity}

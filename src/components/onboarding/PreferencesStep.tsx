@@ -2,7 +2,7 @@
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Dumbbell, Flame, Leaf, Activity, Zap, Walking, Home } from "lucide-react";
+import { Dumbbell, Flame, Leaf, Activity, Zap, Home } from "lucide-react";
 
 interface PreferencesStepProps {
   fitnessGoal: "build_muscle" | "lose_fat" | "increase_mobility" | "stay_active";
@@ -72,7 +72,7 @@ export const PreferencesStep = ({
         >
           {[
             { value: "easy", label: "Easy", icon: <Leaf className="h-6 w-6 mb-1" /> },
-            { value: "moderate", label: "Moderate", icon: <Walking className="h-6 w-6 mb-1" /> },
+            { value: "moderate", label: "Moderate", icon: <Activity className="h-6 w-6 mb-1" /> },
             { value: "hard", label: "Hard", icon: <Dumbbell className="h-6 w-6 mb-1" /> },
             { value: "intense", label: "Intense", icon: <Zap className="h-6 w-6 mb-1" /> }
           ].map((intensity) => (
