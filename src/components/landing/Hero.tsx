@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Brain, Dumbbell, Flame, Activity, Zap } from "lucide-react";
@@ -15,12 +16,12 @@ export const Hero = () => {
         </div>
         
         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
-          Meet <span className="text-purple-600">PULO</span>, Your
+          Meet <span style={{ color: "#7c3aed" }}>PULO</span>, Your
           <span className="text-black block">Fitness Friend</span>
         </h1>
         
         <p className="text-xl text-gray-600 max-w-lg">
-          Think of <span className="text-purple-600 font-bold">PULO</span> as your supportive workout buddy who's always there to guide, motivate, and adapt to your unique fitness journey. No judgment, just personalized support that grows with you.
+          Think of <span style={{ color: "#7c3aed" }} className="font-bold">PULO</span> as your supportive workout buddy who's always there to guide, motivate, and adapt to your unique fitness journey. No judgment, just personalized support that grows with you.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4">
