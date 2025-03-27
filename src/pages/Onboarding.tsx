@@ -52,6 +52,15 @@ const Onboarding = () => {
     }
   };
 
+  // Map UI fitness goal to database fitness goal
+  const mapFitnessGoal = (goal: string): "build_muscle" | "lose_fat" | "increase_mobility" => {
+    if (goal === "stay_active") {
+      // Map "stay_active" to "increase_mobility" as the closest match
+      return "increase_mobility";
+    }
+    return goal as "build_muscle" | "lose_fat" | "increase_mobility";
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     const { data: { session } } = await supabase.auth.getSession();
@@ -90,7 +99,7 @@ const Onboarding = () => {
         .from("workout_plans")
         .insert({
           user_id: session.user.id,
-          fitness_goal: formData.fitness_goal,
+          fitness_goal: mapFitnessGoal(formData.fitness_goal),
           workout_location: formData.workout_location,
           intensity_level: getIntensityLevel(formData.intensity_level),
           equipment: formData.equipment,
