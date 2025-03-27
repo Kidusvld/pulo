@@ -10,6 +10,7 @@ import { WorkoutForm } from "@/components/progress/WorkoutForm";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { ProfileCard } from "@/components/dashboard/ProfileCard";
 import { WorkoutPlanCard } from "@/components/dashboard/WorkoutPlanCard";
+import { PuloFitIndex } from "@/components/dashboard/PuloFitIndex";
 
 interface Profile {
   first_name: string;
@@ -478,6 +479,10 @@ const Dashboard = () => {
               onEditWorkoutLocation={setEditedWorkoutLocation}
               onUpdateProfile={handleUpdateProfile}
             />
+            
+            {profile && (
+              <PuloFitIndex age={profile.age} weight={profile.weight} />
+            )}
 
             <WorkoutPlanCard 
               workoutPlan={workoutPlan}
