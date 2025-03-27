@@ -17,7 +17,7 @@ const Onboarding = () => {
     first_name: "",
     last_name: "",
     age: "30",
-    weight: "120_160",
+    weight: "",
     fitness_goal: "build_muscle" as "build_muscle" | "lose_fat" | "increase_mobility" | "stay_active",
     workout_location: "home" as "home" | "gym",
     intensity_level: "moderate" as "easy" | "moderate" | "hard" | "intense",
@@ -26,17 +26,6 @@ const Onboarding = () => {
 
   const updateFormData = (field: string, value: string | string[]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const getWeightValue = (weightRange: string): number => {
-    switch (weightRange) {
-      case "under_120": return 110;
-      case "120_160": return 140;
-      case "160_200": return 180;
-      case "200_240": return 220;
-      case "over_240": return 250;
-      default: return 150;
-    }
   };
 
   const getIntensityLevel = (intensity: string): "beginner" | "intermediate" | "advanced" => {
@@ -73,7 +62,7 @@ const Onboarding = () => {
           first_name: formData.first_name,
           last_name: formData.last_name,
           age: parseInt(formData.age),
-          weight: getWeightValue(formData.weight),
+          weight: parseInt(formData.weight) || 150,
         })
         .eq("id", session.user.id);
 
