@@ -1,5 +1,7 @@
 
 import { fitnessCategoryMap, calculatePuloFitIndex } from "@/utils/fitnessIndex";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { InfoIcon } from "lucide-react";
 
 interface PuloFitIndexProps {
   age: number;
@@ -56,20 +58,41 @@ export const PuloFitIndex = ({ age, weight, minimal = false }: PuloFitIndexProps
   if (minimal) {
     return (
       <div className="inline-flex items-center gap-1 ml-2">
-        <div className={`rounded-full px-2 py-0.5 ${colorClasses.bg} ${colorClasses.border} shadow-sm ring-1 ${colorClasses.ring} transition-all duration-200`}>
-          <div className="flex items-center gap-1">
-            <span className="text-sm">{category.emoji}</span>
-            <span className={`text-xs font-semibold font-poppins ${colorClasses.text}`}>{category.name}</span>
-          </div>
-        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className={`rounded-full px-2 py-0.5 ${colorClasses.bg} ${colorClasses.border} shadow-sm ring-1 ${colorClasses.ring} transition-all duration-200`}>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm">{category.emoji}</span>
+                  <span className={`text-xs font-semibold font-poppins ${colorClasses.text}`}>{category.name}</span>
+                </div>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className={`${colorClasses.bg} ${colorClasses.border} ${colorClasses.text}`}>
+              <p className="text-sm">{category.message}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     );
   }
 
   return (
     <div className="mt-2 rounded-lg border p-4 bg-white/90 backdrop-blur-sm border-purple-100 shadow-lg shadow-purple-100/20">
-      <div className="mb-2">
+      <div className="mb-2 flex items-center">
         <span className="text-sm text-purple-600 font-medium font-poppins">PULO Fit Index</span>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="ml-2 cursor-help">
+                <InfoIcon className="h-4 w-4 text-purple-400" />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="bg-white text-purple-700 border-purple-200">
+              <p className="text-sm">Your fitness index based on age and weight profile</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       
       <div className={`rounded-lg p-4 ${colorClasses.bg} ${colorClasses.border} mb-2 shadow-sm ring-1 ${colorClasses.ring} transition-all duration-200`}>
