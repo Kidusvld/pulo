@@ -53,8 +53,8 @@ export const Hero = () => {
           <div className="space-y-4">
             <AspectRatio ratio={4/3} className="bg-gray-100">
               <img 
-                src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80" 
-                alt="Diverse group in yoga class" 
+                src="https://images.unsplash.com/photo-1549576490-b0b4831ef60a?auto=format&fit=crop&q=80" 
+                alt="Person exercising" 
                 className="rounded-lg shadow-lg w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
                 loading="lazy"
                 decoding="async"
@@ -62,8 +62,8 @@ export const Hero = () => {
             </AspectRatio>
             <AspectRatio ratio={4/3} className="bg-gray-100">
               <img 
-                src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?auto=format&fit=crop&q=80" 
-                alt="Senior woman exercising" 
+                src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&q=80" 
+                alt="Workout equipment" 
                 className="rounded-lg shadow-lg w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
                 loading="lazy"
                 decoding="async"
@@ -73,8 +73,8 @@ export const Hero = () => {
           <div className="space-y-4 pt-8">
             <AspectRatio ratio={4/3} className="bg-gray-100">
               <img 
-                src="https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&q=80" 
-                alt="Person exercising at home" 
+                src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&q=80" 
+                alt="Yoga pose" 
                 className="rounded-lg shadow-lg w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
                 loading="lazy"
                 decoding="async"
@@ -82,8 +82,8 @@ export const Hero = () => {
             </AspectRatio>
             <AspectRatio ratio={4/3} className="bg-gray-100">
               <img 
-                src="https://images.unsplash.com/photo-1594882645126-14020914d58d?auto=format&fit=crop&q=80" 
-                alt="Adaptive fitness workout" 
+                src="https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&q=80" 
+                alt="Weight training" 
                 className="rounded-lg shadow-lg w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
                 loading="lazy"
                 decoding="async"
