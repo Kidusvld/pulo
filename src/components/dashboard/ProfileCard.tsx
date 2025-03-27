@@ -1,4 +1,3 @@
-
 import { ArrowRight, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +7,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Dumbbell, Flame, Leaf, Activity } from "lucide-react";
+import { PuloFitIndex } from "@/components/dashboard/PuloFitIndex";
 
 interface Profile {
   first_name?: string;
@@ -48,16 +48,13 @@ export const ProfileCard = ({
   onEditWorkoutLocation,
   onUpdateProfile
 }: ProfileCardProps) => {
-  // Map legacy intensity levels to new ones if needed
   const mapLegacyIntensity = (intensity: string | undefined): string => {
     if (!intensity) return "moderate";
     
-    // If it's already in the new format, return it
     if (["easy", "moderate", "hard", "intense"].includes(intensity)) {
       return intensity;
     }
     
-    // Map legacy values to new format
     switch(intensity) {
       case "beginner": return "easy";
       case "intermediate": return "moderate";
@@ -66,7 +63,6 @@ export const ProfileCard = ({
     }
   };
 
-  // Map new intensity levels to legacy ones for database
   const mapToLegacyIntensity = (intensity: string): string => {
     switch(intensity) {
       case "easy": return "beginner";
@@ -77,11 +73,9 @@ export const ProfileCard = ({
     }
   };
 
-  // Map legacy fitness goal values if needed
   const mapLegacyFitnessGoal = (goal: string | undefined): string => {
     if (!goal) return "build_muscle";
     
-    // If it's already in the new format, return it
     if (["build_muscle", "lose_fat", "increase_mobility", "stay_active"].includes(goal)) {
       return goal;
     }
@@ -89,9 +83,7 @@ export const ProfileCard = ({
     return goal === "increase_mobility" ? "increase_mobility" : goal;
   };
 
-  // Map new fitness goal to database compatible value
   const mapToLegacyFitnessGoal = (goal: string): string => {
-    // stay_active is not supported in the database, map it to a supported value
     if (goal === "stay_active") return "build_muscle";
     return goal;
   };
@@ -128,7 +120,9 @@ export const ProfileCard = ({
             <p className="text-lg font-semibold text-purple-900">{profile?.age} years</p>
           </div>
           <div className="bg-purple-50/50 rounded-lg p-4 border border-purple-100">
-            <p className="text-sm text-purple-600 font-medium">Weight</p>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-purple-600 font-medium">Weight</p>
+            </div>
             {isEditing ? (
               <Input 
                 type="number" 
@@ -138,7 +132,10 @@ export const ProfileCard = ({
                 className="mt-1 bg-white border-purple-100" 
               />
             ) : (
-              <p className="text-lg font-semibold text-purple-900">{profile?.weight} lbs</p>
+              <div className="flex items-center">
+                <p className="text-lg font-semibold text-purple-900">{profile?.weight} lbs</p>
+                {profile && <PuloFitIndex age={profile.age} weight={profile.weight} minimal={true} />}
+              </div>
             )}
           </div>
 

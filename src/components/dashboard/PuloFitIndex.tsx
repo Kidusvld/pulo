@@ -4,9 +4,10 @@ import { fitnessCategoryMap, calculatePuloFitIndex } from "@/utils/fitnessIndex"
 interface PuloFitIndexProps {
   age: number;
   weight: number;
+  minimal?: boolean;
 }
 
-export const PuloFitIndex = ({ age, weight }: PuloFitIndexProps) => {
+export const PuloFitIndex = ({ age, weight, minimal = false }: PuloFitIndexProps) => {
   const categoryKey = calculatePuloFitIndex(age, weight);
   const category = fitnessCategoryMap[categoryKey];
   
@@ -47,6 +48,20 @@ export const PuloFitIndex = ({ age, weight }: PuloFitIndexProps) => {
   
   const colorClasses = getColorClasses(category.color);
   
+  if (minimal) {
+    return (
+      <div className="inline-flex items-center gap-1 ml-2">
+        <span className="text-xs text-purple-600 font-medium">PULO Fit:</span>
+        <div className={`rounded-full px-2 py-0.5 ${colorClasses.bg} ${colorClasses.border}`}>
+          <div className="flex items-center gap-1">
+            <span className="text-sm">{category.emoji}</span>
+            <span className={`text-xs font-semibold ${colorClasses.text}`}>{category.name}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mt-2 rounded-lg border p-4 bg-white/90 backdrop-blur-sm border-purple-100 shadow-lg shadow-purple-100/20">
       <div className="mb-2">
