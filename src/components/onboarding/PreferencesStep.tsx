@@ -2,7 +2,7 @@
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Dumbbell, Flame, Leaf, Activity } from "lucide-react";
+import { Dumbbell, Flame, Leaf, Activity, Zap, Walking, Home } from "lucide-react";
 
 interface PreferencesStepProps {
   fitnessGoal: "build_muscle" | "lose_fat" | "increase_mobility" | "stay_active";
@@ -71,10 +71,10 @@ export const PreferencesStep = ({
           className="grid grid-cols-2 gap-4"
         >
           {[
-            { value: "easy", label: "Easy" },
-            { value: "moderate", label: "Moderate" },
-            { value: "hard", label: "Hard" },
-            { value: "intense", label: "Intense" }
+            { value: "easy", label: "Easy", icon: <Leaf className="h-6 w-6 mb-1" /> },
+            { value: "moderate", label: "Moderate", icon: <Walking className="h-6 w-6 mb-1" /> },
+            { value: "hard", label: "Hard", icon: <Dumbbell className="h-6 w-6 mb-1" /> },
+            { value: "intense", label: "Intense", icon: <Zap className="h-6 w-6 mb-1" /> }
           ].map((intensity) => (
             <div key={intensity.value} className="relative">
               <RadioGroupItem 
@@ -84,8 +84,9 @@ export const PreferencesStep = ({
               />
               <Label
                 htmlFor={intensity.value}
-                className="flex items-center justify-center h-16 rounded-lg border-2 border-transparent bg-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-purple-700 peer-data-[state=checked]:border-white transition-all font-poppins font-bold"
+                className="flex flex-col items-center justify-center h-16 rounded-lg border-2 border-transparent bg-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-purple-700 peer-data-[state=checked]:border-white transition-all font-poppins font-bold"
               >
+                {intensity.icon}
                 {intensity.label}
               </Label>
             </div>
@@ -101,8 +102,8 @@ export const PreferencesStep = ({
           className="grid grid-cols-2 gap-4"
         >
           {[
-            { value: "home", label: "Home" },
-            { value: "gym", label: "Gym" }
+            { value: "home", label: "Home", icon: <Home className="h-6 w-6 mb-1" /> },
+            { value: "gym", label: "Gym", icon: <Dumbbell className="h-6 w-6 mb-1" /> }
           ].map((location) => (
             <div key={location.value} className="relative">
               <RadioGroupItem 
@@ -112,8 +113,9 @@ export const PreferencesStep = ({
               />
               <Label
                 htmlFor={`location-${location.value}`}
-                className="flex items-center justify-center h-16 rounded-lg border-2 border-transparent bg-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-purple-700 peer-data-[state=checked]:border-white transition-all font-poppins font-bold"
+                className="flex flex-col items-center justify-center h-16 rounded-lg border-2 border-transparent bg-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-purple-700 peer-data-[state=checked]:border-white transition-all font-poppins font-bold"
               >
+                {location.icon}
                 {location.label}
               </Label>
             </div>
