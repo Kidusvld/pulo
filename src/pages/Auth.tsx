@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -67,11 +68,11 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen relative bg-gradient-to-br from-purple-50 via-white to-purple-50">
+    <div className="min-h-screen relative bg-gradient-to-br from-deep-purple-900 via-deep-purple-800 to-deep-purple-900">
       {/* Decorative Elements */}
-      <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))] -z-10"></div>
-      <div className="absolute h-32 w-32 rounded-full bg-purple-100 blur-3xl top-20 left-20 opacity-50"></div>
-      <div className="absolute h-32 w-32 rounded-full bg-purple-100 blur-3xl bottom-20 right-20 opacity-50"></div>
+      <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] -z-10"></div>
+      <div className="absolute h-32 w-32 rounded-full bg-purple-500/10 blur-3xl top-20 left-20 opacity-50"></div>
+      <div className="absolute h-32 w-32 rounded-full bg-purple-500/10 blur-3xl bottom-20 right-20 opacity-50"></div>
       
       {/* Main Content */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
@@ -86,10 +87,10 @@ const Auth = () => {
               <span className="text-2xl font-bold tracking-tight">PULO</span>
             </div>
           </div>
-          <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-purple-800">
+          <h1 className="text-2xl font-bold text-white">
             Your AI Fitness Partner
           </h1>
-          <p className="text-gray-600 mt-2">Personalized training that adapts to you</p>
+          <p className="text-purple-200 mt-2">Personalized training that adapts to you</p>
         </div>
 
         <Card className="w-full max-w-md bg-white/90 backdrop-blur-lg shadow-xl border-purple-100">
@@ -142,7 +143,7 @@ const Auth = () => {
         </Card>
 
         {/* Footer */}
-        <div className="mt-8 text-center text-sm text-gray-500">
+        <div className="mt-8 text-center text-sm text-purple-200">
           <p>Protected by industry standard encryption</p>
         </div>
       </div>
