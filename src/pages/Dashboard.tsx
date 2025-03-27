@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,9 +16,9 @@ interface Profile {
   first_name: string;
   age: number;
   weight: number;
-  fitness_goal: "lose_fat" | "build_muscle" | "increase_mobility";
+  fitness_goal: "build_muscle" | "lose_fat" | "increase_mobility" | "stay_active";
   workout_location: "home" | "gym";
-  intensity_level: "beginner" | "intermediate" | "advanced";
+  intensity_level: "easy" | "moderate" | "hard" | "intense" | "beginner" | "intermediate" | "advanced";
   equipment: string[];
 }
 
@@ -35,9 +36,9 @@ interface WorkoutPlan {
     }>;
   };
   created_at: string;
-  fitness_goal: "lose_fat" | "build_muscle" | "increase_mobility";
+  fitness_goal: "build_muscle" | "lose_fat" | "increase_mobility" | "stay_active";
   workout_location: "home" | "gym";
-  intensity_level: "beginner" | "intermediate" | "advanced";
+  intensity_level: "easy" | "moderate" | "hard" | "intense" | "beginner" | "intermediate" | "advanced";
   equipment: string[];
 }
 
@@ -49,9 +50,9 @@ const Dashboard = () => {
   const [generatingPlan, setGeneratingPlan] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedWeight, setEditedWeight] = useState<string>("");
-  const [editedIntensity, setEditedIntensity] = useState<"beginner" | "intermediate" | "advanced">("beginner");
-  const [editedFitnessGoal, setEditedFitnessGoal] = useState<"build_muscle" | "lose_fat" | "increase_mobility">("build_muscle");
-  const [editedWorkoutLocation, setEditedWorkoutLocation] = useState<"home" | "gym">("home");
+  const [editedIntensity, setEditedIntensity] = useState<string>("moderate");
+  const [editedFitnessGoal, setEditedFitnessGoal] = useState<string>("build_muscle");
+  const [editedWorkoutLocation, setEditedWorkoutLocation] = useState<string>("home");
   const [numberOfDays, setNumberOfDays] = useState<number>(3);
   const [progressStats, setProgressStats] = useState({
     totalWorkouts: 0,
@@ -221,30 +222,37 @@ const Dashboard = () => {
         weight
       }).eq("id", session.user.id);
       if (profileError) throw profileError;
+      
+      // Convert intensity level to database format if needed
+      let intensityToSave = editedIntensity;
+      
       const {
         error: planError
       } = await supabase.from("workout_plans").update({
-        intensity_level: editedIntensity,
+        intensity_level: intensityToSave,
         fitness_goal: editedFitnessGoal,
         workout_location: editedWorkoutLocation,
         is_active: true
       }).eq("user_id", session.user.id).eq("is_active", true);
       if (planError) throw planError;
+      
       setProfile({
         ...profile,
         weight,
         intensity_level: editedIntensity,
-        fitness_goal: editedFitnessGoal,
-        workout_location: editedWorkoutLocation
+        fitness_goal: editedFitnessGoal as any,
+        workout_location: editedWorkoutLocation as any
       });
+      
       if (workoutPlan) {
         setWorkoutPlan({
           ...workoutPlan,
-          intensity_level: editedIntensity,
-          fitness_goal: editedFitnessGoal,
-          workout_location: editedWorkoutLocation
+          intensity_level: editedIntensity as any,
+          fitness_goal: editedFitnessGoal as any,
+          workout_location: editedWorkoutLocation as any
         });
       }
+      
       toast.success("Profile updated successfully!");
       setIsEditing(false);
     } catch (error) {
@@ -415,8 +423,18 @@ const Dashboard = () => {
               editedFitnessGoal={editedFitnessGoal}
               editedWorkoutLocation={editedWorkoutLocation}
               onEditToggle={() => {
+                // Map legacy intensity values to new format for editing
+                let initialIntensity = profile?.intensity_level || "moderate";
+                if (["beginner", "intermediate", "advanced"].includes(initialIntensity)) {
+                  switch(initialIntensity) {
+                    case "beginner": initialIntensity = "easy"; break;
+                    case "intermediate": initialIntensity = "moderate"; break;
+                    case "advanced": initialIntensity = "hard"; break;
+                  }
+                }
+                
                 setEditedWeight(profile?.weight?.toString() || "");
-                setEditedIntensity(profile?.intensity_level || "beginner");
+                setEditedIntensity(initialIntensity);
                 setEditedFitnessGoal(profile?.fitness_goal || "build_muscle");
                 setEditedWorkoutLocation(profile?.workout_location || "home");
                 setIsEditing(true);
