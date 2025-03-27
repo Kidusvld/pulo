@@ -2,6 +2,7 @@
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
 
 interface BodyInfoStepProps {
   age: string;
@@ -42,9 +43,21 @@ export const BodyInfoStep = ({ age, weight, onUpdateForm }: BodyInfoStepProps) =
       </div>
 
       <div className="space-y-4">
-        <Label htmlFor="weight" className="text-lg font-medium font-poppins">Your Weight Range</Label>
+        <Label htmlFor="weight-input" className="text-lg font-medium font-poppins">Your Weight (lbs)</Label>
+        <Input
+          id="weight-input"
+          type="number"
+          value={weight === "under_120" || weight === "120_160" || weight === "160_200" || weight === "200_240" || weight === "over_240" ? "" : weight}
+          onChange={(e) => onUpdateForm("weight", e.target.value)}
+          placeholder="Enter your weight in lbs"
+          className="bg-white text-center h-12 text-lg font-inter border-purple-200 focus:ring-purple-700"
+        />
+      </div>
+
+      <div className="space-y-4">
+        <Label htmlFor="weight" className="text-lg font-medium font-poppins">Or Select Weight Range</Label>
         <Select
-          value={weight}
+          value={weight.includes("_") ? weight : ""}
           onValueChange={(value) => onUpdateForm("weight", value)}
         >
           <SelectTrigger id="weight" className="bg-white text-center h-12 text-lg font-inter border-purple-200 focus:ring-purple-700">
