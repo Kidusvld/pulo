@@ -47,10 +47,10 @@ export const BodyInfoStep = ({ age, weight, onUpdateForm }: BodyInfoStepProps) =
           value={weight}
           onValueChange={(value) => onUpdateForm("weight", value)}
         >
-          <SelectTrigger id="weight" className="bg-white text-center h-12 text-lg font-inter">
+          <SelectTrigger id="weight" className="bg-white text-center h-12 text-lg font-inter border-purple-200 focus:ring-purple-700">
             <SelectValue placeholder="Select your weight range" />
           </SelectTrigger>
-          <SelectContent className="font-inter">
+          <SelectContent className="font-inter bg-white border-purple-200">
             <SelectItem value="under_120">Under 120 lbs</SelectItem>
             <SelectItem value="120_160">120–160 lbs</SelectItem>
             <SelectItem value="160_200">160–200 lbs</SelectItem>

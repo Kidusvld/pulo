@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,7 +25,6 @@ interface SavedWorkout {
   name: string | null;
 }
 
-// Helper function to determine the appropriate icon for an exercise
 const getExerciseIcon = (exerciseName: string) => {
   const name = exerciseName.toLowerCase();
   
@@ -41,7 +39,6 @@ const getExerciseIcon = (exerciseName: string) => {
   } else if (name.includes("stretch") || name.includes("yoga") || name.includes("mobility")) {
     return <Heart className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
   } else {
-    // Default icon for other exercises
     return <DumbbellIcon className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
   }
 };
@@ -96,101 +93,96 @@ const SavedWorkouts = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-deep-purple-900 via-deep-purple-800 to-deep-purple-900">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      <div className="relative overflow-hidden">
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center opacity-10"
-          style={{ 
-            backgroundImage: 'url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80")',
-          }}
-        />
+    <div className="min-h-screen bg-gradient-to-br from-deep-purple-900 via-deep-purple-800 to-deep-purple-900">
+      <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] -z-10"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-500/10 blur-3xl top-20 left-20 -z-10"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-600/10 blur-3xl bottom-20 right-20 -z-10"></div>
         
-        <div className="relative z-10 max-w-4xl mx-auto px-4 py-8">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Saved Workout Plans</h1>
-            <Button 
-              variant="outline"
-              onClick={() => navigate("/dashboard")}
-              className="hover:bg-purple-50 hover:text-purple-600"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Dashboard
-            </Button>
-          </div>
-
-          {savedWorkouts.length === 0 ? (
-            <Card className="bg-white/95 backdrop-blur-sm border-purple-100">
-              <CardContent className="text-center py-12">
-                <DumbbellIcon className="h-12 w-12 text-purple-200 mx-auto mb-4" />
-                <p className="text-gray-500">
-                  No saved workout plans yet. Generate and save some plans from the dashboard!
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-6">
-              {savedWorkouts.map((workout) => (
-                <Card key={workout.id} className="bg-white/95 backdrop-blur-sm border-purple-100">
-                  <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-xl font-semibold flex items-center gap-2">
-                      <DumbbellIcon className="h-5 w-5 text-purple-600" />
-                      {workout.name || "Workout Plan"}
-                    </CardTitle>
-                    <div className="flex items-center gap-4">
-                      <span className="text-sm text-gray-500">
-                        Saved on {format(new Date(workout.saved_at), 'MMM d, yyyy')}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(workout.id)}
-                        className="hover:bg-red-50 hover:text-red-600"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-6">
-                      {workout.plan_data.workouts.map((day, index) => (
-                        <div key={index} className="space-y-4">
-                          <h3 className="font-semibold flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-purple-600" />
-                            Day {day.day}
-                          </h3>
-                          <div className="grid gap-4">
-                            {day.exercises.map((exercise, exerciseIndex) => (
-                              <div
-                                key={exerciseIndex}
-                                className="bg-purple-50/50 p-4 rounded-lg border border-purple-100"
-                              >
-                                <p className="font-medium text-gray-900 flex items-center">
-                                  {getExerciseIcon(exercise.name)}
-                                  {exercise.name}
-                                </p>
-                                <p className="text-sm text-gray-600 ml-6">
-                                  {exercise.sets} sets × {exercise.reps} reps
-                                  (Rest: {exercise.rest}s)
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+      <div className="relative z-10 max-w-4xl mx-auto px-4 py-8">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-white">Saved Workout Plans</h1>
+          <Button 
+            variant="outline"
+            onClick={() => navigate("/dashboard")}
+            className="bg-white/10 hover:bg-white/20 text-white border-purple-300/20"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Dashboard
+          </Button>
         </div>
+
+        {savedWorkouts.length === 0 ? (
+          <Card className="bg-white/10 backdrop-blur-sm border-purple-300/20">
+            <CardContent className="text-center py-12">
+              <DumbbellIcon className="h-12 w-12 text-purple-200 mx-auto mb-4" />
+              <p className="text-white/80">
+                No saved workout plans yet. Generate and save some plans from the dashboard!
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-6">
+            {savedWorkouts.map((workout) => (
+              <Card key={workout.id} className="bg-white/10 backdrop-blur-sm border-purple-300/20">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-xl font-semibold flex items-center gap-2 text-white">
+                    <DumbbellIcon className="h-5 w-5 text-purple-300" />
+                    {workout.name || "Workout Plan"}
+                  </CardTitle>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-purple-200">
+                      Saved on {format(new Date(workout.saved_at), 'MMM d, yyyy')}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDelete(workout.id)}
+                      className="text-white/70 hover:bg-red-900/30 hover:text-red-300"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    {workout.plan_data.workouts.map((day, index) => (
+                      <div key={index} className="space-y-4">
+                        <h3 className="font-semibold flex items-center gap-2 text-white">
+                          <Calendar className="h-4 w-4 text-purple-300" />
+                          Day {day.day}
+                        </h3>
+                        <div className="grid gap-4">
+                          {day.exercises.map((exercise, exerciseIndex) => (
+                            <div
+                              key={exerciseIndex}
+                              className="bg-white/5 p-4 rounded-lg border border-purple-300/20"
+                            >
+                              <p className="font-medium text-white flex items-center">
+                                {getExerciseIcon(exercise.name)}
+                                {exercise.name}
+                              </p>
+                              <p className="text-sm text-purple-200 ml-6">
+                                {exercise.sets} sets × {exercise.reps} reps
+                                (Rest: {exercise.rest}s)
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

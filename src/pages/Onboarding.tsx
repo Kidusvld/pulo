@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,7 +28,6 @@ const Onboarding = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Convert weight range to numeric value for API
   const getWeightValue = (weightRange: string): number => {
     switch (weightRange) {
       case "under_120": return 110;
@@ -41,7 +39,6 @@ const Onboarding = () => {
     }
   };
 
-  // Convert intensity level to match API requirements
   const getIntensityLevel = (intensity: string): "beginner" | "intermediate" | "advanced" => {
     switch (intensity) {
       case "easy": return "beginner";
@@ -52,10 +49,8 @@ const Onboarding = () => {
     }
   };
 
-  // Map UI fitness goal to database fitness goal
   const mapFitnessGoal = (goal: string): "build_muscle" | "lose_fat" | "increase_mobility" => {
     if (goal === "stay_active") {
-      // Map "stay_active" to "increase_mobility" as the closest match
       return "increase_mobility";
     }
     return goal as "build_muscle" | "lose_fat" | "increase_mobility";
@@ -167,42 +162,38 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-100 to-purple-200">
-      <div className="relative overflow-hidden">
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center opacity-10"
-          style={{ 
-            backgroundImage: 'url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80")',
-          }}
-        />
-        <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-          <Card className="w-full max-w-lg bg-white/95 backdrop-blur-sm shadow-xl border-purple-300">
-            <CardHeader className="pb-8">
-              <CardTitle className="text-3xl font-bold text-center text-purple-900 font-poppins">
-                {step === 1 ? "Welcome to PULO" : `Step ${step} of 3`}
-              </CardTitle>
-              <div className="w-full bg-gray-200 h-3 rounded-full mt-4 overflow-hidden">
-                <div 
-                  className="bg-purple-600 h-3 rounded-full transition-all duration-300"
-                  style={{ width: `${(step / 3) * 100}%` }}
-                />
-              </div>
-            </CardHeader>
-            <CardContent className="font-inter">
-              <div className="space-y-8">
-                {renderStep()}
-                <StepNavigation
-                  currentStep={step}
-                  loading={loading}
-                  canProceed={canProceed()}
-                  onPrevious={() => setStep((s) => s - 1)}
-                  onNext={() => setStep((s) => s + 1)}
-                  onComplete={handleSubmit}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-deep-purple-900 via-deep-purple-800 to-deep-purple-900">
+      <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] -z-10"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-500/10 blur-3xl top-20 left-20 -z-10"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-600/10 blur-3xl bottom-20 right-20 -z-10"></div>
+      
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <Card className="w-full max-w-lg bg-white/95 backdrop-blur-sm shadow-xl border-purple-300">
+          <CardHeader className="pb-8">
+            <CardTitle className="text-3xl font-bold text-center text-purple-900 font-poppins">
+              {step === 1 ? "Welcome to PULO" : `Step ${step} of 3`}
+            </CardTitle>
+            <div className="w-full bg-gray-200 h-3 rounded-full mt-4 overflow-hidden">
+              <div 
+                className="bg-purple-700 h-3 rounded-full transition-all duration-300"
+                style={{ width: `${(step / 3) * 100}%` }}
+              />
+            </div>
+          </CardHeader>
+          <CardContent className="font-inter">
+            <div className="space-y-8">
+              {renderStep()}
+              <StepNavigation
+                currentStep={step}
+                loading={loading}
+                canProceed={canProceed()}
+                onPrevious={() => setStep((s) => s - 1)}
+                onNext={() => setStep((s) => s + 1)}
+                onComplete={handleSubmit}
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
