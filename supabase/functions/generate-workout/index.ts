@@ -46,8 +46,8 @@ serve(async (req: Request) => {
       throw new Error('OpenAI API key not configured');
     }
 
-    // Create system prompt based on user profile
-    const systemPrompt = `You are a professional fitness trainer tasked with creating a personalized workout plan. 
+    // Create updated system prompt based on user profile
+    const systemPrompt = `You are a professional fitness trainer tasked with creating a personalized workout plan.
     Design a detailed workout plan with the following specifications:
     
     1. The plan is for a person who is ${validatedData.age} years old and weighs ${validatedData.weight} lbs.
@@ -57,9 +57,10 @@ serve(async (req: Request) => {
     5. Create workouts for ${validatedData.numberOfDays} days per week.
     
     For each day, include the following:
-    - 4-8 exercises (depending on their fitness level)
+    - 4 to 8 exercises (based on fitness level)
     - Number of sets for each exercise
-    - Number of reps for each exercise
+    - Either the number of reps or a duration in seconds, depending on the type of movement
+    - For example: use reps for strength movements, and duration for exercises like planks, wall sits, or sprints
     - Rest time between sets in seconds
     
     Format your response as a valid JSON object with this structure:
@@ -73,12 +74,19 @@ serve(async (req: Request) => {
               "sets": 3,
               "reps": 10,
               "rest": 60
+            },
+            {
+              "name": "Plank",
+              "sets": 3,
+              "duration": 30,
+              "rest": 60
             }
           ]
         }
       ]
     }
     
+    Use only one of "reps" or "duration" per exercise (never both).
     The response must be valid JSON that matches this exact format. Do not include any explanations or extra text outside the JSON.`;
 
     console.log("Sending request to OpenAI");

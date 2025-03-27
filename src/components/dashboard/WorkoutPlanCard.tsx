@@ -1,5 +1,5 @@
 
-import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart } from "lucide-react";
+import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 interface Exercise {
   name: string;
   sets: number;
-  reps: number;
+  reps?: number;
+  duration?: number;
   rest: number;
 }
 
@@ -43,6 +44,8 @@ const getExerciseIcon = (exerciseName: string) => {
     return <Bike className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
   } else if (name.includes("run") || name.includes("sprint") || name.includes("jog")) {
     return <Activity className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+  } else if (name.includes("plank") || name.includes("hold") || name.includes("wall sit")) {
+    return <Clock className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
   } else if (name.includes("stretch") || name.includes("yoga") || name.includes("mobility")) {
     return <Heart className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
   } else {
@@ -123,7 +126,9 @@ export const WorkoutPlanCard = ({
                         {exercise.name}
                       </p>
                       <p className="text-sm text-purple-600 mt-1 ml-6">
-                        {exercise.sets} sets × {exercise.reps} reps
+                        {exercise.sets} sets × {exercise.duration ? 
+                          `${exercise.duration} seconds` : 
+                          `${exercise.reps} reps`}
                         (Rest: {Math.floor(exercise.rest / 60)} min)
                       </p>
                     </div>
