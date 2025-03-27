@@ -1,4 +1,4 @@
-import { ArrowRight, Trophy, Dumbbell, Flame, Leaf, Activity } from "lucide-react";
+import { ArrowRight, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,8 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Dumbbell, Flame, Leaf, Activity } from "lucide-react";
 import { PuloFitIndex } from "@/components/dashboard/PuloFitIndex";
-
 interface Profile {
   first_name?: string;
   age?: number;
@@ -17,7 +17,6 @@ interface Profile {
   intensity_level?: "easy" | "moderate" | "hard" | "intense" | "beginner" | "intermediate" | "advanced";
   equipment?: string[];
 }
-
 interface ProfileCardProps {
   profile: Profile;
   isEditing: boolean;
@@ -32,7 +31,6 @@ interface ProfileCardProps {
   onEditWorkoutLocation: (value: string) => void;
   onUpdateProfile: () => void;
 }
-
 export const ProfileCard = ({
   profile,
   isEditing,
@@ -63,7 +61,6 @@ export const ProfileCard = ({
         return "moderate";
     }
   };
-
   const mapToLegacyIntensity = (intensity: string): string => {
     switch (intensity) {
       case "easy":
@@ -77,7 +74,6 @@ export const ProfileCard = ({
         return "intermediate";
     }
   };
-
   const mapLegacyFitnessGoal = (goal: string | undefined): string => {
     if (!goal) return "build_muscle";
     if (["build_muscle", "lose_fat", "increase_mobility", "stay_active"].includes(goal)) {
@@ -85,30 +81,12 @@ export const ProfileCard = ({
     }
     return goal === "increase_mobility" ? "increase_mobility" : goal;
   };
-
   const mapToLegacyFitnessGoal = (goal: string): string => {
     if (goal === "stay_active") return "build_muscle";
     return goal;
   };
-
   const displayIntensity = mapLegacyIntensity(profile?.intensity_level);
   const displayFitnessGoal = mapLegacyFitnessGoal(profile?.fitness_goal);
-
-  const getFitnessGoalIcon = (goal: string) => {
-    switch(goal) {
-      case "build_muscle":
-        return <Dumbbell className="h-5 w-5 text-purple-600" />;
-      case "lose_fat":
-        return <Flame className="h-5 w-5 text-purple-600" />;
-      case "increase_mobility":
-        return <Leaf className="h-5 w-5 text-purple-600" />;
-      case "stay_active":
-        return <Activity className="h-5 w-5 text-purple-600" />;
-      default:
-        return <Dumbbell className="h-5 w-5 text-purple-600" />;
-    }
-  };
-
   return <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-xl shadow-purple-100/20">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-xl font-semibold flex items-center gap-2 text-purple-900">
@@ -171,7 +149,10 @@ export const ProfileCard = ({
                   <span className="font-poppins font-bold text-white">Stay Active</span>
                 </ToggleGroupItem>
               </ToggleGroup> : <div className="flex items-center gap-2 text-lg font-semibold text-purple-900 capitalize">
-                {getFitnessGoalIcon(displayFitnessGoal)}
+                {displayFitnessGoal === "build_muscle" && <Dumbbell className="h-5 w-5 text-purple-600" />}
+                {displayFitnessGoal === "lose_fat" && <Flame className="h-5 w-5 text-purple-600" />}
+                {displayFitnessGoal === "increase_mobility" && <Leaf className="h-5 w-5 text-purple-600" />}
+                {displayFitnessGoal === "stay_active" && <Activity className="h-5 w-5 text-purple-600" />}
                 {displayFitnessGoal?.replace(/_/g, ' ')}
               </div>}
           </div>
