@@ -40,118 +40,102 @@ serve(async (req: Request) => {
     console.log("Request body:", body);
     const validatedData = WorkoutRequestSchema.parse(body);
 
-    // Define exercise pools based on location, intensity and goal
-    const exercises = {
-      home: {
-        cardio: ['Jump Rope', 'Jumping Jacks', 'High Knees', 'Mountain Climbers', 'Burpees'],
-        strength: ['Push-ups', 'Squats', 'Lunges', 'Plank', 'Glute Bridges', 'Wall Sits'],
-        flexibility: ['Standing Forward Bend', 'Butterfly Stretch', 'Child\'s Pose', 'Cat-Cow Stretch', 'Pigeon Pose']
-      },
-      gym: {
-        cardio: ['Treadmill', 'Elliptical', 'Stair Climber', 'Rowing Machine', 'Exercise Bike'],
-        strength: ['Bench Press', 'Squats', 'Deadlifts', 'Lat Pulldowns', 'Leg Press', 'Shoulder Press'],
-        flexibility: ['Foam Rolling', 'Stretching Machine', 'Yoga Mat Stretches', 'Cable Rotations', 'Dynamic Stretches']
-      }
-    };
-
-    // Adjust exercise selection based on user characteristics
-    const getExercisePool = () => {
-      // Location-based exercises
-      const locationExercises = exercises[validatedData.workoutLocation];
-      
-      // Goal-based exercises
-      let primaryFocus = [];
-      let secondaryFocus = [];
-      
-      switch(validatedData.fitnessGoal) {
-        case 'build_muscle':
-          primaryFocus = [...locationExercises.strength];
-          secondaryFocus = [...locationExercises.cardio, ...locationExercises.flexibility];
-          break;
-        case 'lose_fat':
-          primaryFocus = [...locationExercises.cardio];
-          secondaryFocus = [...locationExercises.strength, ...locationExercises.flexibility];
-          break;
-        case 'increase_mobility':
-          primaryFocus = [...locationExercises.flexibility];
-          secondaryFocus = [...locationExercises.strength, ...locationExercises.cardio];
-          break;
-        case 'stay_active':
-          primaryFocus = [...locationExercises.cardio, ...locationExercises.strength];
-          secondaryFocus = [...locationExercises.flexibility];
-          break;
-      }
-      
-      // Age adjustments
-      if (validatedData.age > 50) {
-        // More flexibility and less high-impact for older users
-        primaryFocus = primaryFocus.filter(ex => 
-          !['Burpees', 'Jump Rope', 'High Knees', 'Mountain Climbers'].includes(ex));
-        primaryFocus.push(...locationExercises.flexibility.slice(0, 2));
-      }
-      
-      // Return mixed pool with primary focus first
-      return [...primaryFocus, ...secondaryFocus];
-    };
-    
-    const exercisePool = getExercisePool();
-
-    // Generate workout plan
-    const workouts = [];
-    for (let day = 1; day <= validatedData.numberOfDays; day++) {
-      // Number of exercises based on intensity
-      const exercisesPerDay = {
-        beginner: 4,
-        intermediate: 6,
-        advanced: 8
-      }[validatedData.intensityLevel];
-
-      // Select exercises for the day
-      const dayExercises = [];
-      const shuffled = [...exercisePool].sort(() => 0.5 - Math.random());
-      
-      for (let i = 0; i < exercisesPerDay; i++) {
-        // Scale sets, reps, and rest based on user data
-        const exercise = {
-          name: shuffled[i],
-          sets: validatedData.intensityLevel === 'beginner' ? 3 : 
-                validatedData.intensityLevel === 'intermediate' ? 4 : 5,
-          reps: (() => {
-            // Set reps based on fitness goal
-            if (validatedData.fitnessGoal === 'build_muscle') return 8;
-            if (validatedData.fitnessGoal === 'lose_fat') return 15;
-            if (validatedData.fitnessGoal === 'stay_active') return 12;
-            return 10; // increase_mobility
-          })(),
-          rest: (() => {
-            // Set rest periods based on goal and intensity
-            if (validatedData.fitnessGoal === 'build_muscle') return 90;
-            if (validatedData.fitnessGoal === 'lose_fat') return 30;
-            if (validatedData.intensityLevel === 'beginner') return 60;
-            if (validatedData.intensityLevel === 'advanced') return 45;
-            return 60; // default
-          })()
-        };
-        dayExercises.push(exercise);
-      }
-
-      workouts.push({
-        day,
-        exercises: dayExercises
-      });
+    // Get OpenAI API key from environment variable
+    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openaiApiKey) {
+      throw new Error('OpenAI API key not configured');
     }
 
-    console.log("Generated workouts successfully");
-
-    return new Response(
-      JSON.stringify({ workouts }),
-      { 
-        headers: { 
-          ...corsHeaders,
-          'Content-Type': 'application/json'
+    // Create system prompt based on user profile
+    const systemPrompt = `You are a professional fitness trainer tasked with creating a personalized workout plan. 
+    Design a detailed workout plan with the following specifications:
+    
+    1. The plan is for a person who is ${validatedData.age} years old and weighs ${validatedData.weight} lbs.
+    2. Their primary fitness goal is to ${validatedData.fitnessGoal.replace('_', ' ')}.
+    3. They will workout at ${validatedData.workoutLocation === 'home' ? 'home with limited equipment' : 'a fully equipped gym'}.
+    4. Their fitness level is ${validatedData.intensityLevel}.
+    5. Create workouts for ${validatedData.numberOfDays} days per week.
+    
+    For each day, include the following:
+    - 4-8 exercises (depending on their fitness level)
+    - Number of sets for each exercise
+    - Number of reps for each exercise
+    - Rest time between sets in seconds
+    
+    Format your response as a valid JSON object with this structure:
+    {
+      "workouts": [
+        {
+          "day": 1,
+          "exercises": [
+            {
+              "name": "Exercise Name",
+              "sets": 3,
+              "reps": 10,
+              "rest": 60
+            }
+          ]
         }
+      ]
+    }
+    
+    The response must be valid JSON that matches this exact format. Do not include any explanations or extra text outside the JSON.`;
+
+    console.log("Sending request to OpenAI");
+
+    // Call OpenAI API
+    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${openaiApiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: systemPrompt
+          }
+        ],
+        temperature: 0.7
+      })
+    });
+
+    if (!openaiResponse.ok) {
+      const errorData = await openaiResponse.json();
+      console.error("OpenAI API error:", errorData);
+      throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
+    }
+
+    const openaiData = await openaiResponse.json();
+    console.log("Received response from OpenAI");
+
+    // Parse the response content as JSON
+    try {
+      const workoutData = JSON.parse(openaiData.choices[0].message.content);
+      
+      // Validate the structure
+      if (!workoutData.workouts || !Array.isArray(workoutData.workouts)) {
+        throw new Error('Invalid workout plan structure received from OpenAI');
       }
-    );
+
+      console.log("Generated workouts successfully");
+
+      return new Response(
+        JSON.stringify(workoutData),
+        { 
+          headers: { 
+            ...corsHeaders,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+    } catch (parseError) {
+      console.error("Error parsing OpenAI response:", parseError);
+      console.error("Raw response:", openaiData.choices[0].message.content);
+      throw new Error('Failed to parse workout plan from OpenAI');
+    }
 
   } catch (error) {
     console.error('Error:', error.message);
