@@ -17,16 +17,39 @@ const Onboarding = () => {
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
-    age: "",
-    weight: "",
-    fitness_goal: "build_muscle" as "build_muscle" | "lose_fat" | "increase_mobility",
+    age: "30",
+    weight: "120_160",
+    fitness_goal: "build_muscle" as "build_muscle" | "lose_fat" | "increase_mobility" | "stay_active",
     workout_location: "home" as "home" | "gym",
-    intensity_level: "beginner" as "beginner" | "intermediate" | "advanced",
+    intensity_level: "moderate" as "easy" | "moderate" | "hard" | "intense",
     equipment: [] as string[],
   });
 
   const updateFormData = (field: string, value: string | string[]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Convert weight range to numeric value for API
+  const getWeightValue = (weightRange: string): number => {
+    switch (weightRange) {
+      case "under_120": return 110;
+      case "120_160": return 140;
+      case "160_200": return 180;
+      case "200_240": return 220;
+      case "over_240": return 250;
+      default: return 150;
+    }
+  };
+
+  // Convert intensity level to match API requirements
+  const getIntensityLevel = (intensity: string): "beginner" | "intermediate" | "advanced" => {
+    switch (intensity) {
+      case "easy": return "beginner";
+      case "moderate": return "intermediate";
+      case "hard": return "advanced";
+      case "intense": return "advanced";
+      default: return "intermediate";
+    }
   };
 
   const handleSubmit = async () => {
@@ -46,7 +69,7 @@ const Onboarding = () => {
           first_name: formData.first_name,
           last_name: formData.last_name,
           age: parseInt(formData.age),
-          weight: parseFloat(formData.weight),
+          weight: getWeightValue(formData.weight),
         })
         .eq("id", session.user.id);
 
@@ -69,7 +92,7 @@ const Onboarding = () => {
           user_id: session.user.id,
           fitness_goal: formData.fitness_goal,
           workout_location: formData.workout_location,
-          intensity_level: formData.intensity_level,
+          intensity_level: getIntensityLevel(formData.intensity_level),
           equipment: formData.equipment,
           workout_frequency: 3,
           plan_data: {} as Json,
@@ -135,7 +158,7 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-purple-100">
       <div className="relative overflow-hidden">
         <div 
           className="absolute inset-0 z-0 bg-cover bg-center opacity-10"
@@ -144,20 +167,20 @@ const Onboarding = () => {
           }}
         />
         <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-          <Card className="w-full max-w-lg bg-white/95 backdrop-blur-sm">
+          <Card className="w-full max-w-lg bg-white/95 backdrop-blur-sm shadow-xl">
             <CardHeader>
-              <CardTitle className="text-2xl font-bold text-center">
-                Complete Your Profile ({step}/3)
+              <CardTitle className="text-3xl font-bold text-center text-purple-900">
+                {step === 1 ? "Welcome to PULO" : `Step ${step} of 3`}
               </CardTitle>
-              <div className="w-full bg-gray-200 h-2 rounded-full mt-4">
+              <div className="w-full bg-gray-200 h-3 rounded-full mt-4">
                 <div 
-                  className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+                  className="bg-purple-600 h-3 rounded-full transition-all duration-300"
                   style={{ width: `${(step / 3) * 100}%` }}
                 />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {renderStep()}
                 <StepNavigation
                   currentStep={step}

@@ -1,6 +1,7 @@
 
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 
 interface BodyInfoStepProps {
   age: string;
@@ -9,29 +10,54 @@ interface BodyInfoStepProps {
 }
 
 export const BodyInfoStep = ({ age, weight, onUpdateForm }: BodyInfoStepProps) => {
+  // Convert age string to number for slider
+  const ageValue = age ? parseInt(age) : 30;
+  
+  const handleAgeChange = (value: number[]) => {
+    onUpdateForm("age", value[0].toString());
+  };
+  
   return (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="age">Age</Label>
-        <Input
-          id="age"
-          type="number"
-          value={age}
-          onChange={(e) => onUpdateForm("age", e.target.value)}
-          placeholder="Enter your age"
-          className="bg-white"
-        />
+    <div className="space-y-8">
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <Label htmlFor="age" className="text-lg font-medium">Your Age</Label>
+          <span className="text-xl font-bold text-purple-700">{ageValue}</span>
+        </div>
+        <div className="px-1 py-4">
+          <Slider
+            id="age"
+            defaultValue={[ageValue]}
+            max={70}
+            min={18}
+            step={1}
+            onValueChange={handleAgeChange}
+            className="bg-purple-100"
+          />
+          <div className="flex justify-between mt-2 text-sm text-gray-500">
+            <span>18</span>
+            <span>65+</span>
+          </div>
+        </div>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="weight">Weight (in lbs)</Label>
-        <Input
-          id="weight"
-          type="number"
+
+      <div className="space-y-4">
+        <Label htmlFor="weight" className="text-lg font-medium">Your Weight Range</Label>
+        <Select
           value={weight}
-          onChange={(e) => onUpdateForm("weight", e.target.value)}
-          placeholder="Enter your weight"
-          className="bg-white"
-        />
+          onValueChange={(value) => onUpdateForm("weight", value)}
+        >
+          <SelectTrigger id="weight" className="bg-white text-center h-12 text-lg">
+            <SelectValue placeholder="Select your weight range" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="under_120">Under 120 lbs</SelectItem>
+            <SelectItem value="120_160">120–160 lbs</SelectItem>
+            <SelectItem value="160_200">160–200 lbs</SelectItem>
+            <SelectItem value="200_240">200–240 lbs</SelectItem>
+            <SelectItem value="over_240">240+ lbs</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

@@ -12,9 +12,9 @@ const corsHeaders = {
 
 // Input validation schema
 const WorkoutRequestSchema = z.object({
-  age: z.number().min(13).max(100),
+  age: z.number().min(18).max(80),
   weight: z.number().min(30).max(500),
-  fitnessGoal: z.enum(['build_muscle', 'lose_fat', 'increase_mobility']),
+  fitnessGoal: z.enum(['build_muscle', 'lose_fat', 'increase_mobility', 'stay_active']),
   workoutLocation: z.enum(['home', 'gym']),
   equipment: z.array(z.string()),
   intensityLevel: z.enum(['beginner', 'intermediate', 'advanced']),
@@ -40,21 +40,61 @@ serve(async (req: Request) => {
     console.log("Request body:", body);
     const validatedData = WorkoutRequestSchema.parse(body);
 
-    // Define exercise pools based on location and equipment
-    const homeExercises = [
-      'Push-ups', 'Squats', 'Lunges', 'Plank', 'Mountain Climbers',
-      'Burpees', 'Jump Rope', 'Dumbbell Rows', 'Bicycle Crunches',
-      'Glute Bridges', 'Wall Sits', 'Diamond Push-ups'
-    ];
+    // Define exercise pools based on location, intensity and goal
+    const exercises = {
+      home: {
+        cardio: ['Jump Rope', 'Jumping Jacks', 'High Knees', 'Mountain Climbers', 'Burpees'],
+        strength: ['Push-ups', 'Squats', 'Lunges', 'Plank', 'Glute Bridges', 'Wall Sits'],
+        flexibility: ['Standing Forward Bend', 'Butterfly Stretch', 'Child\'s Pose', 'Cat-Cow Stretch', 'Pigeon Pose']
+      },
+      gym: {
+        cardio: ['Treadmill', 'Elliptical', 'Stair Climber', 'Rowing Machine', 'Exercise Bike'],
+        strength: ['Bench Press', 'Squats', 'Deadlifts', 'Lat Pulldowns', 'Leg Press', 'Shoulder Press'],
+        flexibility: ['Foam Rolling', 'Stretching Machine', 'Yoga Mat Stretches', 'Cable Rotations', 'Dynamic Stretches']
+      }
+    };
 
-    const gymExercises = [
-      'Bench Press', 'Squats', 'Deadlifts', 'Lat Pulldowns', 'Leg Press',
-      'Shoulder Press', 'Cable Rows', 'Leg Extensions', 'Bicep Curls',
-      'Tricep Pushdowns', 'Chest Flyes', 'Romanian Deadlifts'
-    ];
-
-    // Select exercise pool based on location
-    const exercisePool = validatedData.workoutLocation === 'home' ? homeExercises : gymExercises;
+    // Adjust exercise selection based on user characteristics
+    const getExercisePool = () => {
+      // Location-based exercises
+      const locationExercises = exercises[validatedData.workoutLocation];
+      
+      // Goal-based exercises
+      let primaryFocus = [];
+      let secondaryFocus = [];
+      
+      switch(validatedData.fitnessGoal) {
+        case 'build_muscle':
+          primaryFocus = [...locationExercises.strength];
+          secondaryFocus = [...locationExercises.cardio, ...locationExercises.flexibility];
+          break;
+        case 'lose_fat':
+          primaryFocus = [...locationExercises.cardio];
+          secondaryFocus = [...locationExercises.strength, ...locationExercises.flexibility];
+          break;
+        case 'increase_mobility':
+          primaryFocus = [...locationExercises.flexibility];
+          secondaryFocus = [...locationExercises.strength, ...locationExercises.cardio];
+          break;
+        case 'stay_active':
+          primaryFocus = [...locationExercises.cardio, ...locationExercises.strength];
+          secondaryFocus = [...locationExercises.flexibility];
+          break;
+      }
+      
+      // Age adjustments
+      if (validatedData.age > 50) {
+        // More flexibility and less high-impact for older users
+        primaryFocus = primaryFocus.filter(ex => 
+          !['Burpees', 'Jump Rope', 'High Knees', 'Mountain Climbers'].includes(ex));
+        primaryFocus.push(...locationExercises.flexibility.slice(0, 2));
+      }
+      
+      // Return mixed pool with primary focus first
+      return [...primaryFocus, ...secondaryFocus];
+    };
+    
+    const exercisePool = getExercisePool();
 
     // Generate workout plan
     const workouts = [];
@@ -66,15 +106,31 @@ serve(async (req: Request) => {
         advanced: 8
       }[validatedData.intensityLevel];
 
-      // Select random exercises for the day
+      // Select exercises for the day
       const dayExercises = [];
       const shuffled = [...exercisePool].sort(() => 0.5 - Math.random());
+      
       for (let i = 0; i < exercisesPerDay; i++) {
+        // Scale sets, reps, and rest based on user data
         const exercise = {
           name: shuffled[i],
-          sets: validatedData.intensityLevel === 'beginner' ? 3 : validatedData.intensityLevel === 'intermediate' ? 4 : 5,
-          reps: validatedData.fitnessGoal === 'build_muscle' ? 8 : validatedData.fitnessGoal === 'lose_fat' ? 15 : 12,
-          rest: validatedData.fitnessGoal === 'build_muscle' ? 90 : validatedData.fitnessGoal === 'lose_fat' ? 30 : 60
+          sets: validatedData.intensityLevel === 'beginner' ? 3 : 
+                validatedData.intensityLevel === 'intermediate' ? 4 : 5,
+          reps: (() => {
+            // Set reps based on fitness goal
+            if (validatedData.fitnessGoal === 'build_muscle') return 8;
+            if (validatedData.fitnessGoal === 'lose_fat') return 15;
+            if (validatedData.fitnessGoal === 'stay_active') return 12;
+            return 10; // increase_mobility
+          })(),
+          rest: (() => {
+            // Set rest periods based on goal and intensity
+            if (validatedData.fitnessGoal === 'build_muscle') return 90;
+            if (validatedData.fitnessGoal === 'lose_fat') return 30;
+            if (validatedData.intensityLevel === 'beginner') return 60;
+            if (validatedData.intensityLevel === 'advanced') return 45;
+            return 60; // default
+          })()
         };
         dayExercises.push(exercise);
       }
