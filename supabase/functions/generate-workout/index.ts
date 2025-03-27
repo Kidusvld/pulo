@@ -12,7 +12,7 @@ const corsHeaders = {
 
 // Input validation schema
 const WorkoutRequestSchema = z.object({
-  age: z.number().min(18).max(80),
+  age: z.number().min(18).max(100), // Updated from 80 to 100
   weight: z.number().min(30).max(500),
   fitnessGoal: z.enum(['build_muscle', 'lose_fat', 'increase_mobility', 'stay_active']),
   workoutLocation: z.enum(['home', 'gym']),
