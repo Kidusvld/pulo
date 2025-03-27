@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -418,17 +417,17 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 via-white to-purple-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-deep-purple-800 via-deep-purple-900 to-deep-purple-800">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-300"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50">
-      <div className="absolute inset-0 bg-grid-purple-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))] -z-10"></div>
-      <div className="absolute h-64 w-64 rounded-full bg-purple-100/50 blur-3xl top-20 left-20 -z-10"></div>
-      <div className="absolute h-64 w-64 rounded-full bg-purple-100/50 blur-3xl bottom-20 right-20 -z-10"></div>
+    <div className="min-h-screen bg-gradient-to-br from-deep-purple-900 via-deep-purple-800 to-deep-purple-900">
+      <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] -z-10"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-500/10 blur-3xl top-20 left-20 -z-10"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-600/10 blur-3xl bottom-20 right-20 -z-10"></div>
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
         <DashboardHeader 
@@ -437,12 +436,12 @@ const Dashboard = () => {
         />
 
         <Tabs defaultValue="workout" className="space-y-6">
-          <TabsList className="grid grid-cols-2 w-[400px] mb-6 bg-white/80 border border-purple-100">
-            <TabsTrigger value="workout" className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+          <TabsList className="grid grid-cols-2 w-[400px] mb-6 bg-white/10 backdrop-blur-sm border border-purple-500/20">
+            <TabsTrigger value="workout" className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white text-white">
               <DumbbellIcon className="h-4 w-4" />
               Workout Plan
             </TabsTrigger>
-            <TabsTrigger value="progress" className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+            <TabsTrigger value="progress" className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white text-white">
               <BarChart className="h-4 w-4" />
               Progress
             </TabsTrigger>

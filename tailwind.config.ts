@@ -66,6 +66,33 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				purple: {
+					50: '#f5f3ff',
+					100: '#ede9fe',
+					200: '#ddd6fe',
+					300: '#c4b5fd',
+					400: '#a78bfa',
+					500: '#8b5cf6',
+					600: '#7c3aed',
+					700: '#6d28d9',
+					800: '#5b21b6',
+					900: '#4c1d95',
+					950: '#2e1065',
+				},
+				deep: {
+					purple: {
+						50: '#eee6ff',
+						100: '#d9ccff',
+						200: '#b399ff',
+						300: '#8c66ff',
+						400: '#6633ff',
+						500: '#5a2de6',
+						600: '#4f27cc',
+						700: '#3d1f99',
+						800: '#2c1773',
+						900: '#1A1F2C',
+					}
 				}
 			},
 			borderRadius: {
