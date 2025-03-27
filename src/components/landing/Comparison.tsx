@@ -1,4 +1,3 @@
-
 import { Users, Brain, Award, CheckCircle2 } from "lucide-react";
 
 export const Comparison = () => {
@@ -6,8 +5,8 @@ export const Comparison = () => {
     <div className="bg-purple-50 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900">Why Choose PULO?</h2>
-          <p className="mt-4 text-lg text-gray-600">See how PULO compares to traditional fitness solutions</p>
+          <h2 className="text-3xl font-bold text-gray-900">Why Choose <span className="text-purple-600">PULO</span>?</h2>
+          <p className="mt-4 text-lg text-gray-600">See how <span className="text-purple-600">PULO</span> compares to traditional fitness solutions</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -42,7 +41,7 @@ export const Comparison = () => {
             </div>
             <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-white">
               <Brain className="text-white" />
-              PULO AI Training
+              <span className="font-bold">PULO</span> AI Training
             </h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-2">

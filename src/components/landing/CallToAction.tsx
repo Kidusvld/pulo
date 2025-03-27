@@ -15,7 +15,7 @@ export const CallToAction = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 mb-4 font-poppins">Ready to Transform Your Fitness Journey?</h2>
-          <p className="text-xl text-gray-600 mb-8 font-inter">Join PULO today and experience the future of personalized fitness training</p>
+          <p className="text-xl text-gray-600 mb-8 font-inter">Join <span className="text-purple-600">PULO</span> today and experience the future of personalized fitness training</p>
           <Button 
             size="lg" 
             onClick={handleGetStarted}

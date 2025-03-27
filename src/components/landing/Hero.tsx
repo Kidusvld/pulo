@@ -25,7 +25,7 @@ export const Hero = () => {
         </h1>
         
         <p className="text-xl text-gray-600 max-w-lg">
-          Think of PULO as your supportive workout buddy who's always there to guide, motivate, and adapt to your unique fitness journey. No judgment, just personalized support that grows with you.
+          Think of <span className="text-purple-600">PULO</span> as your supportive workout buddy who's always there to guide, motivate, and adapt to your unique fitness journey. No judgment, just personalized support that grows with you.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4">

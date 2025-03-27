@@ -24,7 +24,7 @@ export const Navigation = () => {
               />
               <div className="bg-purple-50 text-purple-600 px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 font-inter">
                 <Smartphone className="w-4 h-4" />
-                <span>PULO is launching soon on the App Store. Be the first to experience the future of fitness!</span>
+                <span><span className="text-purple-600 font-semibold">PULO</span> is launching soon on the App Store. Be the first to experience the future of fitness!</span>
                 <Dumbbell className="w-4 h-4" />
               </div>
             </div>
