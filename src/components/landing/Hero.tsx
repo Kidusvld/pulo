@@ -20,8 +20,8 @@ export const Hero = () => {
         </div>
         
         <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
-          Meet PULO, Your
-          <span className="text-purple-600 block">Fitness Friend</span>
+          Meet <span className="text-purple-600">PULO</span>, Your
+          <span className="text-black block">Fitness Friend</span>
         </h1>
         
         <p className="text-xl text-gray-600 max-w-lg">
