@@ -31,7 +31,7 @@ export const Comparison = () => {
               </li>
               <li className="flex items-start gap-2 opacity-50">
                 <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
-                <span className="text-gray-600">Affordable pricing</span>
+                <span className="text-gray-600">Flexibility</span>
               </li>
             </ul>
           </div>
@@ -59,7 +59,7 @@ export const Comparison = () => {
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-5 h-5 text-white mt-1" />
-                <span className="text-white">Affordable monthly subscription</span>
+                <span className="text-white">Consistent workout quality</span>
               </li>
             </ul>
           </div>

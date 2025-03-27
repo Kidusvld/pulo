@@ -21,7 +21,7 @@ export const CallToAction = () => {
             onClick={handleGetStarted}
             className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg h-auto group transition-all duration-300"
           >
-            Start Your Free Trial
+            Get Started Now
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>
