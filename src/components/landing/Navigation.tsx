@@ -31,7 +31,7 @@ export const Navigation = () => {
               <Button
                 variant="outline"
                 size="sm"
-                className="border-white text-white hover:bg-white/10 font-medium rounded-lg"
+                className="border-white border-2 text-white hover:bg-white/20 font-medium rounded-lg shadow-md"
                 onClick={() => navigate("/auth?mode=signin")}
               >
                 <LogIn className="mr-1 w-4 h-4" />

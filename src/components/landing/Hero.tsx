@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
 
 export const Hero = () => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export const Hero = () => {
           <Button 
             size="lg" 
             onClick={handleGetStarted} 
-            className="bg-[#8E44AD] hover:bg-[#9B59B6] text-white px-8 py-6 text-lg h-auto group transition-all duration-300"
+            className="bg-[#8E44AD] hover:bg-[#9B59B6] text-white px-8 py-6 text-lg h-auto group transition-all duration-300 shadow-lg shadow-purple-900/30"
           >
             Get Started
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -35,8 +35,9 @@ export const Hero = () => {
             variant="outline" 
             size="lg" 
             onClick={() => navigate("/#features")} 
-            className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg h-auto"
+            className="border-white border-2 text-white hover:bg-white/20 px-8 py-6 text-lg h-auto font-medium flex items-center shadow-lg shadow-purple-900/20"
           >
+            <Info className="mr-2 h-5 w-5" />
             Learn More
           </Button>
         </div>
