@@ -1,5 +1,4 @@
-
-import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart, Clock } from "lucide-react";
+import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart, Clock, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -30,9 +29,9 @@ interface WorkoutPlanCardProps {
   onDaysChange: (days: number) => void;
   onGeneratePlan: () => void;
   onSavePlan: () => void;
+  isProUser?: boolean;
 }
 
-// Helper function to determine the appropriate icon for an exercise
 const getExerciseIcon = (exerciseName: string) => {
   const name = exerciseName.toLowerCase();
   
@@ -49,7 +48,6 @@ const getExerciseIcon = (exerciseName: string) => {
   } else if (name.includes("stretch") || name.includes("yoga") || name.includes("mobility")) {
     return <Heart className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
   } else {
-    // Default icon for other exercises
     return <DumbbellIcon className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
   }
 };
@@ -61,6 +59,7 @@ export const WorkoutPlanCard = ({
   onDaysChange,
   onGeneratePlan,
   onSavePlan,
+  isProUser = true,
 }: WorkoutPlanCardProps) => {
   return (
     <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-xl shadow-purple-100/20">
@@ -86,7 +85,7 @@ export const WorkoutPlanCard = ({
             </Select>
           </div>
           <div className="flex gap-2">
-            {workoutPlan && (
+            {workoutPlan && isProUser && (
               <Button 
                 variant="outline" 
                 onClick={onSavePlan} 
@@ -97,17 +96,43 @@ export const WorkoutPlanCard = ({
             )}
             <Button 
               onClick={onGeneratePlan} 
-              disabled={generatingPlan} 
+              disabled={generatingPlan || !isProUser} 
               className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white transition-all duration-200"
             >
-              {generatingPlan ? "Generating..." : "Generate New Plan"}
-              {!generatingPlan && <ArrowRight className="ml-2 h-4 w-4" />}
+              {!isProUser ? (
+                <>
+                  <Crown className="h-4 w-4 mr-2" />
+                  Pro Feature
+                </>
+              ) : generatingPlan ? (
+                "Generating..."
+              ) : (
+                <>
+                  Generate New Plan
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
             </Button>
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        {workoutPlan?.plan_data?.workouts ? (
+        {!isProUser ? (
+          <div className="bg-purple-50/80 rounded-lg p-8 text-center border border-purple-100">
+            <Crown className="h-12 w-12 text-purple-400 mx-auto mb-3" />
+            <h3 className="text-xl font-bold text-purple-800 mb-2">Pro Feature</h3>
+            <p className="text-purple-600 mb-4 max-w-md mx-auto">
+              Upgrade to Pro to generate personalized workout plans tailored to your fitness goals.
+            </p>
+            <Button 
+              className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white"
+              onClick={() => window.location.href = "/subscription"}
+            >
+              <Crown className="h-4 w-4 mr-2" />
+              Upgrade to Pro
+            </Button>
+          </div>
+        ) : workoutPlan?.plan_data?.workouts ? (
           <div className="space-y-6">
             {workoutPlan.plan_data.workouts.map((workout, index) => (
               <div key={index} className="space-y-4">
