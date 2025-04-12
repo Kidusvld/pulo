@@ -43,10 +43,10 @@ export const BodyInfoStep = ({ age, weight, onUpdateForm }: BodyInfoStepProps) =
         custom={0}
       >
         <div className="bg-purple-100 mx-auto rounded-full w-20 h-20 flex items-center justify-center mb-4">
-          <Calendar className="h-12 w-12 text-purple-600" />
+          <Calendar className="h-12 w-12 text-pulo-purple" />
         </div>
-        <h3 className="text-xl font-semibold text-purple-800 font-poppins">Your Body Profile</h3>
-        <p className="text-gray-600 mt-1">Helps us create workouts that match your needs</p>
+        <h3 className="text-xl font-semibold text-purple-800 font-montserrat">Your Body Profile</h3>
+        <p className="text-gray-600 mt-1 font-opensans">Helps us create workouts that match your needs</p>
       </motion.div>
 
       <motion.div 
@@ -56,8 +56,8 @@ export const BodyInfoStep = ({ age, weight, onUpdateForm }: BodyInfoStepProps) =
       >
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <Label htmlFor="age" className="text-lg font-medium font-poppins text-purple-800">Your Age</Label>
-            <span className="text-xl font-bold text-purple-700 font-poppins bg-purple-50 px-3 py-1 rounded-full">{ageValue}</span>
+            <Label htmlFor="age" className="text-lg font-medium font-montserrat text-purple-800">Your Age</Label>
+            <span className="text-xl font-bold text-pulo-purple font-montserrat bg-purple-50 px-3 py-1 rounded-full">{ageValue}</span>
           </div>
           <div className="px-1 py-4">
             <Slider
@@ -69,7 +69,7 @@ export const BodyInfoStep = ({ age, weight, onUpdateForm }: BodyInfoStepProps) =
               onValueChange={handleAgeChange}
               className="bg-purple-100"
             />
-            <div className="flex justify-between mt-2 text-sm text-gray-500 font-inter">
+            <div className="flex justify-between mt-2 text-sm text-gray-500 font-opensans">
               <span>18</span>
               <span>100</span>
             </div>
@@ -82,7 +82,7 @@ export const BodyInfoStep = ({ age, weight, onUpdateForm }: BodyInfoStepProps) =
         variants={itemVariants}
         custom={2}
       >
-        <Label htmlFor="weight-input" className="text-lg font-medium font-poppins text-purple-800">Your Weight (lbs)</Label>
+        <Label htmlFor="weight-input" className="text-lg font-medium font-montserrat text-purple-800">Your Weight (lbs)</Label>
         <div className="relative">
           <Weight className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
           <Input
@@ -91,10 +91,10 @@ export const BodyInfoStep = ({ age, weight, onUpdateForm }: BodyInfoStepProps) =
             value={weight.includes("_") ? "" : weight}
             onChange={(e) => onUpdateForm("weight", e.target.value)}
             placeholder="Enter your weight in lbs"
-            className="pl-10 bg-white text-center h-12 text-lg font-inter border-purple-200 focus:ring-purple-600"
+            className="pl-10 bg-white text-center h-12 text-lg font-opensans border-purple-200 focus:ring-pulo-purple rounded-lg"
           />
         </div>
-        <p className="text-center text-gray-500 text-sm mt-2">
+        <p className="text-center text-gray-500 text-sm mt-2 font-opensans">
           This helps us calculate the right workout intensity for you
         </p>
       </motion.div>

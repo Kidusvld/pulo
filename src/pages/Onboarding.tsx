@@ -161,13 +161,13 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-deep-purple-900 via-deep-purple-800 to-deep-purple-900">
+    <div className="min-h-screen bg-gradient-to-br from-pulo-purple via-[#6D3CAA] to-[#502680] font-opensans">
       <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] -z-10"></div>
       <div className="absolute h-64 w-64 rounded-full bg-purple-600/20 blur-3xl top-20 left-20 -z-10 animate-pulse"></div>
       <div className="absolute h-64 w-64 rounded-full bg-purple-700/20 blur-3xl bottom-20 right-20 -z-10 animate-pulse"></div>
       
       {/* Logo and back button */}
-      <div className="w-full max-w-5xl mx-auto px-4 pt-8 flex items-center justify-between">
+      <div className="w-full max-w-[1440px] mx-auto px-[120px] pt-8 flex items-center justify-between">
         <button 
           onClick={() => navigate("/")}
           className="flex items-center text-white/80 hover:text-white transition-colors"
@@ -181,8 +181,8 @@ const Onboarding = () => {
             alt="PULO"
             className="h-10 w-auto rounded-xl" 
           />
-          <span className="ml-2 text-white/90 font-semibold text-lg font-poppins">
-            <span style={{ color: "#7c3aed" }}>PULO</span> Fitness
+          <span className="ml-2 text-white/90 font-semibold text-lg font-montserrat">
+            <span className="text-pulo-accent">PULO</span> Fitness
           </span>
         </div>
       </div>
@@ -196,19 +196,19 @@ const Onboarding = () => {
         >
           <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-purple-300">
             <CardHeader className="pb-8">
-              <CardTitle className="text-3xl font-bold text-center text-purple-900 font-poppins">
+              <CardTitle className="text-3xl font-bold text-center text-purple-900 font-montserrat">
                 {step === 1 ? "Welcome to PULO" : `Step ${step} of 3`}
               </CardTitle>
               <div className="w-full bg-gray-200 h-3 rounded-full mt-4 overflow-hidden">
                 <motion.div 
-                  className="bg-purple-600 h-3 rounded-full"
+                  className="bg-pulo-accent h-3 rounded-full"
                   initial={{ width: `${((step - 1) / 3) * 100}%` }}
                   animate={{ width: `${(step / 3) * 100}%` }}
                   transition={{ duration: 0.3 }}
                 />
               </div>
             </CardHeader>
-            <CardContent className="font-inter">
+            <CardContent className="font-opensans">
               <motion.div
                 key={step}
                 variants={contentVariants}
@@ -230,6 +230,15 @@ const Onboarding = () => {
             </CardContent>
           </Card>
         </motion.div>
+      </div>
+      
+      {/* Watermark */}
+      <div className="absolute bottom-4 left-8 opacity-10 pointer-events-none">
+        <img
+          src="/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png"
+          alt="PULO Watermark"
+          className="w-32 h-32"
+        />
       </div>
     </div>
   );

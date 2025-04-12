@@ -35,10 +35,10 @@ export const PersonalInfoStep = ({ firstName, lastName, onUpdateForm }: Personal
         custom={0}
       >
         <div className="bg-purple-100 mx-auto rounded-full w-20 h-20 flex items-center justify-center mb-4">
-          <UserCircle2 className="h-12 w-12 text-purple-600" />
+          <UserCircle2 className="h-12 w-12 text-pulo-purple" />
         </div>
-        <h3 className="text-xl font-semibold text-purple-800 font-poppins">Let's get to know you</h3>
-        <p className="text-gray-600 mt-1">We'll use this to personalize your experience</p>
+        <h3 className="text-xl font-semibold text-purple-800 font-montserrat">Let's get to know you</h3>
+        <p className="text-gray-600 mt-1 font-opensans">We'll use this to personalize your experience</p>
       </motion.div>
 
       <motion.div 
@@ -47,7 +47,7 @@ export const PersonalInfoStep = ({ firstName, lastName, onUpdateForm }: Personal
         custom={1}
       >
         <div className="space-y-2">
-          <Label htmlFor="first_name" className="font-inter text-purple-900">First Name</Label>
+          <Label htmlFor="first_name" className="font-montserrat text-purple-900">First Name</Label>
           <div className="relative">
             <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             <Input
@@ -56,7 +56,7 @@ export const PersonalInfoStep = ({ firstName, lastName, onUpdateForm }: Personal
               value={firstName}
               onChange={(e) => onUpdateForm("first_name", e.target.value)}
               placeholder="Enter your first name"
-              className="pl-10 bg-white border-purple-200 focus-visible:ring-purple-500 font-inter"
+              className="pl-10 bg-white border-purple-200 focus-visible:ring-pulo-accent font-opensans rounded-lg"
             />
           </div>
         </div>
@@ -67,7 +67,7 @@ export const PersonalInfoStep = ({ firstName, lastName, onUpdateForm }: Personal
         variants={itemVariants}
         custom={2}
       >
-        <Label htmlFor="last_name" className="font-inter text-purple-900">Last Name</Label>
+        <Label htmlFor="last_name" className="font-montserrat text-purple-900">Last Name</Label>
         <div className="relative">
           <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
           <Input
@@ -76,7 +76,7 @@ export const PersonalInfoStep = ({ firstName, lastName, onUpdateForm }: Personal
             value={lastName}
             onChange={(e) => onUpdateForm("last_name", e.target.value)}
             placeholder="Enter your last name"
-            className="pl-10 bg-white border-purple-200 focus-visible:ring-purple-500 font-inter"
+            className="pl-10 bg-white border-purple-200 focus-visible:ring-pulo-accent font-opensans rounded-lg"
           />
         </div>
       </motion.div>

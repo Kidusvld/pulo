@@ -32,7 +32,7 @@ export const StepNavigation = ({
             variant="outline"
             onClick={onPrevious}
             disabled={loading}
-            className="flex items-center font-inter bg-white border-purple-200 hover:bg-purple-50 hover:text-purple-700 transition-all duration-300"
+            className="flex items-center font-montserrat bg-white border-purple-200 hover:bg-purple-50 hover:text-pulo-accent transition-all duration-300 rounded-lg"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Previous
@@ -48,7 +48,7 @@ export const StepNavigation = ({
           <Button
             onClick={onNext}
             disabled={!canProceed || loading}
-            className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 font-inter shadow-md shadow-purple-200/50"
+            className="bg-gradient-to-r from-pulo-purple to-pulo-accent hover:from-[#5C2D91] hover:to-[#9D55BD] font-montserrat shadow-md shadow-purple-200/50 rounded-lg"
           >
             Next
             <ArrowRight className="ml-2 h-4 w-4" />
@@ -63,7 +63,7 @@ export const StepNavigation = ({
           <Button
             onClick={onComplete}
             disabled={!canProceed || loading}
-            className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 font-poppins shadow-md shadow-purple-200/50 px-6"
+            className="bg-gradient-to-r from-pulo-purple to-pulo-accent hover:from-[#5C2D91] hover:to-[#9D55BD] font-montserrat shadow-md shadow-purple-200/50 px-6 rounded-lg"
           >
             {loading ? (
               <div className="flex items-center">

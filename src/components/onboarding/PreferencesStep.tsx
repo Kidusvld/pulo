@@ -47,10 +47,10 @@ export const PreferencesStep = ({
         custom={0}
       >
         <div className="bg-purple-100 mx-auto rounded-full w-20 h-20 flex items-center justify-center mb-4">
-          <Target className="h-12 w-12 text-purple-600" />
+          <Target className="h-12 w-12 text-pulo-purple" />
         </div>
-        <h3 className="text-xl font-semibold text-purple-800 font-poppins">Your Fitness Goals</h3>
-        <p className="text-gray-600 mt-1">Tell us what you want to achieve</p>
+        <h3 className="text-xl font-semibold text-purple-800 font-montserrat">Your Fitness Goals</h3>
+        <p className="text-gray-600 mt-1 font-opensans">Tell us what you want to achieve</p>
       </motion.div>
 
       <motion.div 
@@ -58,7 +58,7 @@ export const PreferencesStep = ({
         variants={itemVariants} 
         custom={1}
       >
-        <Label className="text-lg font-medium font-poppins text-purple-800">What's your goal today?</Label>
+        <Label className="text-lg font-medium font-montserrat text-purple-800">What's your goal today?</Label>
         <ToggleGroup 
           type="single" 
           className="grid grid-cols-2 gap-4"
@@ -84,10 +84,10 @@ export const PreferencesStep = ({
             >
               <ToggleGroupItem 
                 value={goal.value} 
-                className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-gradient-to-br from-purple-600 to-purple-700 bg-purple-500 text-white rounded-xl transition-all w-full h-full"
+                className="flex flex-col items-center gap-2 py-4 border-2 data-[state=on]:border-white data-[state=on]:bg-gradient-to-br from-pulo-purple to-pulo-accent bg-purple-500 text-white rounded-lg transition-all w-full h-full"
               >
                 <goal.icon className="h-8 w-8 text-white" />
-                <span className="font-poppins font-bold text-white">{goal.label}</span>
+                <span className="font-montserrat font-bold text-white">{goal.label}</span>
               </ToggleGroupItem>
             </motion.div>
           ))}
@@ -99,7 +99,7 @@ export const PreferencesStep = ({
         variants={itemVariants} 
         custom={2}
       >
-        <Label className="text-lg font-medium font-poppins text-purple-800">How hard do you want to push today?</Label>
+        <Label className="text-lg font-medium font-montserrat text-purple-800">How hard do you want to push today?</Label>
         <RadioGroup 
           value={intensityLevel} 
           onValueChange={(value) => onUpdateForm("intensity_level", value)}
@@ -127,7 +127,7 @@ export const PreferencesStep = ({
               />
               <Label
                 htmlFor={intensity.value}
-                className="flex flex-col items-center justify-center h-16 rounded-lg border-2 border-transparent bg-gradient-to-br from-purple-500 to-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-gradient-to-br peer-data-[state=checked]:from-purple-600 peer-data-[state=checked]:to-purple-800 peer-data-[state=checked]:border-white transition-all font-poppins font-bold"
+                className="flex flex-col items-center justify-center h-16 rounded-lg border-2 border-transparent bg-gradient-to-br from-pulo-purple to-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-gradient-to-br peer-data-[state=checked]:from-pulo-purple peer-data-[state=checked]:to-pulo-accent peer-data-[state=checked]:border-white transition-all font-montserrat font-bold"
               >
                 {intensity.icon}
                 {intensity.label}
@@ -142,7 +142,7 @@ export const PreferencesStep = ({
         variants={itemVariants} 
         custom={3}
       >
-        <Label className="text-lg font-medium font-poppins text-purple-800">Workout Location</Label>
+        <Label className="text-lg font-medium font-montserrat text-purple-800">Workout Location</Label>
         <RadioGroup 
           value={workoutLocation}
           onValueChange={(value) => onUpdateForm("workout_location", value)}
@@ -168,7 +168,7 @@ export const PreferencesStep = ({
               />
               <Label
                 htmlFor={`location-${location.value}`}
-                className="flex flex-col items-center justify-center h-16 rounded-lg border-2 border-transparent bg-gradient-to-br from-purple-500 to-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-gradient-to-br peer-data-[state=checked]:from-purple-600 peer-data-[state=checked]:to-purple-800 peer-data-[state=checked]:border-white transition-all font-poppins font-bold"
+                className="flex flex-col items-center justify-center h-16 rounded-lg border-2 border-transparent bg-gradient-to-br from-pulo-purple to-purple-600 text-white cursor-pointer peer-data-[state=checked]:bg-gradient-to-br peer-data-[state=checked]:from-pulo-purple peer-data-[state=checked]:to-pulo-accent peer-data-[state=checked]:border-white transition-all font-montserrat font-bold"
               >
                 {location.icon}
                 {location.label}
