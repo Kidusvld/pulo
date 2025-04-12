@@ -1,23 +1,27 @@
 
-import { DumbbellIcon, LogOut, Crown, Lock } from "lucide-react";
+import { DumbbellIcon, LogOut, Calendar, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
 
 interface DashboardHeaderProps {
   firstName?: string;
   onSignOut: () => void;
-  subscriptionStatus?: "free" | "pro";
+  streak?: number;
+  lastWorkoutDate?: string;
 }
 
 export const DashboardHeader = ({
   firstName,
   onSignOut,
-  subscriptionStatus = "free"
+  streak = 0,
+  lastWorkoutDate
 }: DashboardHeaderProps) => {
   const navigate = useNavigate();
-  const isPro = subscriptionStatus === "pro";
-
+  const today = new Date();
+  const formattedDate = format(today, "EEEE, MMMM d");
+  
   return (
     <div className="flex justify-between items-center mb-8">
       <div>
@@ -28,75 +32,40 @@ export const DashboardHeader = ({
             onClick={() => navigate("/")} 
             src="/lovable-uploads/5b723d5b-3568-487e-bb1a-7bd2c43a1223.png" 
           />
-          {isPro && (
-            <div className="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 font-inter">
-              <Crown className="w-4 h-4" />
-              Pro Plan
-            </div>
+          {streak > 0 && (
+            <Badge variant="purple" className="px-3 py-1 flex items-center gap-1 font-inter">
+              <Target className="w-4 h-4" />
+              {streak} Day Streak
+            </Badge>
           )}
         </div>
         <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-700 to-purple-900 bg-clip-text text-transparent font-poppins">
           Welcome{firstName ? `, ${firstName}` : ""}! 👋
         </h1>
-        <p className="text-gray-600 mt-2 font-inter">Track your fitness journey and achieve your goals</p>
+        <p className="text-gray-600 mt-2 font-inter">
+          {formattedDate} · {lastWorkoutDate ? 
+            `Last workout: ${lastWorkoutDate}` : 
+            "Ready for your first workout?"}
+        </p>
       </div>
       <div className="flex gap-4">
-        {!isPro && (
-          <Button 
-            onClick={() => navigate("/subscription")} 
-            style={{backgroundColor: '#9747FF'}} 
-            className="hover:opacity-90 font-inter"
-          >
-            <Crown className="w-4 h-4 mr-2" />
-            Upgrade to Pro
-          </Button>
-        )}
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <Button 
-                  variant="outline" 
-                  onClick={() => navigate("/log-workout")} 
-                  className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100 transition-all duration-200 text-base font-inter" 
-                  disabled={!isPro}
-                >
-                  {!isPro && <Lock className="w-3 h-3 mr-1" />}
-                  <DumbbellIcon className="w-4 h-4 mr-2" />
-                  Logged Workouts
-                </Button>
-              </div>
-            </TooltipTrigger>
-            {!isPro && (
-              <TooltipContent side="bottom" className="bg-purple-900 text-white border-purple-700">
-                <p className="text-xs">Upgrade to Pro to access workout history</p>
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
+        <Button 
+          variant="outline" 
+          onClick={() => navigate("/log-workout")} 
+          className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100 transition-all duration-200 text-base font-inter"
+        >
+          <DumbbellIcon className="w-4 h-4 mr-2" />
+          Log Workout
+        </Button>
         
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <Button 
-                  variant="outline" 
-                  onClick={() => navigate("/saved-workouts")} 
-                  className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100 transition-all duration-200 font-inter" 
-                  disabled={!isPro}
-                >
-                  {!isPro && <Lock className="w-3 h-3 mr-1" />}
-                  Saved Plans
-                </Button>
-              </div>
-            </TooltipTrigger>
-            {!isPro && (
-              <TooltipContent side="bottom" className="bg-purple-900 text-white border-purple-700">
-                <p className="text-xs">Upgrade to Pro to save workout plans</p>
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
+        <Button 
+          variant="outline" 
+          onClick={() => navigate("/saved-workouts")} 
+          className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100 transition-all duration-200 font-inter"
+        >
+          <Calendar className="w-4 h-4 mr-2" />
+          Saved Workouts
+        </Button>
         
         <Button 
           variant="outline" 

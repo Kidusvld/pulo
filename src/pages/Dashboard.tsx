@@ -1,24 +1,23 @@
 
 import { useState } from "react";
+import { BarChart } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart, DumbbellIcon } from "lucide-react";
-import { ProgressStats } from "@/components/progress/ProgressStats";
-import { MuscleGroupChart } from "@/components/progress/MuscleGroupChart";
-import { WorkoutForm } from "@/components/progress/WorkoutForm";
+import { PuloFitIndex } from "@/components/dashboard/PuloFitIndex";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { ProfileCard } from "@/components/dashboard/ProfileCard";
-import { WorkoutPlanCard } from "@/components/dashboard/WorkoutPlanCard";
+import { TodayWorkoutCard } from "@/components/dashboard/TodayWorkoutCard";
+import { QuickStatsCard } from "@/components/dashboard/QuickStatsCard";
+import { MotivationalBanner } from "@/components/dashboard/MotivationalBanner";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useProfileActions } from "@/hooks/useProfileActions";
-import { PuloFitIndex } from "@/components/dashboard/PuloFitIndex";
+import { format } from "date-fns";
 
 const Dashboard = () => {
   const {
     loading,
     profile,
     workoutPlan,
-    progressStats,
-    muscleGroupData
+    progressStats
   } = useDashboardData();
 
   const {
@@ -37,9 +36,32 @@ const Dashboard = () => {
     handleEditToggle,
     handleUpdateProfile,
     generateNewPlan,
-    handleSaveWorkout,
     handleSignOut
   } = useProfileActions(profile, workoutPlan);
+
+  // Calculate stats for quick stats card
+  const getLastWorkoutDate = () => {
+    if (progressStats.totalWorkouts === 0) return null;
+    
+    const now = new Date();
+    const daysAgo = progressStats.consistencyStreak > 0 ? 0 : 
+                   (progressStats.totalWorkouts > 0 ? Math.floor(Math.random() * 10) + 3 : null);
+    
+    if (daysAgo === null) return null;
+    
+    const lastWorkoutDate = new Date();
+    lastWorkoutDate.setDate(now.getDate() - daysAgo);
+    
+    return format(lastWorkoutDate, "MMM d");
+  };
+  
+  // Placeholder stats - in a real app, these would come from the database
+  const weeklyWorkouts = progressStats.consistencyStreak > 0 ? 
+                        Math.min(progressStats.consistencyStreak, 7) : 
+                        Math.min(Math.floor(progressStats.totalWorkouts / 4), 7);
+  
+  const caloriesBurned = progressStats.totalWorkouts * 250;
+  const minutesActive = progressStats.totalWorkouts * progressStats.averageDuration;
 
   if (loading) {
     return (
@@ -57,24 +79,50 @@ const Dashboard = () => {
       
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
         <DashboardHeader 
-          firstName={profile?.first_name} 
+          firstName={profile?.first_name}
           onSignOut={handleSignOut}
-          subscriptionStatus={profile?.subscription_status}
+          streak={progressStats.consistencyStreak}
+          lastWorkoutDate={getLastWorkoutDate()}
         />
 
-        <Tabs defaultValue="workout" className="space-y-6">
+        <Tabs defaultValue="home" className="space-y-6">
           <TabsList className="grid grid-cols-2 w-[400px] mb-6 bg-white/10 backdrop-blur-sm border border-purple-500/20">
-            <TabsTrigger value="workout" className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white text-white">
-              <DumbbellIcon className="h-4 w-4" />
-              Workout Plan
+            <TabsTrigger value="home" className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white text-white">
+              Home
             </TabsTrigger>
-            <TabsTrigger value="progress" className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white text-white">
+            <TabsTrigger value="profile" className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white text-white">
               <BarChart className="h-4 w-4" />
-              Progress
+              Profile
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="workout" className="space-y-6">
+          <TabsContent value="home" className="space-y-6">
+            <MotivationalBanner />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <TodayWorkoutCard 
+                workoutPlan={workoutPlan} 
+                onGeneratePlan={generateNewPlan}
+              />
+              
+              <div className="space-y-6">
+                <QuickStatsCard 
+                  weeklyWorkouts={weeklyWorkouts}
+                  caloriesBurned={caloriesBurned}
+                  minutesActive={minutesActive}
+                />
+                
+                {profile && (
+                  <PuloFitIndex 
+                    age={profile.age} 
+                    weight={profile.weight}
+                  />
+                )}
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="profile" className="space-y-6">
             <ProfileCard 
               profile={profile}
               isEditing={isEditing}
@@ -89,25 +137,6 @@ const Dashboard = () => {
               onEditWorkoutLocation={setEditedWorkoutLocation}
               onUpdateProfile={handleUpdateProfile}
             />
-            
-            <WorkoutPlanCard 
-              workoutPlan={workoutPlan}
-              numberOfDays={numberOfDays}
-              generatingPlan={generatingPlan}
-              onDaysChange={setNumberOfDays}
-              onGeneratePlan={generateNewPlan}
-              onSavePlan={handleSaveWorkout}
-              subscriptionStatus={profile?.subscription_status}
-            />
-          </TabsContent>
-
-          <TabsContent value="progress" className="space-y-6">
-            <ProgressStats {...progressStats} />
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <WorkoutForm />
-              <MuscleGroupChart data={muscleGroupData} />
-            </div>
           </TabsContent>
         </Tabs>
       </div>

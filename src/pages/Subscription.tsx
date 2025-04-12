@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -60,7 +61,7 @@ const PricingTier = ({
 const SubscriptionPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [currentPlan, setCurrentPlan] = useState<"free" | "premium">("free");
+  const [currentPlan, setCurrentPlan] = useState<"free" | "pro">("free");
 
   useEffect(() => {
     checkSubscription();
@@ -91,7 +92,7 @@ const SubscriptionPage = () => {
     }
   };
 
-  const handleSubscribe = async (plan: "free" | "premium") => {
+  const handleSubscribe = async (plan: "free" | "pro") => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -182,7 +183,7 @@ const SubscriptionPage = () => {
             current={currentPlan === "free"}
           />
           <PricingTier
-            title="Premium"
+            title="Pro"
             price="$9.99"
             features={[
               "Everything in Free",
@@ -194,8 +195,8 @@ const SubscriptionPage = () => {
               "Priority support"
             ]}
             isPopular
-            onSubscribe={() => handleSubscribe("premium")}
-            current={currentPlan === "premium"}
+            onSubscribe={() => handleSubscribe("pro")}
+            current={currentPlan === "pro"}
           />
         </div>
       </div>
