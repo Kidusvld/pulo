@@ -49,7 +49,7 @@ export const FeedbackButton = () => {
               }}
             >
               <div className="absolute bottom-[-6px] right-4 w-3 h-3 bg-white/90 rotate-45"></div>
-              Share your thoughts!
+              Share your thoughts with PULO!
             </motion.div>
           </motion.div>
         </DrawerTrigger>
