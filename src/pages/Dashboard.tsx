@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart, DumbbellIcon } from "lucide-react";
-import { ProgressStats } from "@/components/progress/ProgressStats";
-import { MuscleGroupChart } from "@/components/progress/MuscleGroupChart";
-import { WorkoutForm } from "@/components/progress/WorkoutForm";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { ProfileCard } from "@/components/dashboard/ProfileCard";
 import { WorkoutPlanCard } from "@/components/dashboard/WorkoutPlanCard";
+import { ProgressStats } from "@/components/progress/ProgressStats";
+import { MuscleGroupChart } from "@/components/progress/MuscleGroupChart";
+import { WorkoutForm } from "@/components/progress/WorkoutForm";
+import { HomeView } from "@/components/dashboard/HomeView";
+import { ProfileView } from "@/components/dashboard/ProfileView";
+import { Button } from "@/components/ui/button";
+import { Home, User } from "lucide-react";
 
 interface Profile {
   first_name: string;
@@ -53,6 +55,7 @@ const Dashboard = () => {
   const [editedFitnessGoal, setEditedFitnessGoal] = useState<string>("build_muscle");
   const [editedWorkoutLocation, setEditedWorkoutLocation] = useState<string>("home");
   const [numberOfDays, setNumberOfDays] = useState<number>(3);
+  const [activeSection, setActiveSection] = useState<"home" | "profile">("home");
   const [progressStats, setProgressStats] = useState({
     totalWorkouts: 0,
     totalVolume: 0,
@@ -131,6 +134,9 @@ const Dashboard = () => {
       if (planData) {
         setWorkoutPlan(planData as WorkoutPlan);
       }
+      
+      await fetchProgressStats();
+      
       setLoading(false);
     } catch (error) {
       console.error('Error loading profile:', error);
@@ -151,7 +157,7 @@ const Dashboard = () => {
       const {
         data: muscleData,
         error: muscleError
-      } = await supabase.from("muscle_group_tracking").select("muscle_group, total_weight");
+      } = await supabase.from("muscle_group_tracking").select("muscle_group, total_volume");
       if (muscleError) throw muscleError;
       const totalWorkouts = progressData?.length || 0;
       const totalVolume = progressData?.reduce((sum, record) => sum + (record.total_volume || 0), 0) || 0;
@@ -164,7 +170,7 @@ const Dashboard = () => {
             total_volume: 0
           };
         }
-        acc[group].total_volume += curr.total_weight || 0;
+        acc[group].total_volume += curr.total_volume || 0;
         return acc;
       }, {});
       setProgressStats({
@@ -442,76 +448,84 @@ const Dashboard = () => {
         />
       </div>
       
-      <div className="relative z-10 max-w-7xl mx-auto px-[120px] py-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 lg:px-[120px] py-8">
         <DashboardHeader 
           firstName={profile?.first_name} 
           onSignOut={handleSignOut}
           subscriptionStatus="free"
         />
 
-        <Tabs defaultValue="workout" className="space-y-6">
-          <TabsList className="grid grid-cols-2 w-[400px] mb-6 bg-white/10 backdrop-blur-sm border border-purple-500/20">
-            <TabsTrigger value="workout" className="flex items-center gap-2 data-[state=active]:bg-[#8E44AD] data-[state=active]:text-white text-white">
-              <DumbbellIcon className="h-4 w-4" />
-              Workout Plan
-            </TabsTrigger>
-            <TabsTrigger value="progress" className="flex items-center gap-2 data-[state=active]:bg-[#8E44AD] data-[state=active]:text-white text-white">
-              <BarChart className="h-4 w-4" />
-              Progress
-            </TabsTrigger>
-          </TabsList>
+        <div className="flex flex-col space-y-6">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/10 p-2 rounded-lg flex w-[280px] mx-auto">
+            <Button
+              variant={activeSection === "home" ? "default" : "ghost"}
+              className={`flex-1 ${activeSection === "home" 
+                ? "bg-[#8E44AD] hover:bg-[#7D3C98]" 
+                : "text-white hover:bg-white/10"}`}
+              onClick={() => setActiveSection("home")}
+            >
+              <Home className="h-4 w-4 mr-2" />
+              Home
+            </Button>
+            <Button
+              variant={activeSection === "profile" ? "default" : "ghost"}
+              className={`flex-1 ${activeSection === "profile" 
+                ? "bg-[#8E44AD] hover:bg-[#7D3C98]" 
+                : "text-white hover:bg-white/10"}`}
+              onClick={() => setActiveSection("profile")}
+            >
+              <User className="h-4 w-4 mr-2" />
+              Profile
+            </Button>
+          </div>
 
-          <TabsContent value="workout" className="space-y-6">
-            <ProfileCard 
-              profile={profile}
-              isEditing={isEditing}
-              editedWeight={editedWeight}
-              editedIntensity={editedIntensity}
-              editedFitnessGoal={editedFitnessGoal}
-              editedWorkoutLocation={editedWorkoutLocation}
-              onEditToggle={() => {
-                // Map legacy intensity values to new format for editing
-                let initialIntensity = profile?.intensity_level || "moderate";
-                if (["beginner", "intermediate", "advanced"].includes(initialIntensity)) {
-                  switch(initialIntensity) {
-                    case "beginner": initialIntensity = "easy"; break;
-                    case "intermediate": initialIntensity = "moderate"; break;
-                    case "advanced": initialIntensity = "hard"; break;
+          <div className="mt-2">
+            {activeSection === "home" ? (
+              <HomeView 
+                profile={profile}
+                workoutPlan={workoutPlan}
+                numberOfDays={numberOfDays}
+                generatingPlan={generatingPlan}
+                progressStats={progressStats}
+                onDaysChange={setNumberOfDays}
+                onGeneratePlan={generateNewPlan}
+                onSavePlan={handleSaveWorkout}
+              />
+            ) : (
+              <ProfileView
+                profile={profile}
+                isEditing={isEditing}
+                editedWeight={editedWeight}
+                editedIntensity={editedIntensity}
+                editedFitnessGoal={editedFitnessGoal}
+                editedWorkoutLocation={editedWorkoutLocation}
+                muscleGroupData={muscleGroupData}
+                progressStats={progressStats}
+                onEditToggle={() => {
+                  let initialIntensity = profile?.intensity_level || "moderate";
+                  if (["beginner", "intermediate", "advanced"].includes(initialIntensity)) {
+                    switch(initialIntensity) {
+                      case "beginner": initialIntensity = "easy"; break;
+                      case "intermediate": initialIntensity = "moderate"; break;
+                      case "advanced": initialIntensity = "hard"; break;
+                    }
                   }
-                }
-                
-                setEditedWeight(profile?.weight?.toString() || "");
-                setEditedIntensity(initialIntensity);
-                setEditedFitnessGoal(profile?.fitness_goal || "build_muscle");
-                setEditedWorkoutLocation(profile?.workout_location || "home");
-                setIsEditing(true);
-              }}
-              onEditWeight={setEditedWeight}
-              onEditIntensity={setEditedIntensity}
-              onEditFitnessGoal={setEditedFitnessGoal}
-              onEditWorkoutLocation={setEditedWorkoutLocation}
-              onUpdateProfile={handleUpdateProfile}
-            />
-            
-            <WorkoutPlanCard 
-              workoutPlan={workoutPlan}
-              numberOfDays={numberOfDays}
-              generatingPlan={generatingPlan}
-              onDaysChange={setNumberOfDays}
-              onGeneratePlan={generateNewPlan}
-              onSavePlan={handleSaveWorkout}
-            />
-          </TabsContent>
-
-          <TabsContent value="progress" className="space-y-6">
-            <ProgressStats {...progressStats} />
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <WorkoutForm />
-              <MuscleGroupChart data={muscleGroupData} />
-            </div>
-          </TabsContent>
-        </Tabs>
+                  
+                  setEditedWeight(profile?.weight?.toString() || "");
+                  setEditedIntensity(initialIntensity);
+                  setEditedFitnessGoal(profile?.fitness_goal || "build_muscle");
+                  setEditedWorkoutLocation(profile?.workout_location || "home");
+                  setIsEditing(true);
+                }}
+                onEditWeight={setEditedWeight}
+                onEditIntensity={setEditedIntensity}
+                onEditFitnessGoal={setEditedFitnessGoal}
+                onEditWorkoutLocation={setEditedWorkoutLocation}
+                onUpdateProfile={handleUpdateProfile}
+              />
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
