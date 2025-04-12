@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -187,6 +188,11 @@ export function useDashboardData() {
     return streak;
   };
 
+  const refreshData = async () => {
+    setLoading(true);
+    await checkAuth();
+  };
+
   useEffect(() => {
     checkAuth();
     
@@ -206,7 +212,8 @@ export function useDashboardData() {
     profile,
     workoutPlan,
     progressStats,
-    muscleGroupData
+    muscleGroupData,
+    refreshData
   };
 }
 

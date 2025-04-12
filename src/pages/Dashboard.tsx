@@ -17,8 +17,11 @@ const Dashboard = () => {
     loading,
     profile,
     workoutPlan,
-    progressStats
+    progressStats,
+    refreshData
   } = useDashboardData();
+
+  const [activeTab, setActiveTab] = useState("home");
 
   const {
     isEditing,
@@ -37,7 +40,7 @@ const Dashboard = () => {
     handleUpdateProfile,
     generateNewPlan,
     handleSignOut
-  } = useProfileActions(profile, workoutPlan);
+  } = useProfileActions(profile, workoutPlan, refreshData);
 
   // Calculate stats for quick stats card
   const getLastWorkoutDate = () => {
@@ -63,6 +66,11 @@ const Dashboard = () => {
   const caloriesBurned = progressStats.totalWorkouts * 250;
   const minutesActive = progressStats.totalWorkouts * progressStats.averageDuration;
 
+  const handleGenerateWorkout = async () => {
+    await generateNewPlan();
+    setActiveTab("home");
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-deep-purple-800 via-deep-purple-900 to-deep-purple-800">
@@ -85,7 +93,11 @@ const Dashboard = () => {
           lastWorkoutDate={getLastWorkoutDate()}
         />
 
-        <Tabs defaultValue="home" className="space-y-6">
+        <Tabs 
+          value={activeTab} 
+          onValueChange={setActiveTab} 
+          className="space-y-6"
+        >
           <TabsList className="grid grid-cols-2 w-[400px] mb-6 bg-white/10 backdrop-blur-sm border border-purple-500/20">
             <TabsTrigger value="home" className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white text-white">
               Home
@@ -102,7 +114,7 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <TodayWorkoutCard 
                 workoutPlan={workoutPlan} 
-                onGeneratePlan={generateNewPlan}
+                onGeneratePlan={handleGenerateWorkout}
               />
               
               <div className="space-y-6">

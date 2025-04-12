@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Brain, Check, Crown, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { ArrowLeft, Check, ExternalLink, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
+
+type SubscriptionStatus = "free" | "pro";
 
 const PricingTier = ({ 
   title, 
@@ -61,6 +66,7 @@ const SubscriptionPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [currentPlan, setCurrentPlan] = useState<"free" | "pro">("free");
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionStatus>("free");
 
   useEffect(() => {
     checkSubscription();
@@ -110,7 +116,6 @@ const SubscriptionPage = () => {
         toast.success("Free plan activated!");
         navigate("/onboarding");
       } else {
-        // For premium plan, create Stripe checkout session
         const { data: { url }, error } = await supabase.functions.invoke("create-checkout-session", {
           body: { 
             priceId: "your_stripe_price_id", // Replace with your actual Stripe price ID
