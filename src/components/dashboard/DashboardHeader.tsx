@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { getVersionDisplay } from "@/utils/version";
+
 interface DashboardHeaderProps {
   firstName?: string;
   onSignOut: () => void;
@@ -23,6 +25,7 @@ export const DashboardHeader = ({
           <Badge variant="purple" className="py-1 flex items-center gap-1 font-inter">
             All Features Unlocked
           </Badge>
+          <span className="text-xs text-white/60 font-mono">{getVersionDisplay()}</span>
         </div>
 
         <div className="flex items-center gap-3">
