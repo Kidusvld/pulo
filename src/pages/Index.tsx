@@ -13,7 +13,7 @@ const Index = () => {
   useEffect(() => {
     // Preload critical background image
     const bgImage = new Image();
-    bgImage.src = "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80";
+    bgImage.src = "/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png";
     bgImage.onload = () => setIsLoaded(true);
 
     // Add cache control headers for static assets
@@ -40,7 +40,7 @@ const Index = () => {
         <div 
           className="absolute inset-0 z-0 bg-cover bg-center opacity-10"
           style={{ 
-            backgroundImage: 'url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80")',
+            backgroundImage: 'url("/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png")',
           }}
         />
         
