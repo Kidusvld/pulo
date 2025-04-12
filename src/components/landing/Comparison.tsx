@@ -1,4 +1,3 @@
-
 import { Users, Brain, Award, CheckCircle2 } from "lucide-react";
 
 export const Comparison = () => {
@@ -6,14 +5,14 @@ export const Comparison = () => {
     <div className="bg-purple-50 py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-pulo-gradient mb-3">Why Choose <span style={{ color: "#7c3aed" }}>PULO</span>?</h2>
+          <h2 className="text-3xl font-bold text-gray-900">Why Choose <span style={{ color: "#7c3aed" }}>PULO</span>?</h2>
           <p className="mt-4 text-lg text-gray-600">See how <span style={{ color: "#7c3aed" }}>PULO</span> compares to traditional fitness solutions</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="bg-white p-8 rounded-xl shadow-lg">
             <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Users className="text-pulo" />
+              <Users className="text-purple-600" />
               Traditional Personal Training
             </h3>
             <ul className="space-y-4">
@@ -36,16 +35,9 @@ export const Comparison = () => {
             </ul>
           </div>
 
-          <div className="bg-pulo p-8 rounded-xl shadow-lg transform lg:scale-105 relative">
+          <div className="bg-purple-600 p-8 rounded-xl shadow-lg transform lg:scale-105 relative">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 px-4 py-1 rounded-full text-sm font-semibold">
               Recommended
-            </div>
-            <div className="absolute -bottom-6 -right-6 w-20 h-20">
-              <img 
-                src="/lovable-uploads/bc47a5b1-0da4-4e4e-8ca1-17980443a5b2.png" 
-                alt="PULO Mascot" 
-                className="w-full h-full object-contain"
-              />
             </div>
             <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-white">
               <Brain className="text-white" />
@@ -75,7 +67,7 @@ export const Comparison = () => {
 
           <div className="bg-white p-8 rounded-xl shadow-lg">
             <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Award className="text-pulo" />
+              <Award className="text-purple-600" />
               Generic Fitness Apps
             </h3>
             <ul className="space-y-4">

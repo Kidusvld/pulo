@@ -16,14 +16,12 @@ export const Navigation = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-                <img 
-                  src="/lovable-uploads/bc47a5b1-0da4-4e4e-8ca1-17980443a5b2.png"
-                  alt="PULO"
-                  className="h-12 w-auto rounded-xl hover:opacity-90 transition-all duration-200" 
-                />
-                <span className="text-2xl font-bold text-pulo-gradient">PULO</span>
-              </div>
+              <img 
+                src="/lovable-uploads/21b3ca3c-11f1-4d5e-81e3-9b2dddbec6f7.png"
+                alt="PULO"
+                className="h-12 w-auto rounded-xl cursor-pointer hover:opacity-90 transition-all duration-200" 
+                onClick={() => navigate("/")}
+              />
               <div className="bg-purple-50 text-purple-600 px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 font-inter">
                 <Smartphone className="w-4 h-4" />
                 <span><span style={{ color: "#7c3aed" }} className="font-semibold">PULO</span> is launching soon on the App Store. Be the first to experience the future of fitness!</span>
@@ -40,7 +38,8 @@ export const Navigation = () => {
               </Button>
               <Button 
                 onClick={handleGetStarted}
-                className="bg-pulo hover:bg-purple-700 font-poppins"
+                style={{ backgroundColor: '#9747FF' }}
+                className="hover:opacity-90 font-poppins"
               >
                 Get Started
               </Button>

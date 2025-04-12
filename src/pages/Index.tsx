@@ -22,8 +22,7 @@ const Index = () => {
         cache.addAll([
           '/favicon.ico',
           '/og-image.png',
-          bgImage.src,
-          '/lovable-uploads/bc47a5b1-0da4-4e4e-8ca1-17980443a5b2.png'
+          bgImage.src
         ]);
       });
     }
@@ -56,16 +55,6 @@ const Index = () => {
       <Testimonials />
       <Comparison />
       <CallToAction />
-
-      {/* PULO Character Fixed at the bottom right corner */}
-      <div className="fixed bottom-6 right-6 w-20 h-20 z-50 cursor-pointer hover:scale-110 transition-transform duration-300 hidden md:block">
-        <img 
-          src="/lovable-uploads/bc47a5b1-0da4-4e4e-8ca1-17980443a5b2.png" 
-          alt="PULO Assistant" 
-          className="w-full h-full object-contain drop-shadow-lg animate-bounce-subtle"
-          title="Need help with your fitness journey? I'm PULO, your AI Fitness Companion!"
-        />
-      </div>
     </div>
   );
 };
