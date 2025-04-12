@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +9,8 @@ import { PersonalInfoStep } from "@/components/onboarding/PersonalInfoStep";
 import { BodyInfoStep } from "@/components/onboarding/BodyInfoStep";
 import { PreferencesStep } from "@/components/onboarding/PreferencesStep";
 import { StepNavigation } from "@/components/onboarding/StepNavigation";
+import { motion } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -149,40 +152,84 @@ const Onboarding = () => {
         return null;
     }
   };
+  
+  // Animation variants for the step content
+  const contentVariants = {
+    hidden: { opacity: 0, x: 20 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.4 } },
+    exit: { opacity: 0, x: -20, transition: { duration: 0.2 } }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-deep-purple-900 via-deep-purple-800 to-deep-purple-900">
       <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] -z-10"></div>
-      <div className="absolute h-64 w-64 rounded-full bg-purple-500/10 blur-3xl top-20 left-20 -z-10"></div>
-      <div className="absolute h-64 w-64 rounded-full bg-purple-600/10 blur-3xl bottom-20 right-20 -z-10"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-600/20 blur-3xl top-20 left-20 -z-10 animate-pulse"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-700/20 blur-3xl bottom-20 right-20 -z-10 animate-pulse"></div>
       
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <Card className="w-full max-w-lg bg-white/95 backdrop-blur-sm shadow-xl border-purple-300">
-          <CardHeader className="pb-8">
-            <CardTitle className="text-3xl font-bold text-center text-purple-900 font-poppins">
-              {step === 1 ? "Welcome to PULO" : `Step ${step} of 3`}
-            </CardTitle>
-            <div className="w-full bg-gray-200 h-3 rounded-full mt-4 overflow-hidden">
-              <div 
-                className="bg-purple-700 h-3 rounded-full transition-all duration-300"
-                style={{ width: `${(step / 3) * 100}%` }}
-              />
-            </div>
-          </CardHeader>
-          <CardContent className="font-inter">
-            <div className="space-y-8">
-              {renderStep()}
-              <StepNavigation
-                currentStep={step}
-                loading={loading}
-                canProceed={canProceed()}
-                onPrevious={() => setStep((s) => s - 1)}
-                onNext={() => setStep((s) => s + 1)}
-                onComplete={handleSubmit}
-              />
-            </div>
-          </CardContent>
-        </Card>
+      {/* Logo and back button */}
+      <div className="w-full max-w-5xl mx-auto px-4 pt-8 flex items-center justify-between">
+        <button 
+          onClick={() => navigate("/")}
+          className="flex items-center text-white/80 hover:text-white transition-colors"
+        >
+          <ArrowLeft className="h-5 w-5 mr-2" />
+          <span>Back to Home</span>
+        </button>
+        <div className="flex items-center">
+          <img 
+            src="/lovable-uploads/21b3ca3c-11f1-4d5e-81e3-9b2dddbec6f7.png"
+            alt="PULO"
+            className="h-10 w-auto rounded-xl" 
+          />
+          <span className="ml-2 text-white/90 font-semibold text-lg font-poppins">
+            <span style={{ color: "#7c3aed" }}>PULO</span> Fitness
+          </span>
+        </div>
+      </div>
+      
+      <div className="relative z-10 min-h-[calc(100vh-120px)] flex items-center justify-center p-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-lg"
+        >
+          <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-purple-300">
+            <CardHeader className="pb-8">
+              <CardTitle className="text-3xl font-bold text-center text-purple-900 font-poppins">
+                {step === 1 ? "Welcome to PULO" : `Step ${step} of 3`}
+              </CardTitle>
+              <div className="w-full bg-gray-200 h-3 rounded-full mt-4 overflow-hidden">
+                <motion.div 
+                  className="bg-purple-600 h-3 rounded-full"
+                  initial={{ width: `${((step - 1) / 3) * 100}%` }}
+                  animate={{ width: `${(step / 3) * 100}%` }}
+                  transition={{ duration: 0.3 }}
+                />
+              </div>
+            </CardHeader>
+            <CardContent className="font-inter">
+              <motion.div
+                key={step}
+                variants={contentVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="space-y-8"
+              >
+                {renderStep()}
+                <StepNavigation
+                  currentStep={step}
+                  loading={loading}
+                  canProceed={canProceed()}
+                  onPrevious={() => setStep((s) => s - 1)}
+                  onNext={() => setStep((s) => s + 1)}
+                  onComplete={handleSubmit}
+                />
+              </motion.div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </div>
   );
