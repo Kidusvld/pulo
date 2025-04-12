@@ -1,9 +1,10 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Dumbbell, Calendar, Sparkles, LightbulbIcon } from "lucide-react";
 import { WorkoutPlanCard } from "@/components/dashboard/WorkoutPlanCard";
 import { PuloFitIndex } from "@/components/dashboard/PuloFitIndex";
 import { WeeklySummaryStats } from "@/components/dashboard/WeeklySummaryStats";
+import { useState, useEffect } from "react";
+import { getRandomQuote } from "@/utils/motivationalQuotes";
 
 interface Profile {
   first_name?: string;
@@ -58,6 +59,20 @@ export const HomeView = ({
   onGeneratePlan,
   onSavePlan
 }: HomeViewProps) => {
+  // Add state for the motivational quote
+  const [motivationalQuote, setMotivationalQuote] = useState(() => getRandomQuote());
+  
+  // Use effect to set a new quote when the workout plan changes
+  useEffect(() => {
+    setMotivationalQuote(getRandomQuote());
+  }, [workoutPlan]);
+  
+  // Function to handle generating a plan with quote refresh
+  const handleGeneratePlan = () => {
+    onGeneratePlan();
+    // Note: We don't need to set a new quote here since the useEffect will handle it when workoutPlan changes
+  };
+  
   // Calculate this week's workouts
   const calculateWeeklyStats = () => {
     const today = new Date();
@@ -110,8 +125,8 @@ export const HomeView = ({
           <div className="flex items-center">
             <LightbulbIcon className="h-6 w-6 mr-3 text-yellow-200" />
             <div>
-              <h3 className="font-semibold text-lg">Don't wish for it, work for it.</h3>
-              <p className="text-sm text-white/80">Daily Motivation</p>
+              <h3 className="font-semibold text-lg">{motivationalQuote.quote}</h3>
+              <p className="text-sm text-white/80">{motivationalQuote.source}</p>
             </div>
           </div>
         </CardContent>
@@ -126,7 +141,7 @@ export const HomeView = ({
             numberOfDays={numberOfDays}
             generatingPlan={generatingPlan}
             onDaysChange={onDaysChange}
-            onGeneratePlan={onGeneratePlan}
+            onGeneratePlan={handleGeneratePlan}
             onSavePlan={onSavePlan}
           />
         </div>

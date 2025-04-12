@@ -310,6 +310,7 @@ const Dashboard = () => {
       navigate("/auth");
       return;
     }
+    
     try {
       const intensityToUse = mapToLegacyIntensity(profile.intensity_level || "intermediate");
       const fitnessGoalToUse = mapToLegacyFitnessGoal(profile.fitness_goal || "build_muscle");
