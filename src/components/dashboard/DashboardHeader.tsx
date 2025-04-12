@@ -1,3 +1,4 @@
+
 import { Brain, DumbbellIcon, LogOut, User, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -54,8 +55,13 @@ export const DashboardHeader = ({
       
       {/* User greeting section - simplified styling */}
       <div className="mt-4">
-        <h1 className="text-3xl font-semibold text-white font-montserrat">
-          Welcome{firstName ? `, ${firstName}` : ""}! 👋
+        <h1 className="text-3xl font-semibold text-white font-montserrat flex items-center">
+          Welcome{firstName ? `, ${firstName}` : ""}! 
+          <img 
+            src="/lovable-uploads/3a2a6fa3-6ff0-483b-91a8-19b4d0470513.png" 
+            alt="Waving Hand" 
+            className="ml-2 h-8 w-auto"
+          />
         </h1>
         <p className="text-gray-100/80 mt-1 font-opensans">Track your fitness journey and achieve your goals</p>
       </div>
