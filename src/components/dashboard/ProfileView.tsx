@@ -25,6 +25,7 @@ interface ProfileViewProps {
   profile: Profile | null;
   isEditing: boolean;
   editedWeight: string;
+  editedAge: string;
   editedIntensity: string;
   editedFitnessGoal: string;
   editedWorkoutLocation: string;
@@ -35,6 +36,7 @@ interface ProfileViewProps {
   progressStats: ProgressStats;
   onEditToggle: () => void;
   onEditWeight: (value: string) => void;
+  onEditAge: (value: string) => void;
   onEditIntensity: (value: string) => void;
   onEditFitnessGoal: (value: string) => void;
   onEditWorkoutLocation: (value: string) => void;
@@ -45,6 +47,7 @@ export const ProfileView = ({
   profile,
   isEditing,
   editedWeight,
+  editedAge,
   editedIntensity,
   editedFitnessGoal,
   editedWorkoutLocation,
@@ -52,6 +55,7 @@ export const ProfileView = ({
   progressStats,
   onEditToggle,
   onEditWeight,
+  onEditAge,
   onEditIntensity,
   onEditFitnessGoal,
   onEditWorkoutLocation,
@@ -63,11 +67,13 @@ export const ProfileView = ({
         profile={profile}
         isEditing={isEditing}
         editedWeight={editedWeight}
+        editedAge={editedAge}
         editedIntensity={editedIntensity}
         editedFitnessGoal={editedFitnessGoal}
         editedWorkoutLocation={editedWorkoutLocation}
         onEditToggle={onEditToggle}
         onEditWeight={onEditWeight}
+        onEditAge={onEditAge}
         onEditIntensity={onEditIntensity}
         onEditFitnessGoal={onEditFitnessGoal}
         onEditWorkoutLocation={onEditWorkoutLocation}

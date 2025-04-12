@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -47,6 +48,7 @@ const Dashboard = () => {
   const [generatingPlan, setGeneratingPlan] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editedWeight, setEditedWeight] = useState<string>("");
+  const [editedAge, setEditedAge] = useState<string>("");
   const [editedIntensity, setEditedIntensity] = useState<string>("moderate");
   const [editedFitnessGoal, setEditedFitnessGoal] = useState<string>("build_muscle");
   const [editedWorkoutLocation, setEditedWorkoutLocation] = useState<string>("home");
@@ -246,16 +248,25 @@ const Dashboard = () => {
       navigate("/auth");
       return;
     }
+    
     const weight = parseFloat(editedWeight);
     if (isNaN(weight) || weight <= 0) {
       toast.error("Please enter a valid weight");
       return;
     }
+    
+    const age = parseInt(editedAge);
+    if (isNaN(age) || age <= 0) {
+      toast.error("Please enter a valid age");
+      return;
+    }
+    
     try {
       const {
         error: profileError
       } = await supabase.from("profiles").update({
-        weight
+        weight,
+        age
       }).eq("id", session.user.id);
       if (profileError) throw profileError;
       
@@ -275,6 +286,7 @@ const Dashboard = () => {
       setProfile({
         ...profile,
         weight,
+        age,
         intensity_level: editedIntensity as "easy" | "moderate" | "hard" | "intense" | "beginner" | "intermediate" | "advanced",
         fitness_goal: editedFitnessGoal as "build_muscle" | "lose_fat" | "increase_mobility" | "stay_active",
         workout_location: editedWorkoutLocation as "home" | "gym"
@@ -497,6 +509,7 @@ const Dashboard = () => {
                 profile={profile}
                 isEditing={isEditing}
                 editedWeight={editedWeight}
+                editedAge={editedAge}
                 editedIntensity={editedIntensity}
                 editedFitnessGoal={editedFitnessGoal}
                 editedWorkoutLocation={editedWorkoutLocation}
@@ -513,12 +526,14 @@ const Dashboard = () => {
                   }
                   
                   setEditedWeight(profile?.weight?.toString() || "");
+                  setEditedAge(profile?.age?.toString() || "");
                   setEditedIntensity(initialIntensity);
                   setEditedFitnessGoal(profile?.fitness_goal || "build_muscle");
                   setEditedWorkoutLocation(profile?.workout_location || "home");
                   setIsEditing(true);
                 }}
                 onEditWeight={setEditedWeight}
+                onEditAge={setEditedAge}
                 onEditIntensity={setEditedIntensity}
                 onEditFitnessGoal={setEditedFitnessGoal}
                 onEditWorkoutLocation={setEditedWorkoutLocation}

@@ -1,5 +1,5 @@
 
-import { ArrowRight, Trophy, Dumbbell, Flame, Leaf, Activity, Zap, Home, Pencil } from "lucide-react";
+import { ArrowRight, Trophy, Dumbbell, Flame, Leaf, Activity, Zap, Home, Pencil, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -23,11 +23,13 @@ interface ProfileCardProps {
   profile: Profile;
   isEditing: boolean;
   editedWeight: string;
+  editedAge: string;
   editedIntensity: string;
   editedFitnessGoal: string;
   editedWorkoutLocation: string;
   onEditToggle: () => void;
   onEditWeight: (value: string) => void;
+  onEditAge: (value: string) => void;
   onEditIntensity: (value: string) => void;
   onEditFitnessGoal: (value: string) => void;
   onEditWorkoutLocation: (value: string) => void;
@@ -38,11 +40,13 @@ export const ProfileCard = ({
   profile,
   isEditing,
   editedWeight,
+  editedAge,
   editedIntensity,
   editedFitnessGoal,
   editedWorkoutLocation,
   onEditToggle,
   onEditWeight,
+  onEditAge,
   onEditIntensity,
   onEditFitnessGoal,
   onEditWorkoutLocation,
@@ -133,11 +137,27 @@ export const ProfileCard = ({
             <div className="bg-[#5C2D91] rounded-lg p-4 border border-purple-400/20 flex items-center justify-between shadow-md">
               <div>
                 <p className="text-sm text-white/80 font-medium">Age</p>
-                <p className="text-lg font-semibold text-white">{profile?.age} years</p>
+                {!isEditing && (
+                  <p className="text-lg font-semibold text-white">{profile?.age} years</p>
+                )}
+                {isEditing && (
+                  <Input 
+                    type="number" 
+                    value={editedAge} 
+                    onChange={e => onEditAge(e.target.value)} 
+                    placeholder="Enter age" 
+                    className="mt-2 bg-white border-purple-200" 
+                  />
+                )}
               </div>
-              <Badge variant="outline" className="h-14 w-14 rounded-full flex items-center justify-center text-lg font-bold bg-[#8E44AD] text-white border-white/20 shadow-lg">
-                {profile?.age}
-              </Badge>
+              {!isEditing && (
+                <Badge variant="outline" className="h-14 w-14 rounded-full flex items-center justify-center text-lg font-bold bg-[#8E44AD] text-white border-white/20 shadow-lg">
+                  {profile?.age}
+                </Badge>
+              )}
+              {isEditing && (
+                <Calendar className="h-10 w-10 text-white/80" />
+              )}
             </div>
             
             <div className="bg-[#5C2D91] rounded-lg p-4 border border-purple-400/20 shadow-md">
