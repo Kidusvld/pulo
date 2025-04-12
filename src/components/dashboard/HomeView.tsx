@@ -104,10 +104,10 @@ export const HomeView = ({
 
   return (
     <div className="space-y-6">
-      {/* Welcome and overview section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Top row: PULO Fit Index + Weekly Progress side by side */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* PULO Fit Index Card */}
-        <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10 md:col-span-1">
+        <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
           <CardHeader className="pb-2">
             <CardTitle className="text-xl font-semibold flex items-center gap-2 text-[#5C2D91]">
               <Sparkles className="h-5 w-5 text-[#8E44AD]" />
@@ -115,20 +115,26 @@ export const HomeView = ({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {profile && <PuloFitIndex age={profile.age} weight={profile.weight} />}
-            <div className="mt-4 bg-purple-50/50 rounded-lg p-4 border border-purple-100">
-              <h4 className="text-sm font-semibold text-[#8E44AD] mb-1">PULO Says:</h4>
-              <p className="text-sm text-gray-700 italic">{getMotivationalMessage()}</p>
-              <div className="mt-3 pt-3 border-t border-purple-100/50">
-                <p className="text-xs text-[#5C2D91] font-medium">Advice:</p>
-                <p className="text-xs text-gray-600">{getAdviceMessage()}</p>
+            <div className="flex flex-col lg:flex-row gap-4">
+              <div className="flex-1">
+                {profile && <PuloFitIndex age={profile.age} weight={profile.weight} />}
+              </div>
+              <div className="flex-1 mt-4 lg:mt-0">
+                <div className="bg-purple-50/50 rounded-lg p-4 border border-purple-100 h-full flex flex-col">
+                  <h4 className="text-sm font-semibold text-[#8E44AD] mb-1">PULO Says:</h4>
+                  <p className="text-sm text-gray-700 italic">{getMotivationalMessage()}</p>
+                  <div className="mt-auto pt-3 border-t border-purple-100/50">
+                    <p className="text-xs text-[#5C2D91] font-medium">Advice:</p>
+                    <p className="text-xs text-gray-600">{getAdviceMessage()}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Weekly Stats Card */}
-        <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10 md:col-span-2">
+        <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10 lg:col-span-2">
           <CardHeader className="pb-2">
             <CardTitle className="text-xl font-semibold flex items-center gap-2 text-[#5C2D91]">
               <Calendar className="h-5 w-5 text-[#8E44AD]" />
@@ -141,7 +147,7 @@ export const HomeView = ({
         </Card>
       </div>
 
-      {/* Workout Plan Section */}
+      {/* Workout Plan Section - Full width */}
       <WorkoutPlanCard 
         workoutPlan={workoutPlan}
         numberOfDays={numberOfDays}

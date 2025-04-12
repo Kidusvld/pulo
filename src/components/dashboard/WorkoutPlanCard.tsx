@@ -114,7 +114,7 @@ export const WorkoutPlanCard = ({
       </CardHeader>
       <CardContent className="p-0">
         {workoutPlan?.plan_data?.workouts ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0 divide-x divide-y divide-purple-100/20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7 gap-0 divide-x divide-y divide-purple-100/20">
             {workoutPlan.plan_data.workouts.map((workout, index) => (
               <div key={index} className="p-5 bg-gradient-to-br from-white/90 to-white/70">
                 <h3 className="font-semibold flex items-center gap-2 text-[#5C2D91] mb-3 pb-2 border-b border-purple-100/30">

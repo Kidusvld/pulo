@@ -47,7 +47,8 @@ export const WeeklySummaryStats = ({ stats, consistencyStreak }: WeeklySummarySt
   const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
   return (
-    <div className="space-y-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Stats Cards */}
       <div className="grid grid-cols-3 gap-4">
         {/* This Week's Workouts */}
         <div className="bg-purple-50/70 rounded-lg p-4 border border-purple-100 flex flex-col items-center">

@@ -78,7 +78,7 @@ export const PuloFitIndex = ({ age, weight, minimal = false }: PuloFitIndexProps
   }
 
   return (
-    <div className="mt-2 rounded-lg border p-4 bg-white/90 backdrop-blur-sm border-purple-100 shadow-lg shadow-purple-100/20">
+    <div className="rounded-lg border p-4 bg-white/90 backdrop-blur-sm border-purple-100 shadow-lg shadow-purple-100/20 h-full">
       <div className="mb-2 flex items-center">
         <span className="text-sm text-purple-600 font-medium font-poppins">PULO Fit Index</span>
         <TooltipProvider>
@@ -103,7 +103,7 @@ export const PuloFitIndex = ({ age, weight, minimal = false }: PuloFitIndexProps
         <p className="text-sm text-purple-700 font-inter">{category.message}</p>
       </div>
       
-      <p className="text-xs text-purple-500/70 italic font-inter">
+      <p className="text-xs text-purple-500/70 italic font-inter mt-auto">
         Based on your age and weight profile
       </p>
     </div>
