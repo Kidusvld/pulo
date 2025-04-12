@@ -50,6 +50,13 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* PULO Theme Colors */
+    --pulo-purple: 265 84% 58%;
+    --pulo-purple-light: 265 84% 90%;
+    --pulo-purple-dark: 265 84% 40%;
+    --pulo-cream: 36 100% 94%;
+    --pulo-navy: 240 20% 20%;
   }
 
   .dark {
@@ -88,6 +95,13 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* PULO Theme Colors - Dark Mode */
+    --pulo-purple: 265 70% 50%;
+    --pulo-purple-light: 265 70% 80%;
+    --pulo-purple-dark: 265 70% 30%;
+    --pulo-cream: 36 30% 90%;
+    --pulo-navy: 240 20% 15%;
   }
 }
 
@@ -110,4 +124,16 @@
     background-size: 32px 32px;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(143 107 236 / 0.05)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
   }
+  
+  .text-pulo-gradient {
+    @apply bg-gradient-to-r from-[#7c3aed] to-[#9333ea] bg-clip-text text-transparent;
+  }
+  
+  .bg-pulo-gradient {
+    @apply bg-gradient-to-r from-[#7c3aed] to-[#9333ea];
+  }
+}
+
+.pulo-text {
+  color: #7c3aed;
 }
