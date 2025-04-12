@@ -417,31 +417,45 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-deep-purple-800 via-deep-purple-900 to-deep-purple-800">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-300"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#5C2D91] via-[#6D3CAA] to-[#502680]">
+        <div className="absolute inset-0 bg-grid-white/[0.05]"></div>
+        <div className="absolute bottom-0 left-0 w-full h-full opacity-10 pointer-events-none flex items-center justify-center">
+          <img 
+            src="/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png"
+            alt="PULO Watermark"
+            className="h-64 opacity-10"
+          />
+        </div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-deep-purple-900 via-deep-purple-800 to-deep-purple-900">
-      <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] -z-10"></div>
-      <div className="absolute h-64 w-64 rounded-full bg-purple-500/10 blur-3xl top-20 left-20 -z-10"></div>
-      <div className="absolute h-64 w-64 rounded-full bg-purple-600/10 blur-3xl bottom-20 right-20 -z-10"></div>
+    <div className="min-h-screen bg-gradient-to-br from-[#5C2D91] via-[#6D3CAA] to-[#502680] text-white">
+      <div className="absolute inset-0 bg-grid-white/[0.05]"></div>
+      <div className="absolute bottom-0 left-0 w-full h-full opacity-10 pointer-events-none">
+        <img 
+          src="/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png"
+          alt="PULO Watermark"
+          className="absolute bottom-8 left-8 h-48 w-48"
+        />
+      </div>
       
-      <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-[120px] py-8">
         <DashboardHeader 
           firstName={profile?.first_name} 
           onSignOut={handleSignOut}
+          subscriptionStatus="free"
         />
 
         <Tabs defaultValue="workout" className="space-y-6">
           <TabsList className="grid grid-cols-2 w-[400px] mb-6 bg-white/10 backdrop-blur-sm border border-purple-500/20">
-            <TabsTrigger value="workout" className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white text-white">
+            <TabsTrigger value="workout" className="flex items-center gap-2 data-[state=active]:bg-[#8E44AD] data-[state=active]:text-white text-white">
               <DumbbellIcon className="h-4 w-4" />
               Workout Plan
             </TabsTrigger>
-            <TabsTrigger value="progress" className="flex items-center gap-2 data-[state=active]:bg-purple-600 data-[state=active]:text-white text-white">
+            <TabsTrigger value="progress" className="flex items-center gap-2 data-[state=active]:bg-[#8E44AD] data-[state=active]:text-white text-white">
               <BarChart className="h-4 w-4" />
               Progress
             </TabsTrigger>

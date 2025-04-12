@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,17 +23,17 @@ const PricingTier = ({
   disabled?: boolean;
   current?: boolean;
 }) => (
-  <div className={`relative rounded-2xl bg-white shadow-lg border ${isPopular ? 'border-purple-400 border-2' : 'border-gray-200'}`}>
+  <div className={`relative rounded-2xl bg-white shadow-lg border ${isPopular ? 'border-[#8E44AD] border-2' : 'border-gray-200'}`}>
     {isPopular && (
       <div className="absolute -top-5 left-0 right-0 flex justify-center">
-        <div className="bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
+        <div className="bg-[#8E44AD] text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
           <Crown className="w-4 h-4" />
           Most Popular
         </div>
       </div>
     )}
     <div className="p-8">
-      <h3 className="text-2xl font-bold text-gray-900">{title}</h3>
+      <h3 className="text-2xl font-bold text-gray-900 font-montserrat">{title}</h3>
       <p className="mt-4 text-gray-500">
         <span className="text-4xl font-bold text-gray-900">{price}</span>
         {price !== "Free" && <span className="text-base font-medium">/month</span>}
@@ -40,13 +41,13 @@ const PricingTier = ({
       <ul className="mt-8 space-y-4">
         {features.map((feature, index) => (
           <li key={index} className="flex items-start">
-            <Check className="h-5 w-5 text-purple-500 mt-0.5" />
-            <span className="ml-3 text-gray-600">{feature}</span>
+            <Check className="h-5 w-5 text-[#8E44AD] mt-0.5" />
+            <span className="ml-3 text-gray-600 font-opensans">{feature}</span>
           </li>
         ))}
       </ul>
       <Button
-        className={`mt-8 w-full ${isPopular ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+        className={`mt-8 w-full ${isPopular ? 'bg-[#8E44AD] hover:bg-[#5C2D91]' : ''} font-inter`}
         variant={isPopular ? "default" : "outline"}
         onClick={onSubscribe}
         disabled={disabled || current}
@@ -60,7 +61,7 @@ const PricingTier = ({
 const SubscriptionPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [currentPlan, setCurrentPlan] = useState<"free" | "premium">("free");
+  const [currentPlan, setCurrentPlan] = useState<"free" | "pro">("free");
 
   useEffect(() => {
     checkSubscription();
@@ -91,7 +92,7 @@ const SubscriptionPage = () => {
     }
   };
 
-  const handleSubscribe = async (plan: "free" | "premium") => {
+  const handleSubscribe = async (plan: "free" | "pro") => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -110,7 +111,7 @@ const SubscriptionPage = () => {
         toast.success("Free plan activated!");
         navigate("/onboarding");
       } else {
-        // For premium plan, create Stripe checkout session
+        // For pro plan, create Stripe checkout session
         const { data: { url }, error } = await supabase.functions.invoke("create-checkout-session", {
           body: { 
             priceId: "your_stripe_price_id", // Replace with your actual Stripe price ID
@@ -129,39 +130,54 @@ const SubscriptionPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-purple-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#5C2D91] via-[#6D3CAA] to-[#502680]">
+        <div className="absolute inset-0 bg-grid-white/[0.05]"></div>
+        <div className="absolute bottom-0 left-0 w-full h-full opacity-10 pointer-events-none flex items-center justify-center">
+          <img 
+            src="/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png"
+            alt="PULO Watermark"
+            className="h-64 opacity-10"
+          />
+        </div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50">
-      <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.5))] -z-10"></div>
+    <div className="min-h-screen bg-gradient-to-br from-[#5C2D91] via-[#6D3CAA] to-[#502680]">
+      <div className="absolute inset-0 bg-grid-white/[0.05]"></div>
+      <div className="absolute bottom-0 left-0 w-full h-full opacity-10 pointer-events-none">
+        <img 
+          src="/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png"
+          alt="PULO Watermark"
+          className="absolute bottom-8 left-8 h-48 w-48"
+        />
+      </div>
       
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-[120px] py-8 relative z-10">
         <div className="flex justify-between items-center mb-12">
           <div>
             <div className="flex items-center gap-3 mb-4">
               <div 
                 onClick={() => navigate("/")} 
-                className="flex items-center justify-center px-3 py-2 rounded-xl bg-purple-600 text-white cursor-pointer hover:bg-purple-700 transition-colors duration-200"
+                className="flex items-center justify-center px-3 py-2 rounded-xl bg-[#8E44AD] text-white cursor-pointer hover:bg-[#5C2D91] transition-colors duration-200"
               >
                 <Brain className="h-5 w-5 mr-2" />
-                <span className="text-xl font-bold tracking-tight">PULO</span>
+                <span className="text-xl font-bold tracking-tight font-montserrat">PULO</span>
               </div>
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-700 to-purple-900 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold text-white font-montserrat">
               Choose Your Plan
             </h1>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-2 text-white/80 font-opensans">
               Select the perfect plan for your fitness journey
             </p>
           </div>
           <Button 
             variant="outline" 
             onClick={() => navigate("/dashboard")} 
-            className="bg-white/80 hover:bg-purple-50 hover:text-purple-600 border-purple-100"
+            className="bg-white/10 hover:bg-white/20 text-white border-white/20"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Dashboard
@@ -182,7 +198,7 @@ const SubscriptionPage = () => {
             current={currentPlan === "free"}
           />
           <PricingTier
-            title="Premium"
+            title="Pro"
             price="$9.99"
             features={[
               "Everything in Free",
@@ -194,8 +210,8 @@ const SubscriptionPage = () => {
               "Priority support"
             ]}
             isPopular
-            onSubscribe={() => handleSubscribe("premium")}
-            current={currentPlan === "premium"}
+            onSubscribe={() => handleSubscribe("pro")}
+            current={currentPlan === "pro"}
           />
         </div>
       </div>

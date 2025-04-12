@@ -37,20 +37,20 @@ const getExerciseIcon = (exerciseName: string) => {
   const name = exerciseName.toLowerCase();
   
   if (name.includes("dumbbell") || name.includes("curl") || name.includes("press") || name.includes("fly")) {
-    return <DumbbellIcon className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+    return <DumbbellIcon className="h-4 w-4 text-[#8E44AD] mr-2 flex-shrink-0" />;
   } else if (name.includes("barbell") || name.includes("deadlift") || name.includes("bench") || name.includes("squat")) {
-    return <Weight className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+    return <Weight className="h-4 w-4 text-[#8E44AD] mr-2 flex-shrink-0" />;
   } else if (name.includes("bike") || name.includes("cycling")) {
-    return <Bike className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+    return <Bike className="h-4 w-4 text-[#8E44AD] mr-2 flex-shrink-0" />;
   } else if (name.includes("run") || name.includes("sprint") || name.includes("jog")) {
-    return <Activity className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+    return <Activity className="h-4 w-4 text-[#8E44AD] mr-2 flex-shrink-0" />;
   } else if (name.includes("plank") || name.includes("hold") || name.includes("wall sit")) {
-    return <Clock className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+    return <Clock className="h-4 w-4 text-[#8E44AD] mr-2 flex-shrink-0" />;
   } else if (name.includes("stretch") || name.includes("yoga") || name.includes("mobility")) {
-    return <Heart className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+    return <Heart className="h-4 w-4 text-[#8E44AD] mr-2 flex-shrink-0" />;
   } else {
     // Default icon for other exercises
-    return <DumbbellIcon className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+    return <DumbbellIcon className="h-4 w-4 text-[#8E44AD] mr-2 flex-shrink-0" />;
   }
 };
 
@@ -63,17 +63,17 @@ export const WorkoutPlanCard = ({
   onSavePlan,
 }: WorkoutPlanCardProps) => {
   return (
-    <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-xl shadow-purple-100/20">
+    <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-xl font-semibold flex items-center gap-2 text-purple-900">
-          <DumbbellIcon className="h-5 w-5 text-purple-600" />
+        <CardTitle className="text-xl font-semibold flex items-center gap-2 text-[#5C2D91]">
+          <DumbbellIcon className="h-5 w-5 text-[#8E44AD]" />
           Your Workout Plan
         </CardTitle>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <label htmlFor="days" className="text-sm text-purple-600 font-medium">Days:</label>
+            <label htmlFor="days" className="text-sm text-[#8E44AD] font-medium">Days:</label>
             <Select value={numberOfDays.toString()} onValueChange={value => onDaysChange(parseInt(value))}>
-              <SelectTrigger className="w-[100px] bg-white border-purple-100">
+              <SelectTrigger className="w-[100px] bg-white border-purple-200">
                 <SelectValue placeholder="Days" />
               </SelectTrigger>
               <SelectContent>
@@ -90,7 +90,7 @@ export const WorkoutPlanCard = ({
               <Button 
                 variant="outline" 
                 onClick={onSavePlan} 
-                className="bg-white hover:bg-purple-50 hover:text-purple-600 border-purple-100"
+                className="bg-white hover:bg-purple-50 hover:text-[#8E44AD] border-purple-200"
               >
                 Save Plan
               </Button>
@@ -98,7 +98,7 @@ export const WorkoutPlanCard = ({
             <Button 
               onClick={onGeneratePlan} 
               disabled={generatingPlan} 
-              className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white transition-all duration-200"
+              className="bg-gradient-to-r from-[#5C2D91] to-[#8E44AD] hover:from-[#5C2D91]/90 hover:to-[#8E44AD]/90 text-white transition-all duration-200"
             >
               {generatingPlan ? "Generating..." : "Generate New Plan"}
               {!generatingPlan && <ArrowRight className="ml-2 h-4 w-4" />}
@@ -111,21 +111,21 @@ export const WorkoutPlanCard = ({
           <div className="space-y-6">
             {workoutPlan.plan_data.workouts.map((workout, index) => (
               <div key={index} className="space-y-4">
-                <h3 className="font-semibold flex items-center gap-2 text-purple-900">
-                  <Calendar className="h-4 w-4 text-purple-600" />
+                <h3 className="font-semibold flex items-center gap-2 text-[#5C2D91]">
+                  <Calendar className="h-4 w-4 text-[#8E44AD]" />
                   Day {workout.day}
                 </h3>
                 <div className="grid gap-4">
                   {workout.exercises.map((exercise, exerciseIndex) => (
                     <div 
                       key={exerciseIndex} 
-                      className="bg-purple-50/50 p-4 rounded-lg border border-purple-100 hover:bg-purple-50 transition-colors duration-200"
+                      className="bg-purple-50/70 p-4 rounded-lg border border-purple-100 hover:bg-purple-50 transition-colors duration-200"
                     >
-                      <p className="font-medium text-purple-900 flex items-center">
+                      <p className="font-medium text-[#5C2D91] flex items-center">
                         {getExerciseIcon(exercise.name)}
                         {exercise.name}
                       </p>
-                      <p className="text-sm text-purple-600 mt-1 ml-6">
+                      <p className="text-sm text-[#8E44AD]/80 mt-1 ml-6">
                         {exercise.sets} sets × {exercise.duration ? 
                           `${exercise.duration} seconds` : 
                           `${exercise.reps} reps`}
