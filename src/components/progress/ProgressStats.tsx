@@ -118,50 +118,51 @@ export const ProgressStats = ({
 
   const statItems = useMemo(() => [
     {
-      title: "Total Workouts",
+      title: "Workouts",
       value: stats.totalWorkouts,
       icon: Activity,
-      color: "text-blue-600",
+      color: "text-blue-500",
       bgColor: "bg-blue-50",
     },
     {
       title: "Total Volume",
       value: `${stats.totalVolume.toLocaleString()} lbs`,
       icon: Dumbbell,
-      color: "text-purple-600",
+      color: "text-purple-500",
       bgColor: "bg-purple-50",
     },
     {
-      title: "Avg. Duration",
+      title: "Avg Duration",
       value: `${stats.averageDuration} min`,
       icon: Clock,
-      color: "text-emerald-600",
+      color: "text-emerald-500",
       bgColor: "bg-emerald-50",
     },
     {
       title: "Streak",
       value: `${stats.consistencyStreak} days`,
       icon: Target,
-      color: "text-rose-600",
+      color: "text-rose-500",
       bgColor: "bg-rose-50",
     },
   ], [stats]);
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
-        <h2 className="text-xl font-semibold text-white flex items-center gap-2 font-montserrat">
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-lg font-semibold text-white flex items-center gap-2">
           <BarChart className="h-5 w-5 text-purple-300" />
-          Progress Statistics
+          Your Progress
         </h2>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
               variant="outline"
+              size="sm"
               className="bg-white/10 hover:bg-red-500/20 hover:text-white border-red-300/20 text-red-100/80 transition-all duration-200"
             >
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Reset Stats
+              <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
+              Reset
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
@@ -183,7 +184,7 @@ export const ProgressStats = ({
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {statItems.map((stat) => (
           <StatCard key={stat.title} {...stat} />
         ))}

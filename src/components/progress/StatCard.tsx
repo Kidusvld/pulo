@@ -1,5 +1,4 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
 
 interface StatCardProps {
@@ -18,18 +17,12 @@ export const StatCard = ({
   bgColor
 }: StatCardProps) => {
   return (
-    <Card className="bg-white/900 backdrop-blur-sm border-purple-100">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-semibold tracking-wide text-gray-600/90 uppercase">
-          {title}
-        </CardTitle>
+    <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-purple-200/10 p-3 flex flex-col items-center text-center shadow-md hover:shadow-lg transition-all duration-300">
+      <div className={`${bgColor} p-3 rounded-full mb-2`}>
         <Icon className={`h-5 w-5 ${color}`} />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold tracking-tight text-gray-900">
-          {value}
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+      <span className="text-xl font-bold text-white">{value}</span>
+      <span className="text-xs text-white/70 font-medium mt-1">{title}</span>
+    </div>
   );
 };

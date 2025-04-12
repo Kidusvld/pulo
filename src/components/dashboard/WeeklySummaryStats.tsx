@@ -15,21 +15,6 @@ interface WeeklySummaryStatsProps {
 }
 
 export const WeeklySummaryStats = ({ stats, consistencyStreak }: WeeklySummaryStatsProps) => {
-  // Generate day labels for the last 7 days
-  const getDayLabels = () => {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const today = new Date();
-    const todayIndex = today.getDay(); // 0 = Sunday, 6 = Saturday
-    
-    // Reorder days to start with the day that was 6 days ago
-    const orderedDays = [
-      ...days.slice(todayIndex - 6 < 0 ? todayIndex + 1 : todayIndex - 6),
-      ...days.slice(0, todayIndex + 1 > 6 ? todayIndex - 6 : todayIndex + 1)
-    ];
-    
-    return days;
-  };
-  
   // Mock data for active days (in a real app, this would come from the database)
   const [activeDaysData, setActiveDaysData] = useState<boolean[]>([]);
   
@@ -52,21 +37,21 @@ export const WeeklySummaryStats = ({ stats, consistencyStreak }: WeeklySummarySt
       <div className="grid grid-cols-3 gap-3 mb-4">
         {/* Weekly Workouts */}
         <div className="bg-purple-50/70 rounded-lg p-3 border border-purple-100 flex flex-col items-center">
-          <Calendar className="h-6 w-6 text-[#8E44AD] mb-1" />
+          <Calendar className="h-5 w-5 text-[#8E44AD] mb-1" />
           <p className="text-2xl font-bold text-[#5C2D91]">{stats.workoutsThisWeek}</p>
           <p className="text-xs text-[#8E44AD]/70 text-center">weekly workouts</p>
         </div>
         
         {/* Active Days */}
         <div className="bg-purple-50/70 rounded-lg p-3 border border-purple-100 flex flex-col items-center">
-          <Activity className="h-6 w-6 text-[#8E44AD] mb-1" />
+          <Activity className="h-5 w-5 text-[#8E44AD] mb-1" />
           <p className="text-2xl font-bold text-[#5C2D91]">{stats.activeDays}</p>
           <p className="text-xs text-[#8E44AD]/70 text-center">active days</p>
         </div>
         
         {/* Total Workouts */}
         <div className="bg-purple-50/70 rounded-lg p-3 border border-purple-100 flex flex-col items-center">
-          <Trophy className="h-6 w-6 text-[#8E44AD] mb-1" />
+          <Trophy className="h-5 w-5 text-[#8E44AD] mb-1" />
           <p className="text-2xl font-bold text-[#5C2D91]">{stats.totalWorkouts}</p>
           <p className="text-xs text-[#8E44AD]/70 text-center">all-time</p>
         </div>
