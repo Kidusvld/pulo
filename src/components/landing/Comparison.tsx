@@ -1,93 +1,88 @@
+
 import { Users, Brain, Award, CheckCircle2 } from "lucide-react";
 
 export const Comparison = () => {
   return (
-    <div className="bg-purple-50 py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="py-20 bg-[#6D3AA5]">
+      <div className="max-w-[1440px] mx-auto px-[120px]">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900">Why Choose <span style={{ color: "#7c3aed" }}>PULO</span>?</h2>
-          <p className="mt-4 text-lg text-gray-600">See how <span style={{ color: "#7c3aed" }}>PULO</span> compares to traditional fitness solutions</p>
+          <h2 className="text-3xl font-bold text-white">Why Choose <span className="text-[#8E44AD]">PULO</span>?</h2>
+          <p className="mt-4 text-lg text-[#E0E0E0]">See how <span className="text-[#8E44AD]">PULO</span> compares to traditional fitness solutions</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="bg-white p-8 rounded-xl shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Users className="text-purple-600" />
-              Traditional Personal Training
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div className="bg-white/10 backdrop-blur-sm p-8 rounded-xl">
+            <h3 className="text-2xl font-semibold mb-6 flex items-center gap-3 text-white">
+              <Users className="text-[#8E44AD]" />
+              PULO vs Traditional Training
             </h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
-                <span className="text-gray-600">Professional guidance</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
-                <span className="text-gray-600">Personalized workouts</span>
-              </li>
-              <li className="flex items-start gap-2 opacity-50">
-                <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
-                <span className="text-gray-600">24/7 availability</span>
-              </li>
-              <li className="flex items-start gap-2 opacity-50">
-                <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
-                <span className="text-gray-600">Flexibility</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="bg-purple-600 p-8 rounded-xl shadow-lg transform lg:scale-105 relative">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-yellow-400 text-yellow-900 px-4 py-1 rounded-full text-sm font-semibold">
-              Recommended
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                <CheckCircle2 className="w-5 h-5 text-[#8E44AD]" />
+                <div>
+                  <span className="text-white">24/7 Availability</span>
+                  <span className="block text-sm text-[#E0E0E0]">Access PULO anytime, unlike scheduled trainer sessions</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3">
+                <CheckCircle2 className="w-5 h-5 text-[#8E44AD]" />
+                <div>
+                  <span className="text-white">Affordable Price Point</span>
+                  <span className="block text-sm text-[#E0E0E0]">Fraction of the cost of personal training</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                <CheckCircle2 className="w-5 h-5 text-[#8E44AD]" />
+                <div>
+                  <span className="text-white">Continuous Improvement</span>
+                  <span className="block text-sm text-[#E0E0E0]">AI constantly learns and improves its recommendations</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3">
+                <CheckCircle2 className="w-5 h-5 text-[#8E44AD]" />
+                <div>
+                  <span className="text-white">Zero Judgment</span>
+                  <span className="block text-sm text-[#E0E0E0]">Supportive environment without human bias</span>
+                </div>
+              </div>
             </div>
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2 text-white">
-              <Brain className="text-white" />
-              <span className="font-bold">
-                <span style={{ color: "#ffffff" }}>PULO</span> AI Training
-              </span>
-            </h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-white mt-1" />
-                <span className="text-white">AI-powered personalization</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-white mt-1" />
-                <span className="text-white">Available 24/7</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-white mt-1" />
-                <span className="text-white">Adaptive programming</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-white mt-1" />
-                <span className="text-white">Consistent workout quality</span>
-              </li>
-            </ul>
           </div>
 
-          <div className="bg-white p-8 rounded-xl shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-              <Award className="text-purple-600" />
-              Generic Fitness Apps
+          <div className="bg-white/10 backdrop-blur-sm p-8 rounded-xl">
+            <h3 className="text-2xl font-semibold mb-6 flex items-center gap-3 text-white">
+              <Award className="text-[#8E44AD]" />
+              PULO vs Generic Fitness Apps
             </h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
-                <span className="text-gray-600">Workout tracking</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
-                <span className="text-gray-600">Exercise library</span>
-              </li>
-              <li className="flex items-start gap-2 opacity-50">
-                <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
-                <span className="text-gray-600">Real personalization</span>
-              </li>
-              <li className="flex items-start gap-2 opacity-50">
-                <CheckCircle2 className="w-5 h-5 text-gray-400 mt-1" />
-                <span className="text-gray-600">Adaptive programming</span>
-              </li>
-            </ul>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                <CheckCircle2 className="w-5 h-5 text-[#8E44AD]" />
+                <div>
+                  <span className="text-white">True Personalization</span>
+                  <span className="block text-sm text-[#E0E0E0]">Not just templates - truly personalized for you</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3">
+                <CheckCircle2 className="w-5 h-5 text-[#8E44AD]" />
+                <div>
+                  <span className="text-white">Adaptive Programming</span>
+                  <span className="block text-sm text-[#E0E0E0]">Adjusts as you progress, not static workouts</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+                <CheckCircle2 className="w-5 h-5 text-[#8E44AD]" />
+                <div>
+                  <span className="text-white">Smart Feedback</span>
+                  <span className="block text-sm text-[#E0E0E0]">Learns from your results and provides actionable insights</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3">
+                <CheckCircle2 className="w-5 h-5 text-[#8E44AD]" />
+                <div>
+                  <span className="text-white">Holistic Approach</span>
+                  <span className="block text-sm text-[#E0E0E0]">Considers your whole fitness journey, not just workouts</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
