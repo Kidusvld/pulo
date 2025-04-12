@@ -13,7 +13,7 @@ export const FeedbackButton = () => {
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>
           <motion.div
-            className="relative cursor-pointer"
+            className="relative cursor-pointer flex items-center"
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
             whileHover={{ scale: 1.05 }}
@@ -26,6 +26,21 @@ export const FeedbackButton = () => {
               <div className="absolute inset-0 rounded-full bg-purple-500 blur-lg opacity-30 -z-10"></div>
             )}
             
+            {/* Speech bubble - now positioned to the left of the image */}
+            <motion.div 
+              className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-2xl shadow-md text-purple-700 text-sm font-medium mr-3"
+              initial={{ opacity: 0, scale: 0.8, x: 10 }}
+              animate={{ 
+                opacity: 1, 
+                scale: 1, 
+                x: 0,
+                transition: { delay: 0.2 }
+              }}
+            >
+              <div className="absolute top-1/2 right-[-6px] w-3 h-3 bg-white/90 rotate-45 transform -translate-y-1/2"></div>
+              Share your thoughts with PULO!
+            </motion.div>
+            
             {/* PULO Image */}
             <motion.img
               src="/lovable-uploads/f5173d59-6e7e-4c77-935d-c2473fcbcbae.png"
@@ -36,21 +51,6 @@ export const FeedbackButton = () => {
               }}
               transition={{ type: "spring", stiffness: 300 }}
             />
-            
-            {/* Speech bubble */}
-            <motion.div 
-              className="absolute -top-12 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-2xl shadow-md text-purple-700 text-sm font-medium"
-              initial={{ opacity: 0, scale: 0.8, y: 10 }}
-              animate={{ 
-                opacity: 1, 
-                scale: 1, 
-                y: 0,
-                transition: { delay: 0.2 }
-              }}
-            >
-              <div className="absolute bottom-[-6px] right-4 w-3 h-3 bg-white/90 rotate-45"></div>
-              Share your thoughts with PULO!
-            </motion.div>
           </motion.div>
         </DrawerTrigger>
         <DrawerContent className="px-4 pb-6">
