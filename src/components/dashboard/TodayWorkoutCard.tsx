@@ -60,20 +60,21 @@ export const TodayWorkoutCard = ({
     }
   };
   
+  // Update to use only valid Badge variants
   const getIntensityColor = () => {
-    if (!workoutPlan) return "green";
+    if (!workoutPlan) return "purple";
     
     switch(workoutPlan.intensity_level) {
       case "beginner":
       case "easy":
-        return "green";
+        return "success";
       case "moderate":
       case "intermediate":
         return "purple";
       case "hard":
       case "advanced":
       case "intense":
-        return "orange";
+        return "secondary";
       default:
         return "purple";
     }
@@ -109,7 +110,7 @@ export const TodayWorkoutCard = ({
                   </div>
                 </div>
               </div>
-              <Badge variant={getIntensityColor() as "purple" | "green" | "orange"}>
+              <Badge variant={getIntensityColor() as "purple" | "success" | "secondary"}>
                 {getIntensityLabel()}
               </Badge>
             </div>
@@ -157,3 +158,4 @@ export const TodayWorkoutCard = ({
     </Card>
   );
 };
+

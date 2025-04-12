@@ -224,3 +224,4 @@ export function useDashboardData() {
 
 // Export types for use in other components
 export type { Profile, WorkoutPlan, ProgressStats, MuscleGroupData };
+
