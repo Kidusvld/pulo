@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { ArrowLeft, Check, ExternalLink, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
-
-type SubscriptionStatus = "free" | "pro";
+import { Brain, Check, Crown, ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 
 const PricingTier = ({ 
   title, 
@@ -31,7 +26,7 @@ const PricingTier = ({
     {isPopular && (
       <div className="absolute -top-5 left-0 right-0 flex justify-center">
         <div className="bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
-          <Star className="w-4 h-4" />
+          <Crown className="w-4 h-4" />
           Most Popular
         </div>
       </div>
@@ -65,8 +60,7 @@ const PricingTier = ({
 const SubscriptionPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [currentPlan, setCurrentPlan] = useState<"free" | "pro">("free");
-  const [selectedPlan, setSelectedPlan] = useState<SubscriptionStatus>("free");
+  const [currentPlan, setCurrentPlan] = useState<"free" | "premium">("free");
 
   useEffect(() => {
     checkSubscription();
@@ -97,7 +91,7 @@ const SubscriptionPage = () => {
     }
   };
 
-  const handleSubscribe = async (plan: "free" | "pro") => {
+  const handleSubscribe = async (plan: "free" | "premium") => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
@@ -116,6 +110,7 @@ const SubscriptionPage = () => {
         toast.success("Free plan activated!");
         navigate("/onboarding");
       } else {
+        // For premium plan, create Stripe checkout session
         const { data: { url }, error } = await supabase.functions.invoke("create-checkout-session", {
           body: { 
             priceId: "your_stripe_price_id", // Replace with your actual Stripe price ID
@@ -152,7 +147,7 @@ const SubscriptionPage = () => {
                 onClick={() => navigate("/")} 
                 className="flex items-center justify-center px-3 py-2 rounded-xl bg-purple-600 text-white cursor-pointer hover:bg-purple-700 transition-colors duration-200"
               >
-                <Star className="h-5 w-5 mr-2" />
+                <Brain className="h-5 w-5 mr-2" />
                 <span className="text-xl font-bold tracking-tight">PULO</span>
               </div>
             </div>
@@ -187,7 +182,7 @@ const SubscriptionPage = () => {
             current={currentPlan === "free"}
           />
           <PricingTier
-            title="Pro"
+            title="Premium"
             price="$9.99"
             features={[
               "Everything in Free",
@@ -199,8 +194,8 @@ const SubscriptionPage = () => {
               "Priority support"
             ]}
             isPopular
-            onSubscribe={() => handleSubscribe("pro")}
-            current={currentPlan === "pro"}
+            onSubscribe={() => handleSubscribe("premium")}
+            current={currentPlan === "premium"}
           />
         </div>
       </div>

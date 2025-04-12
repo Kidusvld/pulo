@@ -1,9 +1,8 @@
 
-import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart, Clock, Lock } from "lucide-react";
+import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Exercise {
   name: string;
@@ -31,7 +30,6 @@ interface WorkoutPlanCardProps {
   onDaysChange: (days: number) => void;
   onGeneratePlan: () => void;
   onSavePlan: () => void;
-  subscriptionStatus?: "free" | "pro";
 }
 
 // Helper function to determine the appropriate icon for an exercise
@@ -63,10 +61,7 @@ export const WorkoutPlanCard = ({
   onDaysChange,
   onGeneratePlan,
   onSavePlan,
-  subscriptionStatus = "free"
 }: WorkoutPlanCardProps) => {
-  const isPro = subscriptionStatus === "pro";
-
   return (
     <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-xl shadow-purple-100/20">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -77,11 +72,7 @@ export const WorkoutPlanCard = ({
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <label htmlFor="days" className="text-sm text-purple-600 font-medium">Days:</label>
-            <Select 
-              value={numberOfDays.toString()} 
-              onValueChange={value => onDaysChange(parseInt(value))} 
-              disabled={!isPro}
-            >
+            <Select value={numberOfDays.toString()} onValueChange={value => onDaysChange(parseInt(value))}>
               <SelectTrigger className="w-[100px] bg-white border-purple-100">
                 <SelectValue placeholder="Days" />
               </SelectTrigger>
@@ -96,28 +87,13 @@ export const WorkoutPlanCard = ({
           </div>
           <div className="flex gap-2">
             {workoutPlan && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div>
-                      <Button 
-                        variant="outline" 
-                        onClick={onSavePlan} 
-                        className="bg-white hover:bg-purple-50 hover:text-purple-600 border-purple-100"
-                        disabled={!isPro}
-                      >
-                        {!isPro && <Lock className="w-3 h-3 mr-1" />}
-                        Save Plan
-                      </Button>
-                    </div>
-                  </TooltipTrigger>
-                  {!isPro && (
-                    <TooltipContent side="bottom" className="bg-purple-900 text-white border-purple-700">
-                      <p className="text-xs">Upgrade to Pro to save plans</p>
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              </TooltipProvider>
+              <Button 
+                variant="outline" 
+                onClick={onSavePlan} 
+                className="bg-white hover:bg-purple-50 hover:text-purple-600 border-purple-100"
+              >
+                Save Plan
+              </Button>
             )}
             <Button 
               onClick={onGeneratePlan} 
