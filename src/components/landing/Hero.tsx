@@ -45,7 +45,7 @@ export const Hero = () => {
 
       <div className="hidden md:flex items-center justify-center">
         <img 
-          src="/lovable-uploads/d5a3d106-9961-461f-9c75-11ba2b80b6e0.png" 
+          src="/lovable-uploads/0c6ba37f-748f-4f95-97f3-ed0ca45e618b.png" 
           alt="PULO Mascot" 
           className="w-3/4 max-w-md transform hover:scale-105 transition-all duration-500 drop-shadow-2xl"
         />
