@@ -63,7 +63,6 @@ const Dashboard = () => {
     muscle_group: string;
     total_volume: number;
   }>>([]);
-  const [subscriptionStatus, setSubscriptionStatus] = useState<"free" | "pro">("free");
 
   useEffect(() => {
     const checkSession = async () => {
@@ -79,7 +78,6 @@ const Dashboard = () => {
       checkAuth();
     };
     checkSession();
-    
     const {
       data: {
         subscription
@@ -89,28 +87,9 @@ const Dashboard = () => {
         navigate("/auth");
       }
     });
-    
-    // Check subscription status
-    const checkSubscription = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return;
-      
-      try {
-        const { data: subscriptionData, error } = await supabase
-          .from('subscriptions')
-          .select('status')
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-          
-        if (!error && subscriptionData && subscriptionData.status === 'active') {
-          setSubscriptionStatus("pro");
-        }
-      } catch (error) {
-        console.error('Error checking subscription:', error);
-      }
+    return () => {
+      subscription.unsubscribe();
     };
-    
-    checkSubscription();
   }, [navigate]);
 
   const checkAuth = async () => {
@@ -454,7 +433,6 @@ const Dashboard = () => {
         <DashboardHeader 
           firstName={profile?.first_name} 
           onSignOut={handleSignOut}
-          subscriptionStatus={subscriptionStatus}
         />
 
         <Tabs defaultValue="workout" className="space-y-6">
@@ -469,7 +447,7 @@ const Dashboard = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="workout" className="space-y-6 animate-fade-in">
+          <TabsContent value="workout" className="space-y-6">
             <ProfileCard 
               profile={profile}
               isEditing={isEditing}
@@ -508,11 +486,10 @@ const Dashboard = () => {
               onDaysChange={setNumberOfDays}
               onGeneratePlan={generateNewPlan}
               onSavePlan={handleSaveWorkout}
-              isProUser={subscriptionStatus === "pro"}
             />
           </TabsContent>
 
-          <TabsContent value="progress" className="space-y-6 animate-fade-in">
+          <TabsContent value="progress" className="space-y-6">
             <ProgressStats {...progressStats} />
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
