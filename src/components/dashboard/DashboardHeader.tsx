@@ -61,7 +61,7 @@ export const DashboardHeader = ({
         <h1 className="text-3xl font-semibold text-white font-montserrat flex items-center">
           Welcome{firstName ? `, ${firstName}` : ""}! 
           <img 
-            src="/lovable-uploads/3a2a6fa3-6ff0-483b-91a8-19b4d0470513.png" 
+            src="/lovable-uploads/a985bec8-4bd3-4ddb-b5ce-b141fc180362.png" 
             alt="Waving Hand" 
             className="ml-2 h-8 w-auto"
           />
