@@ -70,9 +70,9 @@ export const WorkoutPlanCard = ({
           <DumbbellIcon className="h-5 w-5 text-[#8E44AD]" />
           Today's Workout
         </CardTitle>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
           <div className="flex items-center gap-2 bg-purple-50/50 px-3 py-1 rounded-lg border border-purple-100/50">
-            <label htmlFor="days" className="text-sm text-[#8E44AD] font-medium">Training Days:</label>
+            <label htmlFor="days" className="text-sm text-[#8E44AD] font-medium whitespace-nowrap">Training Days:</label>
             <Select value={numberOfDays.toString()} onValueChange={value => onDaysChange(parseInt(value))}>
               <SelectTrigger className="w-[80px] bg-white border-purple-200">
                 <SelectValue placeholder="Days" />
@@ -86,32 +86,37 @@ export const WorkoutPlanCard = ({
               </SelectContent>
             </Select>
           </div>
-          <div className="flex gap-2">
-            {workoutPlan && (
-              <Button 
-                variant="outline" 
-                onClick={onSavePlan} 
-                className="bg-white hover:bg-purple-50 hover:text-[#8E44AD] border-purple-200 flex items-center gap-1"
-              >
-                <Heart className="h-4 w-4" />
-                Save Plan
-              </Button>
-            )}
-            <Button 
-              onClick={onGeneratePlan} 
-              disabled={generatingPlan} 
-              className="bg-gradient-to-r from-[#5C2D91] to-[#8E44AD] hover:from-[#5C2D91]/90 hover:to-[#8E44AD]/90 text-white transition-all duration-200 flex items-center gap-2"
-            >
-              {generatingPlan ? "Generating..." : (
-                <>
-                  <Sparkles className="h-4 w-4" />
-                  Generate Plan
-                </>
-              )}
-            </Button>
-          </div>
         </div>
       </CardHeader>
+      
+      {/* Action buttons in separate row for more space */}
+      <div className="flex items-center justify-end px-6 pt-2 pb-3 border-b border-purple-100/20">
+        <div className="flex gap-2">
+          {workoutPlan && (
+            <Button 
+              variant="outline" 
+              onClick={onSavePlan} 
+              className="bg-white hover:bg-purple-50 hover:text-[#8E44AD] border-purple-200 flex items-center gap-1"
+            >
+              <Heart className="h-4 w-4" />
+              Save Plan
+            </Button>
+          )}
+          <Button 
+            onClick={onGeneratePlan} 
+            disabled={generatingPlan} 
+            className="bg-gradient-to-r from-[#5C2D91] to-[#8E44AD] hover:from-[#5C2D91]/90 hover:to-[#8E44AD]/90 text-white transition-all duration-200 flex items-center gap-2"
+          >
+            {generatingPlan ? "Generating..." : (
+              <>
+                <Sparkles className="h-4 w-4" />
+                Generate Plan
+              </>
+            )}
+          </Button>
+        </div>
+      </div>
+      
       <CardContent className="p-0">
         {workoutPlan?.plan_data?.workouts ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7 gap-0 divide-x divide-y divide-purple-100/20 max-h-[500px] overflow-y-auto">
@@ -150,11 +155,11 @@ export const WorkoutPlanCard = ({
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 px-6">
-            <div className="bg-purple-50/30 p-8 rounded-2xl border border-purple-100/30 max-w-md mx-auto">
-              <DumbbellIcon className="h-16 w-16 text-purple-200 mx-auto mb-4" />
+          <div className="text-center py-8 px-6">
+            <div className="bg-purple-50/30 p-6 rounded-2xl border border-purple-100/30 max-w-md mx-auto">
+              <DumbbellIcon className="h-12 w-12 text-purple-200 mx-auto mb-3" />
               <h3 className="text-lg font-semibold text-[#5C2D91] mb-2">No Workout Plan Yet</h3>
-              <p className="text-[#8E44AD]/70 mb-6">
+              <p className="text-[#8E44AD]/70 mb-4">
                 Generate your personalized workout plan based on your fitness goals and preferences.
               </p>
               <Button 

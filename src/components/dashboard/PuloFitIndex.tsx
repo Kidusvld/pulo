@@ -7,9 +7,10 @@ interface PuloFitIndexProps {
   age: number;
   weight: number;
   minimal?: boolean;
+  horizontal?: boolean;
 }
 
-export const PuloFitIndex = ({ age, weight, minimal = false }: PuloFitIndexProps) => {
+export const PuloFitIndex = ({ age, weight, minimal = false, horizontal = false }: PuloFitIndexProps) => {
   const categoryKey = calculatePuloFitIndex(age, weight);
   const category = fitnessCategoryMap[categoryKey];
   
@@ -73,6 +74,23 @@ export const PuloFitIndex = ({ age, weight, minimal = false }: PuloFitIndexProps
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
+      </div>
+    );
+  }
+
+  if (horizontal) {
+    return (
+      <div className={`rounded-lg p-4 ${colorClasses.bg} ${colorClasses.border} shadow-sm ring-1 ${colorClasses.ring} transition-all duration-200`}>
+        <div className="flex items-start sm:items-center flex-col sm:flex-row sm:justify-between gap-2">
+          <div className="flex items-center gap-2 mb-1 sm:mb-0">
+            <span className="text-xl">{category.emoji}</span>
+            <h3 className={`text-lg font-bold font-poppins ${colorClasses.text}`}>{category.name}</h3>
+          </div>
+          <p className="text-sm text-purple-700 font-inter max-w-md">{category.message}</p>
+        </div>
+        <p className="text-xs text-purple-500/70 italic font-inter mt-2">
+          Based on your age and weight profile
+        </p>
       </div>
     );
   }

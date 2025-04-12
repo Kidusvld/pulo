@@ -117,10 +117,10 @@ export const HomeView = ({
         </CardContent>
       </Card>
 
-      {/* Main Content - Two column layout */}
+      {/* Main Content in a more horizontal layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column - Workout Plan (Spans 7 columns on lg screens) */}
-        <div className="lg:col-span-7">
+        {/* Left Column - Workout Plan (Spans 8 columns on lg screens) */}
+        <div className="lg:col-span-8 order-2 lg:order-1">
           <WorkoutPlanCard 
             workoutPlan={workoutPlan}
             numberOfDays={numberOfDays}
@@ -131,8 +131,8 @@ export const HomeView = ({
           />
         </div>
         
-        {/* Right Column - Stats and Fit Index (Spans 5 columns on lg screens) */}
-        <div className="lg:col-span-5 space-y-6">
+        {/* Right Column - Stats and Fit Index (Spans 4 columns on lg screens) */}
+        <div className="lg:col-span-4 space-y-6 order-1 lg:order-2">
           {/* Weekly Stats Card */}
           <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
             <CardHeader className="pb-2">
@@ -146,36 +146,32 @@ export const HomeView = ({
             </CardContent>
           </Card>
 
-          {/* PULO Fit Index with Motivation */}
-          <div className="grid grid-cols-1 gap-4">
-            {profile && (
-              <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-xl font-semibold flex items-center gap-2 text-[#5C2D91]">
-                    <Sparkles className="h-5 w-5 text-[#8E44AD]" />
-                    PULO Fit Index
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col">
-                    <div className="mb-3">
-                      {profile && <PuloFitIndex age={profile.age} weight={profile.weight} />}
-                    </div>
-                    <div className="mt-2">
-                      <div className="bg-purple-50/50 rounded-lg p-4 border border-purple-100">
-                        <h4 className="text-sm font-semibold text-[#8E44AD] mb-1">PULO Says:</h4>
-                        <p className="text-sm text-gray-700 italic">{getMotivationalMessage()}</p>
-                        <div className="mt-3 pt-2 border-t border-purple-100/50">
-                          <p className="text-xs text-[#5C2D91] font-medium">Advice:</p>
-                          <p className="text-xs text-gray-600">{getAdviceMessage()}</p>
-                        </div>
-                      </div>
+          {/* PULO Fit Index - More horizontal format */}
+          {profile && (
+            <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-xl font-semibold flex items-center gap-2 text-[#5C2D91]">
+                  <Sparkles className="h-5 w-5 text-[#8E44AD]" />
+                  PULO Fit Index
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col gap-3">
+                  <div className="mb-1">
+                    {profile && <PuloFitIndex age={profile.age} weight={profile.weight} horizontal={true} />}
+                  </div>
+                  <div className="bg-purple-50/50 rounded-lg p-3 border border-purple-100">
+                    <h4 className="text-sm font-semibold text-[#8E44AD] mb-1">PULO Says:</h4>
+                    <p className="text-sm text-gray-700 italic">{getMotivationalMessage()}</p>
+                    <div className="mt-2 pt-2 border-t border-purple-100/50">
+                      <p className="text-xs text-[#5C2D91] font-medium">Advice:</p>
+                      <p className="text-xs text-gray-600">{getAdviceMessage()}</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>
