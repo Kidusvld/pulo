@@ -1,5 +1,5 @@
 
-import { Brain, DumbbellIcon, LogOut, Crown, User, ChevronRight } from "lucide-react";
+import { Brain, DumbbellIcon, LogOut, User, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
@@ -35,26 +35,12 @@ export const DashboardHeader = ({
             onClick={() => navigate("/")} 
             src="/lovable-uploads/5b723d5b-3568-487e-bb1a-7bd2c43a1223.png" 
           />
-          {subscriptionStatus === "pro" && (
-            <Badge variant="purple" className="py-1 flex items-center gap-1 font-inter">
-              <Crown className="w-4 h-4" />
-              Pro Plan
-            </Badge>
-          )}
+          <Badge variant="purple" className="py-1 flex items-center gap-1 font-inter">
+            All Features Unlocked
+          </Badge>
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Separate subscription upgrade button for better visibility */}
-          {subscriptionStatus === "free" && (
-            <Button 
-              onClick={() => navigate("/subscription")} 
-              className="bg-[#8E44AD] hover:bg-[#7D3C98] text-white font-inter"
-            >
-              <Crown className="w-4 h-4 mr-2" />
-              Upgrade to Pro
-            </Button>
-          )}
-          
           {/* Navigation dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -69,7 +55,6 @@ export const DashboardHeader = ({
             <DropdownMenuContent align="end" className="w-56 bg-white/95 backdrop-blur-md border-purple-100">
               <DropdownMenuItem 
                 onClick={() => navigate("/log-workout")}
-                disabled={subscriptionStatus === "free"}
                 className="cursor-pointer"
               >
                 <DumbbellIcon className="w-4 h-4 mr-2" />
@@ -77,7 +62,6 @@ export const DashboardHeader = ({
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => navigate("/saved-workouts")}
-                disabled={subscriptionStatus === "free"}
                 className="cursor-pointer"
               >
                 <Brain className="w-4 h-4 mr-2" />

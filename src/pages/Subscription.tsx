@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 
 const Subscription = () => {
   const navigate = useNavigate();
-  const [subscription, setSubscription] = useState<"free" | "pro">("free");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,107 +22,10 @@ const Subscription = () => {
         navigate("/auth");
         return;
       }
-      fetchSubscriptionStatus();
+      setLoading(false);
     };
     checkSession();
   }, [navigate]);
-
-  const fetchSubscriptionStatus = async () => {
-    try {
-      const {
-        data: {
-          session
-        }
-      } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/auth");
-        return;
-      }
-      
-      // Updated query to use profiles table instead of non-existent subscriptions table
-      const {
-        data,
-        error
-      } = await supabase.from("profiles").select("subscription_status").eq("id", session.user.id).single();
-      
-      if (error) {
-        throw error;
-      }
-      
-      // Check subscription_status value from the profiles table
-      if (data && data.subscription_status === "premium") {
-        setSubscription("pro");
-      } else {
-        setSubscription("free");
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching subscription status:", error);
-      toast.error("Failed to load subscription status");
-      setLoading(false);
-    }
-  };
-
-  const handleUpgrade = async () => {
-    try {
-      const {
-        data: {
-          session
-        }
-      } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/auth");
-        return;
-      }
-      const {
-        data,
-        error
-      } = await supabase.functions.invoke('create-stripe-checkout-session', {
-        body: {
-          priceId: process.env.NODE_ENV === 'development' ? "price_1Oq9jJSB59cpKxKpEqKjG19F" : "price_1OrkzhSB59cpKxKpEqWw9lJV",
-          userId: session.user.id,
-          successUrl: `${window.location.origin}/dashboard`,
-          cancelUrl: `${window.location.origin}/subscription`
-        }
-      });
-      if (error) {
-        throw error;
-      }
-      window.location.href = data.url;
-    } catch (error) {
-      console.error("Error creating checkout session:", error);
-      toast.error("Failed to initiate upgrade process");
-    }
-  };
-
-  const handleCancelSubscription = async () => {
-    try {
-      const {
-        data: {
-          session
-        }
-      } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/auth");
-        return;
-      }
-      const {
-        error
-      } = await supabase.functions.invoke('cancel-stripe-subscription', {
-        body: {
-          userId: session.user.id
-        }
-      });
-      if (error) {
-        throw error;
-      }
-      setSubscription("free");
-      toast.success("Subscription cancelled successfully");
-    } catch (error) {
-      console.error("Error cancelling subscription:", error);
-      toast.error("Failed to cancel subscription");
-    }
-  };
 
   if (loading) {
     return (
@@ -140,50 +42,47 @@ const Subscription = () => {
         <h1 className="text-4xl font-bold bg-gradient-to-r from-[#5C2D91] to-[#8E44AD] bg-clip-text text-transparent font-montserrat mb-6">
           Subscription
         </h1>
-        {subscription === "free" ? (
-          <div className="bg-white/10 rounded-lg p-6 mb-6">
-            <h2 className="text-2xl font-semibold mb-4">Free Plan</h2>
-            <p className="text-gray-100/80 mb-4">
-              You are currently on the free plan. Upgrade to Pro for unlimited access and exclusive features.
-            </p>
-            <ul className="list-disc list-inside text-gray-100/80 mb-4">
-              <li>Limited workout tracking</li>
-              <li>Basic workout plans</li>
-              <li>Community support</li>
-            </ul>
-            <Button onClick={handleUpgrade} className="bg-[#8E44AD] hover:bg-[#7D3C98] text-white font-inter">
-              Upgrade to Pro
-            </Button>
+        
+        <div className="bg-white/10 rounded-lg p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-semibold">Free Access</h2>
+            <Badge variant="purple" className="py-1 flex items-center gap-1 font-inter">
+              All Features Unlocked
+            </Badge>
           </div>
-        ) : (
-          <div className="bg-white/10 rounded-lg p-6 mb-6">
-            <h2 className="text-2xl font-semibold mb-4">Pro Plan</h2>
-            <p className="text-gray-100/80 mb-4">
-              You are currently on the Pro plan. Enjoy unlimited access and exclusive features.
-            </p>
-            <ul className="list-disc list-inside text-gray-100/80 mb-4">
-              <li>Unlimited workout tracking</li>
-              <li>Advanced workout plans</li>
-              <li>Priority support</li>
-            </ul>
-            <Button onClick={handleCancelSubscription} className="bg-red-500 hover:bg-red-700 text-white font-inter">
-              Cancel Subscription
-            </Button>
-          </div>
-        )}
+          <p className="text-gray-100/80 mb-4">
+            All premium features are currently free to use. We're still working on our subscription plans.
+          </p>
+          <ul className="list-disc list-inside text-gray-100/80 mb-4">
+            <li>Unlimited workout tracking</li>
+            <li>Advanced workout plans</li>
+            <li>Priority support</li>
+          </ul>
+          <Button onClick={() => navigate("/dashboard")} className="bg-[#8E44AD] hover:bg-[#7D3C98] text-white font-inter">
+            Return to Dashboard
+          </Button>
+        </div>
+
         <div className="bg-white/10 rounded-lg p-6">
-          <h3 className="text-xl font-semibold mb-4">Plan Details</h3>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-100/80">Workout Tracking</span>
-            {subscription === "pro" ? <CheckCircle2 className="text-green-500" /> : <XCircle className="text-red-500" />}
-          </div>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-100/80">Advanced Workout Plans</span>
-            {subscription === "pro" ? <CheckCircle2 className="text-green-500" /> : <XCircle className="text-red-500" />}
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-gray-100/80">Priority Support</span>
-            {subscription === "pro" ? <CheckCircle2 className="text-green-500" /> : <XCircle className="text-red-500" />}
+          <h3 className="text-xl font-semibold mb-4">Features Details</h3>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-gray-100/80">Workout Tracking</span>
+              <CheckCircle2 className="text-green-500" />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-100/80">Advanced Workout Plans</span>
+              <CheckCircle2 className="text-green-500" />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-gray-100/80">Priority Support</span>
+              <CheckCircle2 className="text-green-500" />
+            </div>
+            <div className="mt-6 p-4 bg-white/5 rounded-lg">
+              <p className="text-sm text-gray-100/80">
+                We're currently developing our subscription model. For now, enjoy full access to all features at no cost!
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -14,6 +14,7 @@ import Dashboard from "./pages/Dashboard";
 import SavedWorkouts from "./pages/SavedWorkouts";
 import LogWorkout from "./pages/LogWorkout";
 import NotFound from "./pages/NotFound";
+import Subscription from "./pages/Subscription";
 
 // Configure with proper caching and retry logic
 const queryClient = new QueryClient({
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/saved-workouts" element={<SavedWorkouts />} />
             <Route path="/log-workout" element={<LogWorkout />} />
+            <Route path="/subscription" element={<Subscription />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <FeedbackButton />
