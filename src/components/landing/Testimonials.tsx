@@ -12,11 +12,11 @@ export const Testimonials = () => {
       avatar: "SM"
     },
     {
-      name: "Mike R.",
+      name: "Dagim R.",
       role: "Business Owner",
       content: "The AI-powered recommendations are spot-on. I've seen more progress in 3 months than in my past year of solo training.",
       rating: 5,
-      avatar: "MR"
+      avatar: "DR"
     },
     {
       name: "Lisa K.",
