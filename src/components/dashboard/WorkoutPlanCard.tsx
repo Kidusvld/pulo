@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { LoadingMascot } from "@/components/ui/loading-mascot";
 
 interface Exercise {
   name: string;
@@ -120,7 +121,11 @@ export const WorkoutPlanCard = ({
       </div>
       
       <CardContent className="p-0">
-        {workoutPlan?.plan_data?.workouts ? (
+        {generatingPlan && !workoutPlan?.plan_data?.workouts ? (
+          <div className="flex items-center justify-center py-20 px-6 bg-gradient-to-br from-purple-50/50 to-white/80">
+            <LoadingMascot size="lg" showText={true} />
+          </div>
+        ) : workoutPlan?.plan_data?.workouts ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7 gap-0 divide-x divide-y divide-purple-100/20 max-h-[500px] overflow-y-auto">
             {workoutPlan.plan_data.workouts.map((workout, index) => (
               <div key={index} className="p-4 bg-gradient-to-br from-white/90 to-white/70">
