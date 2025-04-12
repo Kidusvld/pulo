@@ -47,39 +47,36 @@ export const WeeklySummaryStats = ({ stats, consistencyStreak }: WeeklySummarySt
   const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Stats Cards */}
-      <div className="grid grid-cols-3 gap-4">
-        {/* This Week's Workouts */}
-        <div className="bg-purple-50/70 rounded-lg p-4 border border-purple-100 flex flex-col items-center">
-          <Calendar className="h-8 w-8 text-[#8E44AD] mb-2" />
-          <p className="text-sm text-[#5C2D91] text-center font-medium">This Week</p>
+    <div>
+      {/* Stats Cards in a horizontal grid */}
+      <div className="grid grid-cols-3 gap-3 mb-4">
+        {/* Weekly Workouts */}
+        <div className="bg-purple-50/70 rounded-lg p-3 border border-purple-100 flex flex-col items-center">
+          <Calendar className="h-6 w-6 text-[#8E44AD] mb-1" />
           <p className="text-2xl font-bold text-[#5C2D91]">{stats.workoutsThisWeek}</p>
-          <p className="text-xs text-[#8E44AD]/70 text-center">workouts</p>
+          <p className="text-xs text-[#8E44AD]/70 text-center">weekly workouts</p>
         </div>
         
         {/* Active Days */}
-        <div className="bg-purple-50/70 rounded-lg p-4 border border-purple-100 flex flex-col items-center">
-          <Activity className="h-8 w-8 text-[#8E44AD] mb-2" />
-          <p className="text-sm text-[#5C2D91] text-center font-medium">Active Days</p>
+        <div className="bg-purple-50/70 rounded-lg p-3 border border-purple-100 flex flex-col items-center">
+          <Activity className="h-6 w-6 text-[#8E44AD] mb-1" />
           <p className="text-2xl font-bold text-[#5C2D91]">{stats.activeDays}</p>
-          <p className="text-xs text-[#8E44AD]/70 text-center">this week</p>
+          <p className="text-xs text-[#8E44AD]/70 text-center">active days</p>
         </div>
         
         {/* Total Workouts */}
-        <div className="bg-purple-50/70 rounded-lg p-4 border border-purple-100 flex flex-col items-center">
-          <Trophy className="h-8 w-8 text-[#8E44AD] mb-2" />
-          <p className="text-sm text-[#5C2D91] text-center font-medium">All-Time</p>
+        <div className="bg-purple-50/70 rounded-lg p-3 border border-purple-100 flex flex-col items-center">
+          <Trophy className="h-6 w-6 text-[#8E44AD] mb-1" />
           <p className="text-2xl font-bold text-[#5C2D91]">{stats.totalWorkouts}</p>
-          <p className="text-xs text-[#8E44AD]/70 text-center">workouts</p>
+          <p className="text-xs text-[#8E44AD]/70 text-center">all-time</p>
         </div>
       </div>
       
       {/* Weekly Activity Visualization */}
-      <div className="bg-purple-50/40 rounded-lg p-4 border border-purple-100">
+      <div className="bg-purple-50/40 rounded-lg p-3 border border-purple-100">
         <div className="flex items-center justify-between mb-2">
           <p className="text-sm text-[#5C2D91] font-semibold">Weekly Activity</p>
-          <Badge variant="purple" className="bg-[#8E44AD]/90">
+          <Badge variant="purple" className="bg-[#8E44AD]/90 text-xs">
             {consistencyStreak > 0 
               ? `${consistencyStreak} Day Streak` 
               : "No Current Streak"}

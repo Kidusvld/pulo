@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Dumbbell, Calendar, Sparkles } from "lucide-react";
+import { BarChart, Dumbbell, Calendar, Sparkles, LightbulbIcon } from "lucide-react";
 import { WorkoutPlanCard } from "@/components/dashboard/WorkoutPlanCard";
 import { PuloFitIndex } from "@/components/dashboard/PuloFitIndex";
 import { WeeklySummaryStats } from "@/components/dashboard/WeeklySummaryStats";
@@ -104,58 +104,80 @@ export const HomeView = ({
 
   return (
     <div className="space-y-6">
-      {/* Top row: PULO Fit Index + Weekly Progress side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* PULO Fit Index Card */}
-        <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xl font-semibold flex items-center gap-2 text-[#5C2D91]">
-              <Sparkles className="h-5 w-5 text-[#8E44AD]" />
-              PULO Fit Index
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex-1">
-                {profile && <PuloFitIndex age={profile.age} weight={profile.weight} />}
-              </div>
-              <div className="flex-1 mt-4 lg:mt-0">
-                <div className="bg-purple-50/50 rounded-lg p-4 border border-purple-100 h-full flex flex-col">
-                  <h4 className="text-sm font-semibold text-[#8E44AD] mb-1">PULO Says:</h4>
-                  <p className="text-sm text-gray-700 italic">{getMotivationalMessage()}</p>
-                  <div className="mt-auto pt-3 border-t border-purple-100/50">
-                    <p className="text-xs text-[#5C2D91] font-medium">Advice:</p>
-                    <p className="text-xs text-gray-600">{getAdviceMessage()}</p>
-                  </div>
-                </div>
-              </div>
+      {/* Motivational Banner */}
+      <Card className="bg-[#6E59A5]/90 text-white border-none shadow-lg overflow-hidden">
+        <CardContent className="p-4">
+          <div className="flex items-center">
+            <LightbulbIcon className="h-6 w-6 mr-3 text-yellow-200" />
+            <div>
+              <h3 className="font-semibold text-lg">Don't wish for it, work for it.</h3>
+              <p className="text-sm text-white/80">Daily Motivation</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Weekly Stats Card */}
-        <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10 lg:col-span-2">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xl font-semibold flex items-center gap-2 text-[#5C2D91]">
-              <Calendar className="h-5 w-5 text-[#8E44AD]" />
-              Weekly Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <WeeklySummaryStats stats={weeklyStats} consistencyStreak={progressStats.consistencyStreak} />
-          </CardContent>
-        </Card>
+      {/* Main Content - Two column layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column - Workout Plan (Spans 7 columns on lg screens) */}
+        <div className="lg:col-span-7">
+          <WorkoutPlanCard 
+            workoutPlan={workoutPlan}
+            numberOfDays={numberOfDays}
+            generatingPlan={generatingPlan}
+            onDaysChange={onDaysChange}
+            onGeneratePlan={onGeneratePlan}
+            onSavePlan={onSavePlan}
+          />
+        </div>
+        
+        {/* Right Column - Stats and Fit Index (Spans 5 columns on lg screens) */}
+        <div className="lg:col-span-5 space-y-6">
+          {/* Weekly Stats Card */}
+          <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xl font-semibold flex items-center gap-2 text-[#5C2D91]">
+                <Calendar className="h-5 w-5 text-[#8E44AD]" />
+                Weekly Progress
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <WeeklySummaryStats stats={weeklyStats} consistencyStreak={progressStats.consistencyStreak} />
+            </CardContent>
+          </Card>
+
+          {/* PULO Fit Index with Motivation */}
+          <div className="grid grid-cols-1 gap-4">
+            {profile && (
+              <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-xl font-semibold flex items-center gap-2 text-[#5C2D91]">
+                    <Sparkles className="h-5 w-5 text-[#8E44AD]" />
+                    PULO Fit Index
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col">
+                    <div className="mb-3">
+                      {profile && <PuloFitIndex age={profile.age} weight={profile.weight} />}
+                    </div>
+                    <div className="mt-2">
+                      <div className="bg-purple-50/50 rounded-lg p-4 border border-purple-100">
+                        <h4 className="text-sm font-semibold text-[#8E44AD] mb-1">PULO Says:</h4>
+                        <p className="text-sm text-gray-700 italic">{getMotivationalMessage()}</p>
+                        <div className="mt-3 pt-2 border-t border-purple-100/50">
+                          <p className="text-xs text-[#5C2D91] font-medium">Advice:</p>
+                          <p className="text-xs text-gray-600">{getAdviceMessage()}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
       </div>
-
-      {/* Workout Plan Section - Full width */}
-      <WorkoutPlanCard 
-        workoutPlan={workoutPlan}
-        numberOfDays={numberOfDays}
-        generatingPlan={generatingPlan}
-        onDaysChange={onDaysChange}
-        onGeneratePlan={onGeneratePlan}
-        onSavePlan={onSavePlan}
-      />
     </div>
   );
 };

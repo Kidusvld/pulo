@@ -64,11 +64,11 @@ export const WorkoutPlanCard = ({
   onSavePlan,
 }: WorkoutPlanCardProps) => {
   return (
-    <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10 overflow-hidden">
+    <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10 overflow-hidden h-full">
       <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-purple-100/20">
         <CardTitle className="text-xl font-semibold flex items-center gap-2 text-[#5C2D91]">
           <DumbbellIcon className="h-5 w-5 text-[#8E44AD]" />
-          Your Workout Plan
+          Today's Workout
         </CardTitle>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 bg-purple-50/50 px-3 py-1 rounded-lg border border-purple-100/50">
@@ -105,7 +105,7 @@ export const WorkoutPlanCard = ({
               {generatingPlan ? "Generating..." : (
                 <>
                   <Sparkles className="h-4 w-4" />
-                  Generate New Plan
+                  Generate Plan
                 </>
               )}
             </Button>
@@ -114,20 +114,20 @@ export const WorkoutPlanCard = ({
       </CardHeader>
       <CardContent className="p-0">
         {workoutPlan?.plan_data?.workouts ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7 gap-0 divide-x divide-y divide-purple-100/20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7 gap-0 divide-x divide-y divide-purple-100/20 max-h-[500px] overflow-y-auto">
             {workoutPlan.plan_data.workouts.map((workout, index) => (
-              <div key={index} className="p-5 bg-gradient-to-br from-white/90 to-white/70">
+              <div key={index} className="p-4 bg-gradient-to-br from-white/90 to-white/70">
                 <h3 className="font-semibold flex items-center gap-2 text-[#5C2D91] mb-3 pb-2 border-b border-purple-100/30">
                   <Badge variant="purple" className="px-3 py-1">
                     <Calendar className="h-3 w-3 mr-1" />
                     Day {workout.day}
                   </Badge>
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {workout.exercises.map((exercise, exerciseIndex) => (
                     <div 
                       key={exerciseIndex} 
-                      className="bg-purple-50/70 p-3 rounded-lg border border-purple-100 hover:bg-purple-50 transition-colors duration-200"
+                      className="bg-purple-50/70 p-2 rounded-lg border border-purple-100 hover:bg-purple-50 transition-colors duration-200"
                     >
                       <p className="font-medium text-[#5C2D91] flex items-center text-sm">
                         {getExerciseIcon(exercise.name)}
@@ -150,8 +150,8 @@ export const WorkoutPlanCard = ({
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 px-6">
-            <div className="bg-purple-50/30 p-10 rounded-2xl border border-purple-100/30 max-w-md mx-auto">
+          <div className="text-center py-12 px-6">
+            <div className="bg-purple-50/30 p-8 rounded-2xl border border-purple-100/30 max-w-md mx-auto">
               <DumbbellIcon className="h-16 w-16 text-purple-200 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-[#5C2D91] mb-2">No Workout Plan Yet</h3>
               <p className="text-[#8E44AD]/70 mb-6">

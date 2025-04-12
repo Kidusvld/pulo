@@ -78,32 +78,14 @@ export const PuloFitIndex = ({ age, weight, minimal = false }: PuloFitIndexProps
   }
 
   return (
-    <div className="rounded-lg border p-4 bg-white/90 backdrop-blur-sm border-purple-100 shadow-lg shadow-purple-100/20 h-full">
-      <div className="mb-2 flex items-center">
-        <span className="text-sm text-purple-600 font-medium font-poppins">PULO Fit Index</span>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="ml-2 cursor-help">
-                <InfoIcon className="h-4 w-4 text-purple-400" />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent className="bg-white text-purple-700 border-purple-200">
-              <p className="text-sm">Your fitness index based on age and weight profile</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+    <div className={`rounded-lg p-4 ${colorClasses.bg} ${colorClasses.border} shadow-sm ring-1 ${colorClasses.ring} transition-all duration-200`}>
+      <div className="flex items-center gap-2 mb-1">
+        <span className="text-xl">{category.emoji}</span>
+        <h3 className={`text-lg font-bold font-poppins ${colorClasses.text}`}>{category.name}</h3>
       </div>
+      <p className="text-sm text-purple-700 font-inter">{category.message}</p>
       
-      <div className={`rounded-lg p-4 ${colorClasses.bg} ${colorClasses.border} mb-2 shadow-sm ring-1 ${colorClasses.ring} transition-all duration-200`}>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-xl">{category.emoji}</span>
-          <h3 className={`text-lg font-bold font-poppins ${colorClasses.text}`}>{category.name}</h3>
-        </div>
-        <p className="text-sm text-purple-700 font-inter">{category.message}</p>
-      </div>
-      
-      <p className="text-xs text-purple-500/70 italic font-inter mt-auto">
+      <p className="text-xs text-purple-500/70 italic font-inter mt-2">
         Based on your age and weight profile
       </p>
     </div>
