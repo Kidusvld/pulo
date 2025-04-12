@@ -29,7 +29,7 @@ export const CallToAction = () => {
             <Button 
               variant="outline"
               size="lg" 
-              className="border-white text-white hover:bg-white/10 px-8 py-6 text-lg h-auto"
+              className="bg-white/20 border-[#8E44AD] border-2 text-white hover:bg-[#8E44AD]/30 px-8 py-6 text-lg h-auto transition-all"
               onClick={() => window.open('https://apps.apple.com', '_blank')}
             >
               App Store Coming Soon

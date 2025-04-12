@@ -35,7 +35,7 @@ export const Hero = () => {
             variant="outline" 
             size="lg" 
             onClick={() => navigate("/#features")} 
-            className="border-white border-2 text-white hover:bg-white/20 px-8 py-6 text-lg h-auto font-medium flex items-center shadow-lg shadow-purple-900/20"
+            className="bg-white/20 border-[#8E44AD] border-2 text-white hover:bg-[#8E44AD]/30 px-8 py-6 text-lg h-auto font-medium flex items-center shadow-lg shadow-purple-900/20 transition-all"
           >
             <Info className="mr-2 h-5 w-5" />
             Learn More
