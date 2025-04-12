@@ -1,5 +1,4 @@
-
-import { ArrowRight, Trophy, Dumbbell, Flame, Leaf, Activity, Zap, Home, Pencil, Calendar } from "lucide-react";
+import { ArrowRight, Trophy, Dumbbell, Flame, Leaf, Activity, Zap, Home, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -154,9 +153,6 @@ export const ProfileCard = ({
                 <Badge variant="outline" className="h-14 w-14 rounded-full flex items-center justify-center text-lg font-bold bg-[#8E44AD] text-white border-white/20 shadow-lg">
                   {profile?.age}
                 </Badge>
-              )}
-              {isEditing && (
-                <Calendar className="h-10 w-10 text-white/80" />
               )}
             </div>
             
