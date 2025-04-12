@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,14 +39,19 @@ const Subscription = () => {
         navigate("/auth");
         return;
       }
+      
+      // Updated query to use profiles table instead of non-existent subscriptions table
       const {
         data,
         error
-      } = await supabase.from("subscriptions").select("status").eq("user_id", session.user.id).single();
+      } = await supabase.from("profiles").select("subscription_status").eq("id", session.user.id).single();
+      
       if (error) {
         throw error;
       }
-      if (data && data.status === "active") {
+      
+      // Check subscription_status value from the profiles table
+      if (data && data.subscription_status === "premium") {
         setSubscription("pro");
       } else {
         setSubscription("free");
