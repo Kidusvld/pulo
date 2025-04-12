@@ -3,11 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { ProfileCard } from "@/components/dashboard/ProfileCard";
 import { WorkoutPlanCard } from "@/components/dashboard/WorkoutPlanCard";
-import { ProgressStats } from "@/components/progress/ProgressStats";
-import { MuscleGroupChart } from "@/components/progress/MuscleGroupChart";
-import { WorkoutForm } from "@/components/progress/WorkoutForm";
 import { HomeView } from "@/components/dashboard/HomeView";
 import { ProfileView } from "@/components/dashboard/ProfileView";
 import { Button } from "@/components/ui/button";
@@ -150,20 +146,30 @@ const Dashboard = () => {
       const {
         data: progressData,
         error: progressError
-      } = await supabase.from("progress_tracking").select("total_volume, workout_duration").order("created_at", {
+      } = await supabase.from("progress_tracking").select("total_volume, workout_duration, created_at").order("created_at", {
         ascending: false
       });
       if (progressError) throw progressError;
+      
       const {
         data: muscleData,
         error: muscleError
       } = await supabase.from("muscle_group_tracking").select("muscle_group, total_volume");
-      if (muscleError) throw muscleError;
+      
+      if (muscleError) {
+        console.error("Error fetching muscle group data:", muscleError);
+      }
+      
       const totalWorkouts = progressData?.length || 0;
       const totalVolume = progressData?.reduce((sum, record) => sum + (record.total_volume || 0), 0) || 0;
       const averageDuration = Math.round(progressData?.reduce((sum, record) => sum + (record.workout_duration || 0), 0) / (totalWorkouts || 1));
-      const muscleGroupStats = muscleData?.reduce((acc: any, curr) => {
+      
+      const muscleGroupStats = muscleData ? muscleData.reduce((acc: any, curr) => {
+        if (!curr) return acc;
+        
         const group = curr.muscle_group;
+        if (!group) return acc;
+        
         if (!acc[group]) {
           acc[group] = {
             muscle_group: group,
@@ -172,13 +178,15 @@ const Dashboard = () => {
         }
         acc[group].total_volume += curr.total_volume || 0;
         return acc;
-      }, {});
+      }, {}) : {};
+      
       setProgressStats({
         totalWorkouts,
         totalVolume,
         averageDuration,
         consistencyStreak: calculateStreak(progressData || [])
       });
+      
       setMuscleGroupData(Object.values(muscleGroupStats || {}));
     } catch (error) {
       console.error("Error fetching progress stats:", error);
@@ -210,7 +218,6 @@ const Dashboard = () => {
       case "moderate": return "intermediate";
       case "hard": 
       case "intense": return "advanced";
-      // If it's already a legacy value, return it as is
       case "beginner": return "beginner";
       case "intermediate": return "intermediate";
       case "advanced": return "advanced";
@@ -219,15 +226,12 @@ const Dashboard = () => {
   };
 
   const mapToLegacyFitnessGoal = (goal: string): "build_muscle" | "lose_fat" | "increase_mobility" => {
-    // stay_active is not supported in the database, map it to a supported value
     if (goal === "stay_active") return "build_muscle";
     
-    // If it's already a valid database value, return it
     if (goal === "build_muscle" || goal === "lose_fat" || goal === "increase_mobility") {
       return goal as "build_muscle" | "lose_fat" | "increase_mobility";
     }
     
-    // Default fallback
     return "build_muscle";
   };
 
@@ -255,9 +259,7 @@ const Dashboard = () => {
       }).eq("id", session.user.id);
       if (profileError) throw profileError;
       
-      // Convert intensity level to database format
       const intensityToSave = mapToLegacyIntensity(editedIntensity);
-      // Convert fitness goal to database format
       const fitnessGoalToSave = mapToLegacyFitnessGoal(editedFitnessGoal);
       
       const {
@@ -309,9 +311,7 @@ const Dashboard = () => {
       return;
     }
     try {
-      // Use mapToLegacyIntensity to ensure we're using the correct enum value
       const intensityToUse = mapToLegacyIntensity(profile.intensity_level || "intermediate");
-      // Use mapToLegacyFitnessGoal to ensure we're using the correct enum value
       const fitnessGoalToUse = mapToLegacyFitnessGoal(profile.fitness_goal || "build_muscle");
       
       const {

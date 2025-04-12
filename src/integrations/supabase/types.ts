@@ -49,6 +49,7 @@ export type Database = {
           muscle_group: Database["public"]["Enums"]["muscle_group"]
           progress_tracking_id: string | null
           sets_completed: number | null
+          total_volume: number | null
           total_weight: number | null
         }
         Insert: {
@@ -57,6 +58,7 @@ export type Database = {
           muscle_group: Database["public"]["Enums"]["muscle_group"]
           progress_tracking_id?: string | null
           sets_completed?: number | null
+          total_volume?: number | null
           total_weight?: number | null
         }
         Update: {
@@ -65,6 +67,7 @@ export type Database = {
           muscle_group?: Database["public"]["Enums"]["muscle_group"]
           progress_tracking_id?: string | null
           sets_completed?: number | null
+          total_volume?: number | null
           total_weight?: number | null
         }
         Relationships: [
