@@ -28,9 +28,9 @@ export const FeedbackButton = () => {
             
             {/* PULO Image */}
             <motion.img
-              src="/lovable-uploads/598422e7-6d2c-4dca-b56d-d8a7d8872b11.png"
+              src="/lovable-uploads/f5173d59-6e7e-4c77-935d-c2473fcbcbae.png"
               alt="PULO wants your feedback"
-              className="h-20 w-auto"
+              className="h-24 w-auto"
               animate={{
                 y: isHovered ? -5 : 0,
               }}
