@@ -130,21 +130,21 @@ export const ProfileCard = ({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           {/* Left column for basic info */}
           <div className="md:col-span-4 space-y-4">
-            <div className="bg-purple-50/70 rounded-lg p-4 border border-purple-100 flex items-center justify-between">
+            <div className="bg-[#5C2D91] rounded-lg p-4 border border-purple-400/20 flex items-center justify-between shadow-md">
               <div>
-                <p className="text-sm text-[#8E44AD] font-medium">Age</p>
-                <p className="text-lg font-semibold text-[#5C2D91]">{profile?.age} years</p>
+                <p className="text-sm text-white/80 font-medium">Age</p>
+                <p className="text-lg font-semibold text-white">{profile?.age} years</p>
               </div>
-              <Badge variant="shadow" className="h-12 w-12 rounded-full flex items-center justify-center text-lg font-bold">
+              <Badge variant="outline" className="h-14 w-14 rounded-full flex items-center justify-center text-lg font-bold bg-[#8E44AD] text-white border-white/20 shadow-lg">
                 {profile?.age}
               </Badge>
             </div>
             
-            <div className="bg-purple-50/70 rounded-lg p-4 border border-purple-100">
+            <div className="bg-[#5C2D91] rounded-lg p-4 border border-purple-400/20 shadow-md">
               <div className="flex items-center justify-between">
-                <p className="text-sm text-[#8E44AD] font-medium">Weight</p>
+                <p className="text-sm text-white/80 font-medium">Weight</p>
                 {!isEditing && (
-                  <Badge variant="shadow" className="px-3 py-1">
+                  <Badge variant="outline" className="px-3 py-1 bg-[#8E44AD] text-white border-white/20">
                     {profile?.weight} lbs
                   </Badge>
                 )}
@@ -155,10 +155,10 @@ export const ProfileCard = ({
                   value={editedWeight} 
                   onChange={e => onEditWeight(e.target.value)} 
                   placeholder="Enter weight in lbs" 
-                  className="mt-1 bg-white border-purple-200" 
+                  className="mt-2 bg-white border-purple-200" 
                 />
               ) : (
-                <p className="text-lg font-semibold text-[#5C2D91]">{profile?.weight} lbs</p>
+                <p className="text-lg font-semibold text-white">{profile?.weight} lbs</p>
               )}
             </div>
             
