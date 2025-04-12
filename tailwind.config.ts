@@ -22,6 +22,8 @@ export default {
 			fontFamily: {
 				'poppins': ['Poppins', 'sans-serif'],
 				'inter': ['Inter', 'sans-serif'],
+				'montserrat': ['Montserrat', 'Inter', 'sans-serif'],
+				'opensans': ['Open Sans', 'Roboto', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -93,6 +95,12 @@ export default {
 						800: '#2c1773',
 						900: '#1A1F2C',
 					}
+				},
+				pulo: {
+					purple: '#5C2D91',
+					accent: '#8E44AD',
+					white: '#FFFFFF',
+					gray: '#E0E0E0',
 				}
 			},
 			borderRadius: {

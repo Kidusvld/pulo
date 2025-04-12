@@ -1,9 +1,9 @@
 
 import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain } from "lucide-react";
+import { ArrowLeft, Brain } from "lucide-react";
 import { SignInForm } from "@/components/auth/SignInForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
 import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
@@ -68,11 +68,20 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen relative bg-gradient-to-br from-deep-purple-900 via-deep-purple-800 to-deep-purple-900">
+    <div className="min-h-screen relative bg-pulo-gradient bg-grid-white overflow-hidden">
+      {/* Watermark */}
+      <div className="absolute bottom-0 left-0 w-full h-full opacity-10 pointer-events-none flex items-center justify-center">
+        <img 
+          src="/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png"
+          alt="PULO Watermark"
+          className="h-64 opacity-10"
+        />
+      </div>
+      
       {/* Decorative Elements */}
       <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] -z-10"></div>
-      <div className="absolute h-32 w-32 rounded-full bg-purple-500/10 blur-3xl top-20 left-20 opacity-50"></div>
-      <div className="absolute h-32 w-32 rounded-full bg-purple-500/10 blur-3xl bottom-20 right-20 opacity-50"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-500/10 blur-[100px] top-20 left-20 opacity-50"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-500/10 blur-[100px] bottom-20 right-20 opacity-50"></div>
       
       {/* Main Content */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
@@ -81,24 +90,45 @@ const Auth = () => {
           <div className="flex items-center justify-center mb-4">
             <div 
               onClick={() => navigate("/")}
-              className="flex items-center justify-center px-3 py-2 rounded-xl bg-purple-600 text-white cursor-pointer hover:bg-purple-700 transition-colors duration-200"
+              className="flex items-center justify-center px-3 py-2 rounded-xl bg-[#8E44AD] text-white cursor-pointer hover:bg-[#9B59B6] transition-colors duration-200"
             >
               <Brain className="h-8 w-8 mr-2" />
-              <span className="text-2xl font-bold tracking-tight">PULO</span>
+              <span className="text-2xl font-bold tracking-tight font-montserrat">PULO</span>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-white">
+          <h1 className="text-2xl font-bold text-white font-montserrat">
             Your AI Fitness Partner
           </h1>
-          <p className="text-purple-200 mt-2">Personalized training that adapts to you</p>
+          <p className="text-purple-200 mt-2 font-opensans">Personalized training that adapts to you</p>
         </div>
 
-        <Card className="w-full max-w-md bg-white/90 backdrop-blur-lg shadow-xl border-purple-100">
-          <CardHeader className="space-y-2">
-            <CardTitle className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to-purple-900">
+        <Card className="w-full max-w-[400px] bg-white/90 backdrop-blur-lg shadow-xl border-purple-100 rounded-lg">
+          {currentMode !== "forgot" && currentMode !== "recovery" && (
+            <div className="flex border-b border-gray-200">
+              <button
+                onClick={() => handleSwitchMode("signin")}
+                className={`flex-1 py-3 text-center font-montserrat transition-colors ${
+                  currentMode === "signin" ? "auth-tab-active text-[#5C2D91]" : "auth-tab-inactive text-gray-500"
+                }`}
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => handleSwitchMode("signup")}
+                className={`flex-1 py-3 text-center font-montserrat transition-colors ${
+                  currentMode === "signup" ? "auth-tab-active text-[#5C2D91]" : "auth-tab-inactive text-gray-500"
+                }`}
+              >
+                Sign Up
+              </button>
+            </div>
+          )}
+          
+          <CardHeader className="space-y-2 pt-6">
+            <CardTitle className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-[#5C2D91] to-[#8E44AD] font-montserrat">
               {getFormTitle()}
             </CardTitle>
-            <p className="text-center text-gray-600">
+            <p className="text-center text-gray-600 font-opensans">
               {getFormDescription()}
             </p>
           </CardHeader>
@@ -116,34 +146,31 @@ const Auth = () => {
               <ResetPasswordForm />
             )}
 
-            {currentMode !== "forgot" && currentMode !== "recovery" && (
-              <>
-                <div className="relative my-6">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-200"></div>
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">or</span>
-                  </div>
-                </div>
-
-                <p className="text-center text-sm text-gray-600">
-                  {currentMode === "signin" ? "New to PULO? " : "Already have a PULO account? "}
-                  <button
-                    type="button"
-                    onClick={() => handleSwitchMode(currentMode === "signin" ? "signup" : "signin")}
-                    className="text-purple-600 hover:text-purple-700 hover:underline font-medium"
-                  >
-                    {currentMode === "signin" ? "Sign Up" : "Sign In"}
-                  </button>
-                </p>
-              </>
+            {currentMode === "forgot" && (
+              <div className="mt-6 text-center">
+                <button
+                  type="button"
+                  onClick={() => handleSwitchMode("signin")}
+                  className="text-[#5C2D91] hover:text-[#8E44AD] hover:underline font-medium font-opensans text-sm"
+                >
+                  Back to Sign In
+                </button>
+              </div>
             )}
           </CardContent>
         </Card>
 
+        {/* Back to Home Link */}
+        <Link 
+          to="/" 
+          className="mt-8 text-white hover:text-purple-200 flex items-center justify-center font-opensans"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Home
+        </Link>
+
         {/* Footer */}
-        <div className="mt-8 text-center text-sm text-purple-200">
+        <div className="mt-4 text-center text-sm text-purple-200 font-opensans">
           <p>Protected by industry standard encryption</p>
         </div>
       </div>

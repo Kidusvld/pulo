@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -97,7 +99,11 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-opensans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-montserrat font-bold;
   }
 }
 
@@ -109,5 +115,27 @@
   .bg-grid-purple-100 {
     background-size: 32px 32px;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(143 107 236 / 0.05)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+  }
+
+  .bg-pulo-gradient {
+    @apply bg-gradient-to-br from-[#5C2D91] via-[#6D3CAA] to-[#502680];
+  }
+  
+  .bg-pulo-watermark {
+    @apply relative;
+  }
+  
+  .bg-pulo-watermark::after {
+    content: '';
+    @apply absolute inset-0 bg-contain bg-center bg-no-repeat opacity-10 pointer-events-none z-0;
+    background-image: url('/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png');
+  }
+  
+  .auth-tab-active {
+    @apply border-b-2 border-[#8E44AD] text-white font-semibold;
+  }
+  
+  .auth-tab-inactive {
+    @apply border-b-2 border-transparent text-purple-200 hover:text-white;
   }
 }

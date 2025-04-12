@@ -1,7 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Smartphone } from "lucide-react";
+import { LogIn, Smartphone } from "lucide-react";
 
 export const Navigation = () => {
   const navigate = useNavigate();
@@ -23,9 +23,20 @@ export const Navigation = () => {
                 src="/lovable-uploads/d5a3d106-9961-461f-9c75-11ba2b80b6e0.png" 
               />
             </div>
-            <div className="bg-white/10 backdrop-blur-sm text-white px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-2">
-              <Smartphone className="w-4 h-4" />
-              <span>Coming Soon on the App Store</span>
+            <div className="flex items-center gap-4">
+              <div className="bg-white/10 backdrop-blur-sm text-white px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-2">
+                <Smartphone className="w-4 h-4" />
+                <span>Coming Soon on the App Store</span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-white text-white hover:bg-white/10 font-medium rounded-lg"
+                onClick={() => navigate("/auth?mode=signin")}
+              >
+                <LogIn className="mr-1 w-4 h-4" />
+                Sign In
+              </Button>
             </div>
           </div>
         </div>
