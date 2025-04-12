@@ -80,12 +80,12 @@ export const DashboardHeader = ({
         </div>
       </div>
       
-      {/* User greeting section */}
-      <div className="mt-2">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-[#5C2D91] to-[#8E44AD] bg-clip-text text-transparent font-montserrat">
+      {/* User greeting section - simplified styling */}
+      <div className="mt-4">
+        <h1 className="text-3xl font-semibold text-white font-montserrat">
           Welcome{firstName ? `, ${firstName}` : ""}! 👋
         </h1>
-        <p className="text-gray-100/80 mt-2 font-opensans">Track your fitness journey and achieve your goals</p>
+        <p className="text-gray-100/80 mt-1 font-opensans">Track your fitness journey and achieve your goals</p>
       </div>
     </div>
   );
