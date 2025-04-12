@@ -140,15 +140,22 @@ export const WorkoutPlanCard = ({
                         {getExerciseIcon(exercise.name)}
                         {exercise.name}
                       </p>
-                      <div className="flex items-center justify-between mt-1 ml-6">
-                        <p className="text-xs text-[#8E44AD]/80">
-                          {exercise.sets} sets × {exercise.duration ? 
-                            `${exercise.duration} sec` : 
-                            `${exercise.reps} reps`}
-                        </p>
-                        <Badge variant="shadow" className="text-xs">
-                          {Math.floor(exercise.rest / 60)} min rest
-                        </Badge>
+                      <div className="flex flex-col mt-1">
+                        <div className="ml-6 flex items-center justify-between">
+                          <p className="text-xs text-[#8E44AD]/80">
+                            {exercise.sets} sets × {exercise.duration ? 
+                              `${exercise.duration} sec` : 
+                              `${exercise.reps} reps`}
+                          </p>
+                        </div>
+                        
+                        {/* Enhanced Rest Period Display */}
+                        <div className="ml-6 mt-1.5 flex items-center bg-[#F1F0FB] rounded-md px-2 py-1 border border-purple-100">
+                          <Clock className="h-3.5 w-3.5 text-[#8E44AD] mr-1.5" />
+                          <span className="text-xs font-semibold text-[#5C2D91]">
+                            Rest: {Math.floor(exercise.rest / 60)} min
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ))}
