@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,7 +61,6 @@ export function useDashboardData() {
   });
   const [muscleGroupData, setMuscleGroupData] = useState<MuscleGroupData[]>([]);
 
-  // Function to check authentication and load profile data
   const checkAuth = async () => {
     const {
       data: { session }
@@ -74,20 +72,17 @@ export function useDashboardData() {
     }
     
     try {
-      // Get user profile data
       const { data: profileData, error: profileError } = await supabase
         .from("profiles")
         .select("first_name, age, weight, subscription_status, subscription_end_date")
         .eq("id", session.user.id)
         .single();
       
-      // Check if profile exists with required data
       if (profileError || !profileData?.age || !profileData?.weight || !profileData?.first_name) {
         navigate("/onboarding");
         return;
       }
       
-      // Get active workout plan
       const { data: planData, error: planError } = await supabase
         .from("workout_plans")
         .select("*")
@@ -100,7 +95,6 @@ export function useDashboardData() {
         toast.error("Failed to load workout plan");
       }
       
-      // Set profile data
       setProfile({
         first_name: profileData.first_name,
         age: profileData.age,
@@ -113,12 +107,10 @@ export function useDashboardData() {
         subscription_end_date: profileData.subscription_end_date
       });
       
-      // Set workout plan if it exists
       if (planData) {
         setWorkoutPlan(planData as WorkoutPlan);
       }
       
-      // Fetch progress stats
       await fetchProgressStats();
       
       setLoading(false);
@@ -129,7 +121,6 @@ export function useDashboardData() {
     }
   };
 
-  // Function to fetch progress statistics
   const fetchProgressStats = async () => {
     try {
       const { data: progressData, error: progressError } = await supabase
@@ -151,7 +142,6 @@ export function useDashboardData() {
         progressData?.reduce((sum, record) => sum + (record.workout_duration || 0), 0) / (totalWorkouts || 1)
       );
       
-      // Process muscle group data
       const muscleGroupStats = muscleData?.reduce((acc: Record<string, MuscleGroupData>, curr) => {
         const group = curr.muscle_group;
         if (!acc[group]) {
@@ -178,7 +168,6 @@ export function useDashboardData() {
     }
   };
 
-  // Calculate workout streak
   const calculateStreak = (progressData: any[]) => {
     let streak = 0;
     const today = new Date();
@@ -198,7 +187,6 @@ export function useDashboardData() {
     return streak;
   };
 
-  // Set up auth state monitoring
   useEffect(() => {
     checkAuth();
     
@@ -222,6 +210,4 @@ export function useDashboardData() {
   };
 }
 
-// Export types for use in other components
 export type { Profile, WorkoutPlan, ProgressStats, MuscleGroupData };
-
