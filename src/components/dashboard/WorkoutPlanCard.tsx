@@ -1,5 +1,5 @@
 
-import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart, Clock, Sparkles } from "lucide-react";
+import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart, Clock, Sparkles, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -70,11 +70,16 @@ export const WorkoutPlanCard = ({
           <DumbbellIcon className="h-5 w-5 text-[#8E44AD]" />
           Today's Workout
         </CardTitle>
-        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-4">
-          <div className="flex items-center gap-2 bg-purple-50/50 px-3 py-1 rounded-lg border border-purple-100/50">
+      </CardHeader>
+      
+      {/* Training Days Selection - More Visible */}
+      <div className="flex items-center justify-end px-6 pt-4 pb-3 border-b border-purple-100/20 bg-purple-50/30">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-purple-200 shadow-sm">
+            <CalendarDays className="h-4 w-4 text-[#8E44AD]" />
             <label htmlFor="days" className="text-sm text-[#8E44AD] font-medium whitespace-nowrap">Training Days:</label>
             <Select value={numberOfDays.toString()} onValueChange={value => onDaysChange(parseInt(value))}>
-              <SelectTrigger className="w-[80px] bg-white border-purple-200">
+              <SelectTrigger className="w-[90px] bg-white border-purple-200 text-[#5C2D91] font-semibold">
                 <SelectValue placeholder="Days" />
               </SelectTrigger>
               <SelectContent>
@@ -86,34 +91,31 @@ export const WorkoutPlanCard = ({
               </SelectContent>
             </Select>
           </div>
-        </div>
-      </CardHeader>
-      
-      {/* Action buttons in separate row for more space */}
-      <div className="flex items-center justify-end px-6 pt-2 pb-3 border-b border-purple-100/20">
-        <div className="flex gap-2">
-          {workoutPlan && (
-            <Button 
-              variant="outline" 
-              onClick={onSavePlan} 
-              className="bg-white hover:bg-purple-50 hover:text-[#8E44AD] border-purple-200 flex items-center gap-1"
-            >
-              <Heart className="h-4 w-4" />
-              Save Plan
-            </Button>
-          )}
-          <Button 
-            onClick={onGeneratePlan} 
-            disabled={generatingPlan} 
-            className="bg-gradient-to-r from-[#5C2D91] to-[#8E44AD] hover:from-[#5C2D91]/90 hover:to-[#8E44AD]/90 text-white transition-all duration-200 flex items-center gap-2"
-          >
-            {generatingPlan ? "Generating..." : (
-              <>
-                <Sparkles className="h-4 w-4" />
-                Generate Plan
-              </>
+          
+          <div className="flex gap-2">
+            {workoutPlan && (
+              <Button 
+                variant="outline" 
+                onClick={onSavePlan} 
+                className="bg-white hover:bg-purple-50 hover:text-[#8E44AD] border-purple-200 flex items-center gap-1"
+              >
+                <Heart className="h-4 w-4" />
+                Save Plan
+              </Button>
             )}
-          </Button>
+            <Button 
+              onClick={onGeneratePlan} 
+              disabled={generatingPlan} 
+              className="bg-gradient-to-r from-[#5C2D91] to-[#8E44AD] hover:from-[#5C2D91]/90 hover:to-[#8E44AD]/90 text-white transition-all duration-200 flex items-center gap-2 px-4"
+            >
+              {generatingPlan ? "Generating..." : (
+                <>
+                  <Sparkles className="h-4 w-4" />
+                  Generate Plan
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
       
