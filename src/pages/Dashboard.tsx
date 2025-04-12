@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { BarChart } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -42,7 +41,6 @@ const Dashboard = () => {
     handleSignOut
   } = useProfileActions(profile, workoutPlan, refreshData);
 
-  // Calculate stats for quick stats card
   const getLastWorkoutDate = () => {
     if (progressStats.totalWorkouts === 0) return null;
     
@@ -58,7 +56,6 @@ const Dashboard = () => {
     return format(lastWorkoutDate, "MMM d");
   };
   
-  // Placeholder stats - in a real app, these would come from the database
   const weeklyWorkouts = progressStats.consistencyStreak > 0 ? 
                         Math.min(progressStats.consistencyStreak, 7) : 
                         Math.min(Math.floor(progressStats.totalWorkouts / 4), 7);

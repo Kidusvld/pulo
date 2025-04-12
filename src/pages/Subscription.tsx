@@ -31,7 +31,7 @@ const PricingTier = ({
     {isPopular && (
       <div className="absolute -top-5 left-0 right-0 flex justify-center">
         <div className="bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
-          <Crown className="w-4 h-4" />
+          <Star className="w-4 h-4" />
           Most Popular
         </div>
       </div>
@@ -152,7 +152,7 @@ const SubscriptionPage = () => {
                 onClick={() => navigate("/")} 
                 className="flex items-center justify-center px-3 py-2 rounded-xl bg-purple-600 text-white cursor-pointer hover:bg-purple-700 transition-colors duration-200"
               >
-                <Brain className="h-5 w-5 mr-2" />
+                <Star className="h-5 w-5 mr-2" />
                 <span className="text-xl font-bold tracking-tight">PULO</span>
               </div>
             </div>
