@@ -149,16 +149,16 @@ export const ProgressStats = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-purple-900 flex items-center gap-2">
-          <BarChart className="h-5 w-5 text-purple-600" />
+      <div className="flex justify-between items-center mb-4 pb-3 border-b border-white/10">
+        <h2 className="text-xl font-semibold text-white flex items-center gap-2 font-montserrat">
+          <BarChart className="h-5 w-5 text-purple-300" />
           Progress Statistics
         </h2>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button
               variant="outline"
-              className="bg-white hover:bg-red-50 hover:text-red-600 border-red-100 transition-all duration-200"
+              className="bg-white/10 hover:bg-red-500/20 hover:text-white border-red-300/20 text-red-100/80 transition-all duration-200"
             >
               <RotateCcw className="h-4 w-4 mr-2" />
               Reset Stats
@@ -183,7 +183,7 @@ export const ProgressStats = ({
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {statItems.map((stat) => (
           <StatCard key={stat.title} {...stat} />
         ))}
