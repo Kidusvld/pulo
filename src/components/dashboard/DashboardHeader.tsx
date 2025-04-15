@@ -1,4 +1,3 @@
-
 import { DumbbellIcon, LogOut, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +10,7 @@ interface DashboardHeaderProps {
   onSignOut: () => void;
   subscriptionStatus?: "free" | "pro";
 }
+
 export const DashboardHeader = ({
   firstName,
   onSignOut,
@@ -33,7 +33,6 @@ export const DashboardHeader = ({
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Navigation dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="bg-white/10 hover:bg-purple-500/10 hover:text-white border-purple-300/20 transition-all duration-200 font-inter text-white">
@@ -50,7 +49,7 @@ export const DashboardHeader = ({
                 <img 
                   src="/lovable-uploads/e23dd508-2106-4335-9918-2f12a6af334b.png"
                   alt="PULO Hand"
-                  className="w-4 h-4 mr-2" 
+                  className="w-5 h-5 mr-2" 
                 />
                 Saved Plans
               </DropdownMenuItem>
@@ -64,7 +63,6 @@ export const DashboardHeader = ({
         </div>
       </div>
       
-      {/* User greeting section - simplified styling */}
       <div className="mt-4">
         <h1 className="text-3xl font-semibold text-white font-montserrat flex items-center">
           Welcome{firstName ? `, ${firstName}` : ""}! 

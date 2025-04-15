@@ -1,5 +1,4 @@
-
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,7 +68,6 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen relative bg-pulo-gradient bg-grid-white overflow-hidden">
-      {/* Watermark */}
       <div className="absolute bottom-0 left-0 w-full h-full opacity-10 pointer-events-none flex items-center justify-center">
         <img 
           src="/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png"
@@ -78,14 +76,11 @@ const Auth = () => {
         />
       </div>
       
-      {/* Decorative Elements */}
       <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] -z-10"></div>
       <div className="absolute h-64 w-64 rounded-full bg-purple-500/10 blur-[100px] top-20 left-20 opacity-50"></div>
       <div className="absolute h-64 w-64 rounded-full bg-purple-500/10 blur-[100px] bottom-20 right-20 opacity-50"></div>
       
-      {/* Main Content */}
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
-        {/* Logo and Branding */}
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center mb-4">
             <div 
@@ -95,7 +90,7 @@ const Auth = () => {
               <img 
                 src="/lovable-uploads/e23dd508-2106-4335-9918-2f12a6af334b.png" 
                 alt="PULO Hand" 
-                className="h-8 w-8 mr-2"
+                className="h-12 w-12 mr-2"
               />
               <span className="text-2xl font-bold tracking-tight font-montserrat">PULO</span>
             </div>
@@ -164,7 +159,6 @@ const Auth = () => {
           </CardContent>
         </Card>
 
-        {/* Back to Home Link */}
         <Link 
           to="/" 
           className="mt-8 text-white hover:text-purple-200 flex items-center justify-center font-opensans"
@@ -173,7 +167,6 @@ const Auth = () => {
           Back to Home
         </Link>
 
-        {/* Footer */}
         <div className="mt-4 text-center text-sm text-purple-200 font-opensans">
           <p>Protected by industry standard encryption</p>
         </div>
