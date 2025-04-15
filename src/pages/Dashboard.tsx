@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { HomeView } from "@/components/dashboard/HomeView";
@@ -69,11 +68,26 @@ const Dashboard = () => {
   const handleSignOut = async () => {
     try {
       console.log("Signing out...");
+      
+      // First check if there's even a session to sign out from
+      const { data: sessionData } = await supabase.auth.getSession();
+      
+      // If no session, just redirect to auth page directly
+      if (!sessionData.session) {
+        console.log("No active session found, redirecting to auth page");
+        toast.success("Successfully signed out");
+        window.location.href = "/auth"; // Use direct navigation to ensure complete reset
+        return;
+      }
+      
+      // Otherwise proceed with normal sign out
       const { error } = await supabase.auth.signOut();
       
       if (error) {
         console.error("Sign out error:", error);
-        toast.error("Failed to sign out: " + error.message);
+        // Even if there's an error, try to navigate to auth page anyway
+        toast.error("Error during sign out, redirecting to login page");
+        window.location.href = "/auth"; // Use direct navigation as fallback
         return;
       }
       
@@ -82,7 +96,8 @@ const Dashboard = () => {
       // No need to redirect here as useAuthCheck will handle it
     } catch (error) {
       console.error('Error signing out:', error);
-      toast.error("Error during sign out. Please try again.");
+      toast.error("Error during sign out. Redirecting to login page.");
+      window.location.href = "/auth"; // Use direct navigation as fallback
     }
   };
   
