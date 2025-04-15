@@ -1,4 +1,3 @@
-
 import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart, Clock, Loader, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,7 +33,6 @@ interface WorkoutPlanCardProps {
   onSavePlan: () => void;
 }
 
-// Helper function to determine the appropriate icon for an exercise
 const getExerciseIcon = (exerciseName: string) => {
   const name = exerciseName.toLowerCase();
   
@@ -51,7 +49,6 @@ const getExerciseIcon = (exerciseName: string) => {
   } else if (name.includes("stretch") || name.includes("yoga") || name.includes("mobility")) {
     return <Heart className="h-4 w-4 text-[#8E44AD] mr-2 flex-shrink-0" />;
   } else {
-    // Default icon for other exercises
     return <DumbbellIcon className="h-4 w-4 text-[#8E44AD] mr-2 flex-shrink-0" />;
   }
 };
@@ -73,7 +70,6 @@ export const WorkoutPlanCard = ({
         </CardTitle>
       </CardHeader>
       
-      {/* Training Days Selection - More Visible */}
       <div className="flex items-center justify-end px-6 pt-4 pb-3 border-b border-purple-100/20 bg-purple-50/30">
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border border-purple-200 shadow-sm">
@@ -159,7 +155,6 @@ export const WorkoutPlanCard = ({
                           </p>
                         </div>
                         
-                        {/* Enhanced Rest Period Display */}
                         <div className="ml-6 mt-1.5 flex items-center bg-[#F1F0FB] rounded-md px-2 py-1 border border-purple-100">
                           <Clock className="h-3.5 w-3.5 text-[#8E44AD] mr-1.5" />
                           <span className="text-xs font-semibold text-[#5C2D91]">
@@ -186,7 +181,7 @@ export const WorkoutPlanCard = ({
                 disabled={generatingPlan}
                 className="bg-[#8E44AD] hover:bg-[#7D3C98] text-white"
               >
-                <Sparkles className="h-4 w-4 mr-2" />
+                <Loader className="h-4 w-4 mr-2" />
                 {generatingPlan ? "Generating..." : "Generate Workout Plan"}
               </Button>
             </div>
