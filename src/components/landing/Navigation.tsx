@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LogIn, Smartphone } from "lucide-react";
@@ -15,7 +14,12 @@ export const Navigation = () => {
         <div className="max-w-[1440px] mx-auto px-[120px]">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center">
-              <img alt="PULO" className="h-10 w-20 object-contain cursor-pointer hover:opacity-90 transition-all duration-200" onClick={() => navigate("/")} src="/lovable-uploads/1c8d5492-3bdc-4f1e-895c-19bd9cf6ac54.png" />
+              <img 
+                alt="PULO" 
+                className="h-16 w-32 object-contain cursor-pointer hover:opacity-90 transition-all duration-200" 
+                onClick={() => navigate("/")} 
+                src="/lovable-uploads/1c8d5492-3bdc-4f1e-895c-19bd9cf6ac54.png" 
+              />
             </div>
             <div className="flex items-center gap-4">
               <div className="bg-white/10 backdrop-blur-sm text-white px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-2">
