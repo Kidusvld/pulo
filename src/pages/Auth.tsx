@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -108,7 +107,9 @@ const Auth = () => {
               <button
                 onClick={() => handleSwitchMode("signin")}
                 className={`flex-1 py-3 text-center font-montserrat transition-colors ${
-                  currentMode === "signin" ? "auth-tab-active text-[#5C2D91]" : "auth-tab-inactive text-[#8E44AD]"
+                  currentMode === "signin" 
+                    ? "auth-tab-active text-[#5C2D91] font-bold" 
+                    : "auth-tab-inactive text-[#5C2D91] text-opacity-70 hover:text-opacity-100"
                 }`}
               >
                 Sign In
@@ -116,7 +117,9 @@ const Auth = () => {
               <button
                 onClick={() => handleSwitchMode("signup")}
                 className={`flex-1 py-3 text-center font-montserrat transition-colors ${
-                  currentMode === "signup" ? "auth-tab-active text-[#5C2D91]" : "auth-tab-inactive text-[#8E44AD]"
+                  currentMode === "signup" 
+                    ? "auth-tab-active text-[#5C2D91] font-bold" 
+                    : "auth-tab-inactive text-[#5C2D91] text-opacity-70 hover:text-opacity-100"
                 }`}
               >
                 Sign Up
