@@ -1,3 +1,4 @@
+
 import { DumbbellIcon, LogOut, ChevronRight, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +18,13 @@ export const DashboardHeader = ({
   subscriptionStatus
 }: DashboardHeaderProps) => {
   const navigate = useNavigate();
+  
+  const handleSignOut = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onSignOut();
+  };
+  
   return <div className="flex flex-col gap-4 mb-8">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
@@ -50,7 +58,7 @@ export const DashboardHeader = ({
                 Saved Plans
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={onSignOut} className="cursor-pointer text-red-500 focus:text-red-500">
+              <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-red-500 focus:text-red-500">
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out
               </DropdownMenuItem>

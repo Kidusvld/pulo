@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const useAuthCheck = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ export const useAuthCheck = () => {
       if (event === 'SIGNED_OUT') {
         // Always redirect to auth page when user signs out
         navigate("/auth");
+        toast.success("Successfully signed out");
       } else if (!session && !location.pathname.includes("/auth")) {
         // If no session and not on auth page, redirect to auth
         navigate("/auth");

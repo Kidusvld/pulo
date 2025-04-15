@@ -9,6 +9,7 @@ import { useAuthCheck } from "@/hooks/useAuthCheck";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { useProfileEditor } from "@/hooks/useProfileEditor";
 import { useWorkoutPlan } from "@/hooks/useWorkoutPlan";
+import { toast } from "sonner";
 
 // Define a shared Profile interface to ensure consistency
 interface Profile {
@@ -67,10 +68,21 @@ const Dashboard = () => {
   // Handle sign out
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
-      // Note: The redirect is now handled by the useAuthCheck hook
+      console.log("Signing out...");
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error("Sign out error:", error);
+        toast.error("Failed to sign out: " + error.message);
+        return;
+      }
+      
+      // Auth state change will handle redirection in useAuthCheck
+      console.log("Sign out successful");
+      // No need to redirect here as useAuthCheck will handle it
     } catch (error) {
       console.error('Error signing out:', error);
+      toast.error("Error during sign out. Please try again.");
     }
   };
   
