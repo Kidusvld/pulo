@@ -1,5 +1,5 @@
 
-import { Brain, BarChart3, Calendar, Dumbbell, Activity, Flame, Zap } from "lucide-react";
+import { BarChart3, Calendar, Dumbbell, Activity, Flame, Zap, Hand } from "lucide-react";
 
 export const Features = () => {
   return (
@@ -45,7 +45,7 @@ export const Features = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="text-center p-6 group">
             <div className="bg-[#8E44AD]/30 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4 group-hover:bg-[#8E44AD] transition-colors">
-              <Brain className="w-8 h-8 text-white" />
+              <Hand className="w-8 h-8 text-white" />
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">Smart Adaptation</h3>
             <p className="text-[#E0E0E0]">Just like a friend who knows your style, PULO learns and adjusts your workouts as you progress</p>

@@ -1,5 +1,5 @@
 
-import { Brain, DumbbellIcon, LogOut, User, ChevronRight } from "lucide-react";
+import { DumbbellIcon, LogOut, User, ChevronRight, Hand } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
@@ -47,7 +47,7 @@ export const DashboardHeader = ({
                 Logged Workouts
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => navigate("/saved-workouts")} className="cursor-pointer">
-                <Brain className="w-4 h-4 mr-2" />
+                <Hand className="w-4 h-4 mr-2" />
                 Saved Plans
               </DropdownMenuItem>
               <DropdownMenuSeparator />
