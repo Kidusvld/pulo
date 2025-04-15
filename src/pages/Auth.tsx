@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -91,7 +92,7 @@ const Auth = () => {
               onClick={() => navigate("/")}
               className="flex items-center justify-center px-3 py-2 rounded-xl bg-[#8E44AD] text-white cursor-pointer hover:bg-[#9B59B6] transition-colors duration-200"
             >
-              <Hand className="h-8 w-8 mr-2" />
+              <Hand className="h-6 w-6 mr-2 transform rotate-0 scale-110" strokeWidth={2} />
               <span className="text-2xl font-bold tracking-tight font-montserrat">PULO</span>
             </div>
           </div>
