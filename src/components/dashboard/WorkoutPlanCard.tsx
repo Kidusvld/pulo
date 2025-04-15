@@ -1,5 +1,5 @@
 
-import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart, Clock, Sparkles, CalendarDays } from "lucide-react";
+import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart, Clock, Loader, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -109,9 +109,14 @@ export const WorkoutPlanCard = ({
               disabled={generatingPlan} 
               className="bg-gradient-to-r from-[#5C2D91] to-[#8E44AD] hover:from-[#5C2D91]/90 hover:to-[#8E44AD]/90 text-white transition-all duration-200 flex items-center gap-2 px-4"
             >
-              {generatingPlan ? "Generating..." : (
+              {generatingPlan ? (
                 <>
-                  <Sparkles className="h-4 w-4" />
+                  <Loader className="h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Loader className="h-4 w-4" />
                   Generate Plan
                 </>
               )}
