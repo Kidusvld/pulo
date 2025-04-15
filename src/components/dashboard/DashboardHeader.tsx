@@ -18,10 +18,14 @@ export const DashboardHeader = ({
 }: DashboardHeaderProps) => {
   const navigate = useNavigate();
   return <div className="flex flex-col gap-4 mb-8">
-      {/* Top navigation bar */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <img alt="PULO" className="h-12 w-auto rounded-xl cursor-pointer hover:opacity-90 transition-all duration-200" onClick={() => navigate("/")} src="/lovable-uploads/a1cb33b9-09aa-4558-8800-3874f34822ba.png" />
+          <img 
+            alt="PULO" 
+            className="h-32 w-72 object-contain cursor-pointer hover:opacity-90 transition-all duration-200" 
+            onClick={() => navigate("/")} 
+            src="/lovable-uploads/a1cb33b9-09aa-4558-8800-3874f34822ba.png" 
+          />
           <Badge variant="purple" className="py-1 flex items-center gap-1 font-inter">
             All Features Unlocked
           </Badge>
