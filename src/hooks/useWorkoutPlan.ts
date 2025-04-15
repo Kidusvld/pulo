@@ -3,6 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { Json } from "@/integrations/supabase/types";
 
 // Use generic type parameter to ensure consistency with caller's Profile type
 export const useWorkoutPlan = <T extends {
@@ -47,6 +48,16 @@ export const useWorkoutPlan = <T extends {
     return "build_muscle";
   };
   
+  const mapToWorkoutLocation = (location: string | undefined): "home" | "gym" => {
+    if (!location) return "home";
+    
+    if (location === "home" || location === "gym") {
+      return location as "home" | "gym";
+    }
+    
+    return "home";
+  };
+  
   const generateNewPlan = async () => {
     if (!profile) return;
     setGeneratingPlan(true);
@@ -60,13 +71,14 @@ export const useWorkoutPlan = <T extends {
     try {
       const intensityToUse = mapToLegacyIntensity(profile.intensity_level);
       const fitnessGoalToUse = mapToLegacyFitnessGoal(profile.fitness_goal);
+      const workoutLocationToUse = mapToWorkoutLocation(profile.workout_location);
       
       const { data: aiResponse, error: aiError } = await supabase.functions.invoke('generate-workout', {
         body: {
           age: profile.age,
           weight: profile.weight,
           fitnessGoal: fitnessGoalToUse,
-          workoutLocation: profile.workout_location,
+          workoutLocation: workoutLocationToUse,
           equipment: profile.equipment,
           intensityLevel: intensityToUse,
           numberOfDays: numberOfDays
@@ -88,7 +100,7 @@ export const useWorkoutPlan = <T extends {
       console.log('Saving workout plan:', {
         userId: session.user.id,
         fitnessGoal: fitnessGoalToUse,
-        workoutLocation: profile.workout_location,
+        workoutLocation: workoutLocationToUse,
         intensityLevel: intensityToUse,
         equipment: profile.equipment,
         planData: aiResponse
@@ -102,16 +114,18 @@ export const useWorkoutPlan = <T extends {
         throw new Error('Failed to deactivate existing workout plans');
       }
       
-      const { data: plan, error: createError } = await supabase.from("workout_plans").insert([{
+      // Fixed the insert call - using a single object instead of an array
+      // and ensuring proper type casting for workout_location
+      const { data: plan, error: createError } = await supabase.from("workout_plans").insert({
         user_id: session.user.id,
         fitness_goal: fitnessGoalToUse,
-        workout_location: profile.workout_location,
+        workout_location: workoutLocationToUse,
         intensity_level: intensityToUse,
         equipment: profile.equipment,
-        plan_data: aiResponse,
+        plan_data: aiResponse as Json,
         is_active: true,
         workout_frequency: numberOfDays
-      }]).select().single();
+      }).select().single();
       
       if (createError) {
         throw new Error('Failed to save new workout plan');
