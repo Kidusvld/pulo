@@ -1,4 +1,3 @@
-
 import { DumbbellIcon, LogOut, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -70,7 +69,7 @@ export const DashboardHeader = ({
           <img 
             src="/lovable-uploads/a985bec8-4bd3-4ddb-b5ce-b141fc180362.png" 
             alt="Waving Hand" 
-            className="ml-2 h-12 w-auto"  // Increased from h-8 to h-12
+            className="ml-2 h-16 w-auto" 
           />
         </h1>
         <p className="text-gray-100/80 mt-1 font-opensans">Track your fitness journey and achieve your goals</p>
