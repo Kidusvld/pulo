@@ -59,7 +59,7 @@ const Dashboard = () => {
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
-      navigate("/");
+      // Note: The redirect is now handled by the useAuthCheck hook
     } catch (error) {
       console.error('Error signing out:', error);
     }
