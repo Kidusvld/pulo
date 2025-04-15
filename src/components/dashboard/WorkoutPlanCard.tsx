@@ -1,9 +1,11 @@
+
 import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart, Clock, Loader, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { LoadingMascot } from "@/components/ui/loading-mascot";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 interface Exercise {
   name: string;
@@ -127,43 +129,48 @@ export const WorkoutPlanCard = ({
             <LoadingMascot size="lg" showText={true} />
           </div>
         ) : workoutPlan?.plan_data?.workouts ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-7 gap-0 divide-x divide-y divide-purple-100/20 max-h-[500px] overflow-y-auto">
+          <div className="p-4 max-h-[500px] overflow-y-auto">
             {workoutPlan.plan_data.workouts.map((workout, index) => (
-              <div key={index} className="p-4 bg-gradient-to-br from-white/90 to-white/70">
-                <h3 className="font-semibold flex items-center gap-2 text-[#5C2D91] mb-3 pb-2 border-b border-purple-100/30">
-                  <Badge variant="purple" className="px-3 py-1">
+              <div key={index} className="mb-6 last:mb-0">
+                <div className="flex items-center mb-3">
+                  <Badge variant="purple" className="px-3 py-1 mr-3">
                     <Calendar className="h-3 w-3 mr-1" />
                     Day {workout.day}
                   </Badge>
-                </h3>
-                <div className="space-y-2">
-                  {workout.exercises.map((exercise, exerciseIndex) => (
-                    <div 
-                      key={exerciseIndex} 
-                      className="bg-purple-50/70 p-2 rounded-lg border border-purple-100 hover:bg-purple-50 transition-colors duration-200"
-                    >
-                      <p className="font-medium text-[#5C2D91] flex items-center text-sm">
-                        {getExerciseIcon(exercise.name)}
-                        {exercise.name}
-                      </p>
-                      <div className="flex flex-col mt-1">
-                        <div className="ml-6 flex items-center justify-between">
-                          <p className="text-xs text-[#8E44AD]/80">
-                            {exercise.sets} sets × {exercise.duration ? 
-                              `${exercise.duration} sec` : 
-                              `${exercise.reps} reps`}
-                          </p>
-                        </div>
-                        
-                        <div className="ml-6 mt-1.5 flex items-center bg-[#F1F0FB] rounded-md px-2 py-1 border border-purple-100">
-                          <Clock className="h-3.5 w-3.5 text-[#8E44AD] mr-1.5" />
-                          <span className="text-xs font-semibold text-[#5C2D91]">
-                            Rest: {Math.floor(exercise.rest / 60)} min
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                  <h3 className="font-semibold text-[#5C2D91]">Workout Plan</h3>
+                </div>
+                
+                <div className="bg-white rounded-lg border border-purple-100 overflow-hidden">
+                  <Table>
+                    <TableHeader className="bg-purple-50">
+                      <TableRow>
+                        <TableHead className="text-[#5C2D91] font-semibold">Exercise</TableHead>
+                        <TableHead className="text-[#5C2D91] font-semibold text-center">Sets</TableHead>
+                        <TableHead className="text-[#5C2D91] font-semibold text-center">Reps/Duration</TableHead>
+                        <TableHead className="text-[#5C2D91] font-semibold text-center">Rest</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {workout.exercises.map((exercise, exerciseIndex) => (
+                        <TableRow key={exerciseIndex}>
+                          <TableCell className="font-medium flex items-center py-3">
+                            {getExerciseIcon(exercise.name)}
+                            {exercise.name}
+                          </TableCell>
+                          <TableCell className="text-center">{exercise.sets}</TableCell>
+                          <TableCell className="text-center">
+                            {exercise.duration ? `${exercise.duration} sec` : `${exercise.reps} reps`}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <span className="inline-flex items-center bg-purple-50 px-2 py-1 rounded text-sm">
+                              <Clock className="h-3 w-3 text-[#8E44AD] mr-1" />
+                              {Math.floor(exercise.rest / 60)} min
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
               </div>
             ))}
