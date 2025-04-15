@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LogIn, Smartphone } from "lucide-react";
@@ -16,7 +17,7 @@ export const Navigation = () => {
             <div className="flex items-center">
               <img 
                 alt="PULO" 
-                className="h-16 w-32 object-contain cursor-pointer hover:opacity-90 transition-all duration-200" 
+                className="h-20 w-40 object-contain cursor-pointer hover:opacity-90 transition-all duration-200" 
                 onClick={() => navigate("/")} 
                 src="/lovable-uploads/1c8d5492-3bdc-4f1e-895c-19bd9cf6ac54.png" 
               />
