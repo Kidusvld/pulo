@@ -12,7 +12,7 @@ export const Navigation = () => {
   
   return <div className="relative z-20 sticky top-0">
       <nav className="h-20 bg-[#5C2D91] shadow-md">
-        <div className="max-w-[1440px] mx-auto px-[120px]">
+        <div className="max-w-[1440px] mx-auto px-[60px]">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center">
               <img 
