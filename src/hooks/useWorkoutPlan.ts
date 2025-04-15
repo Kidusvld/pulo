@@ -4,16 +4,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
-interface Profile {
+// Use generic type parameter to ensure consistency with caller's Profile type
+export const useWorkoutPlan = <T extends {
   age: number;
   weight: number;
-  workout_location?: "home" | "gym";
+  workout_location?: string;
   intensity_level?: string;
   equipment?: string[];
   fitness_goal?: string;
-}
-
-export const useWorkoutPlan = (profile: Profile | null, workoutPlan: any, setWorkoutPlan: (plan: any) => void) => {
+}>(
+  profile: T | null, 
+  workoutPlan: any, 
+  setWorkoutPlan: (plan: any) => void
+) => {
   const navigate = useNavigate();
   const [numberOfDays, setNumberOfDays] = useState<number>(3);
   const [generatingPlan, setGeneratingPlan] = useState(false);

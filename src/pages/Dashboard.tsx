@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { HomeView } from "@/components/dashboard/HomeView";
 import { ProfileView } from "@/components/dashboard/ProfileView";
@@ -11,8 +10,18 @@ import { useDashboardData } from "@/hooks/useDashboardData";
 import { useProfileEditor } from "@/hooks/useProfileEditor";
 import { useWorkoutPlan } from "@/hooks/useWorkoutPlan";
 
+// Define a shared Profile interface to ensure consistency
+interface Profile {
+  first_name?: string;
+  age: number;
+  weight: number;
+  fitness_goal?: "build_muscle" | "lose_fat" | "increase_mobility" | "stay_active";
+  workout_location?: "home" | "gym";
+  intensity_level?: "easy" | "moderate" | "hard" | "intense" | "beginner" | "intermediate" | "advanced";
+  equipment?: string[];
+}
+
 const Dashboard = () => {
-  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<"home" | "profile">("home");
   
   // Check authentication status
@@ -27,7 +36,7 @@ const Dashboard = () => {
     muscleGroupData,
     setProfile,
     setWorkoutPlan
-  } = useDashboardData();
+  } = useDashboardData<Profile>();
   
   // Profile editor state and handlers
   const {

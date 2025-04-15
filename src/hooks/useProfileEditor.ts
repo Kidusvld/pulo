@@ -4,19 +4,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
-interface Profile {
+// Generic type parameter to ensure consistent interface with caller
+export const useProfileEditor = <T extends {
   first_name?: string;
   age: number;
   weight: number;
-  fitness_goal?: "build_muscle" | "lose_fat" | "increase_mobility" | "stay_active";
-  workout_location?: "home" | "gym";
-  intensity_level?: "easy" | "moderate" | "hard" | "intense" | "beginner" | "intermediate" | "advanced";
+  fitness_goal?: any;
+  workout_location?: any;
+  intensity_level?: any;
   equipment?: string[];
-}
-
-export const useProfileEditor = (
-  profile: Profile | null, 
-  setProfile: (profile: Profile) => void, 
+}>(
+  profile: T | null, 
+  setProfile: (profile: T) => void, 
   workoutPlan: any,
   setWorkoutPlan: (plan: any) => void
 ) => {
@@ -111,21 +110,23 @@ export const useProfileEditor = (
       
       if (planError) throw planError;
       
-      setProfile({
+      const updatedProfile = {
         ...profile,
         weight,
         age,
-        intensity_level: editedIntensity as "easy" | "moderate" | "hard" | "intense" | "beginner" | "intermediate" | "advanced",
-        fitness_goal: editedFitnessGoal as "build_muscle" | "lose_fat" | "increase_mobility" | "stay_active",
-        workout_location: editedWorkoutLocation as "home" | "gym"
-      });
+        intensity_level: editedIntensity as any,
+        fitness_goal: editedFitnessGoal as any,
+        workout_location: editedWorkoutLocation as any
+      };
+      
+      setProfile(updatedProfile);
       
       if (workoutPlan) {
         setWorkoutPlan({
           ...workoutPlan,
-          intensity_level: intensityToSave as "beginner" | "intermediate" | "advanced",
-          fitness_goal: fitnessGoalToSave as "build_muscle" | "lose_fat" | "increase_mobility",
-          workout_location: editedWorkoutLocation as "home" | "gym"
+          intensity_level: intensityToSave,
+          fitness_goal: fitnessGoalToSave,
+          workout_location: editedWorkoutLocation
         });
       }
       

@@ -5,42 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { calculateStreak } from "@/components/progress/utils/calculateStreak";
 
-interface Profile {
-  first_name: string;
-  age: number;
-  weight: number;
-  fitness_goal: "build_muscle" | "lose_fat" | "increase_mobility" | "stay_active";
-  workout_location: "home" | "gym";
-  intensity_level: "easy" | "moderate" | "hard" | "intense" | "beginner" | "intermediate" | "advanced";
-  equipment: string[];
-}
-
-interface WorkoutPlan {
-  id: string;
-  plan_data: {
-    workouts?: Array<{
-      day: number;
-      exercises: Array<{
-        name: string;
-        sets: number;
-        reps?: number;
-        duration?: number;
-        rest: number;
-      }>;
-    }>;
-  };
-  created_at: string;
-  fitness_goal: "build_muscle" | "lose_fat" | "increase_mobility" | "stay_active";
-  workout_location: "home" | "gym";
-  intensity_level: "easy" | "moderate" | "hard" | "intense" | "beginner" | "intermediate" | "advanced";
-  equipment: string[];
-}
-
-export const useDashboardData = () => {
+// Generic type parameter to ensure consistency with the caller's Profile type
+export function useDashboardData<T>() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [workoutPlan, setWorkoutPlan] = useState<WorkoutPlan | null>(null);
+  const [profile, setProfile] = useState<T | null>(null);
+  const [workoutPlan, setWorkoutPlan] = useState<any | null>(null);
   const [progressStats, setProgressStats] = useState({
     totalWorkouts: 0,
     totalVolume: 0,
@@ -92,10 +62,10 @@ export const useDashboardData = () => {
           workout_location: planData?.workout_location || "home",
           intensity_level: planData?.intensity_level || "beginner",
           equipment: planData?.equipment || []
-        });
+        } as T);
         
         if (planData) {
-          setWorkoutPlan(planData as WorkoutPlan);
+          setWorkoutPlan(planData);
         }
         
         await fetchProgressStats(session.user.id);
@@ -171,4 +141,4 @@ export const useDashboardData = () => {
     setProfile,
     setWorkoutPlan
   };
-};
+}
