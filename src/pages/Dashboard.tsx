@@ -1,10 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { WorkoutPlanCard } from "@/components/dashboard/WorkoutPlanCard";
 import { HomeView } from "@/components/dashboard/HomeView";
 import { ProfileView } from "@/components/dashboard/ProfileView";
 import { Button } from "@/components/ui/button";
@@ -461,14 +459,14 @@ const Dashboard = () => {
         />
       </div>
       
-      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 lg:px-[120px] py-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 lg:px-[120px] py-4">
         <DashboardHeader 
           firstName={profile?.first_name} 
           onSignOut={handleSignOut}
           subscriptionStatus="free"
         />
 
-        <div className="flex flex-col space-y-6">
+        <div className="flex flex-col space-y-4">
           <div className="bg-white/10 backdrop-blur-sm border border-white/10 p-2 rounded-lg flex w-[280px] mx-auto">
             <Button
               variant={activeSection === "home" ? "default" : "ghost"}
@@ -492,7 +490,7 @@ const Dashboard = () => {
             </Button>
           </div>
 
-          <div className="mt-2">
+          <div>
             {activeSection === "home" ? (
               <HomeView 
                 profile={profile}

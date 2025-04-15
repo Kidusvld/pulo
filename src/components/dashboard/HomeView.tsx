@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Dumbbell, Calendar, Sparkles, LightbulbIcon } from "lucide-react";
 import { WorkoutPlanCard } from "@/components/dashboard/WorkoutPlanCard";
@@ -118,22 +119,22 @@ export const HomeView = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Motivational Banner */}
       <Card className="bg-[#6E59A5]/90 text-white border-none shadow-lg overflow-hidden">
-        <CardContent className="p-4">
+        <CardContent className="p-3">
           <div className="flex items-center">
-            <LightbulbIcon className="h-6 w-6 mr-3 text-yellow-200" />
+            <LightbulbIcon className="h-5 w-5 mr-2 text-yellow-200" />
             <div>
-              <h3 className="font-semibold text-lg">{motivationalQuote.quote}</h3>
-              <p className="text-sm text-white/80">{motivationalQuote.source}</p>
+              <h3 className="font-semibold text-base">{motivationalQuote.quote}</h3>
+              <p className="text-xs text-white/80">{motivationalQuote.source}</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Main Content in a more horizontal layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* Main Content in a more compact layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         {/* Left Column - Workout Plan (Spans 8 columns on lg screens) */}
         <div className="lg:col-span-8 order-2 lg:order-1">
           <WorkoutPlanCard 
@@ -147,30 +148,30 @@ export const HomeView = ({
         </div>
         
         {/* Right Column - Stats and Fit Index (Spans 4 columns on lg screens) */}
-        <div className="lg:col-span-4 space-y-6 order-1 lg:order-2">
+        <div className="lg:col-span-4 space-y-4 order-1 lg:order-2">
           {/* Weekly Stats Card */}
           <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-semibold flex items-center gap-2 text-[#5C2D91]">
+              <CardTitle className="text-lg font-semibold flex items-center gap-2 text-[#5C2D91]">
                 <Calendar className="h-5 w-5 text-[#8E44AD]" />
                 Weekly Progress
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="py-3 px-4">
               <WeeklySummaryStats stats={weeklyStats} consistencyStreak={progressStats.consistencyStreak} />
             </CardContent>
           </Card>
 
-          {/* PULO Fit Index - More horizontal format */}
+          {/* PULO Fit Index - More compact format */}
           {profile && (
             <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
               <CardHeader className="pb-2">
-                <CardTitle className="text-xl font-semibold flex items-center gap-2 text-[#5C2D91]">
+                <CardTitle className="text-lg font-semibold flex items-center gap-2 text-[#5C2D91]">
                   <Sparkles className="h-5 w-5 text-[#8E44AD]" />
                   PULO Fit Index
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="py-3 px-4">
                 <div className="flex flex-col gap-3">
                   <div className="mb-1">
                     {profile && <PuloFitIndex age={profile.age} weight={profile.weight} horizontal={true} />}
