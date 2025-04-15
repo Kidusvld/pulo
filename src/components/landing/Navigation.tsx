@@ -1,3 +1,4 @@
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LogIn, Smartphone } from "lucide-react";
@@ -6,13 +7,13 @@ export const Navigation = () => {
   const navigate = useNavigate();
   
   return <div className="relative z-20 sticky top-0">
-      <nav className="h-24 bg-[#5C2D91] shadow-md">
-        <div className="max-w-[1440px] mx-auto px-[30px]">
-          <div className="flex justify-between items-center h-24">
+      <nav className="h-32 bg-[#5C2D91] shadow-md">
+        <div className="max-w-[1440px] mx-auto px-[15px]">
+          <div className="flex justify-between items-center h-32">
             <div className="flex items-center">
               <img 
                 alt="PULO" 
-                className="h-24 w-56 object-contain cursor-pointer hover:opacity-90 transition-all duration-200" 
+                className="h-32 w-72 object-contain cursor-pointer hover:opacity-90 transition-all duration-200" 
                 onClick={() => navigate("/")} 
                 src="/lovable-uploads/1c8d5492-3bdc-4f1e-895c-19bd9cf6ac54.png" 
               />
