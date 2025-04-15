@@ -1,5 +1,4 @@
-
-import { DumbbellIcon, LogOut, ChevronRight } from "lucide-react";
+import { DumbbellIcon, LogOut, ChevronRight, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
@@ -47,11 +46,7 @@ export const DashboardHeader = ({
                 Logged Workouts
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => navigate("/saved-workouts")} className="cursor-pointer">
-                <img 
-                  src="/lovable-uploads/e23dd508-2106-4335-9918-2f12a6af334b.png"
-                  alt="PULO Hand"
-                  className="w-5 h-5 mr-2" 
-                />
+                <Heart className="w-5 h-5 mr-2" />
                 Saved Plans
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -70,7 +65,7 @@ export const DashboardHeader = ({
           <img 
             src="/lovable-uploads/a985bec8-4bd3-4ddb-b5ce-b141fc180362.png" 
             alt="Waving Hand" 
-            className="ml-2 h-12 w-auto"  // Increased from h-8 to h-12
+            className="ml-2 h-12 w-auto" 
           />
         </h1>
         <p className="text-gray-100/80 mt-1 font-opensans">Track your fitness journey and achieve your goals</p>
