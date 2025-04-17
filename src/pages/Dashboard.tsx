@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { HomeView } from "@/components/dashboard/HomeView";
@@ -23,6 +24,7 @@ interface Profile {
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState<"home" | "profile">("home");
+  const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
   
   // Check authentication status
   useAuthCheck();
@@ -62,7 +64,12 @@ const Dashboard = () => {
     setNumberOfDays,
     generateNewPlan,
     handleSaveWorkout
-  } = useWorkoutPlan(profile, workoutPlan, setWorkoutPlan);
+  } = useWorkoutPlan(profile, workoutPlan, setWorkoutPlan, selectedBodyParts);
+  
+  // Handle body part selection
+  const handleBodyPartSelect = (bodyParts: string[]) => {
+    setSelectedBodyParts(bodyParts);
+  };
   
   // Handle sign out
   const handleSignOut = async () => {
@@ -122,6 +129,7 @@ const Dashboard = () => {
           onDaysChange={setNumberOfDays}
           onGeneratePlan={generateNewPlan}
           onSavePlan={handleSaveWorkout}
+          onBodyPartSelect={handleBodyPartSelect}
         />
       ) : (
         <ProfileView

@@ -1,11 +1,13 @@
 
-import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart, Clock, Loader, CalendarDays } from "lucide-react";
+import { ArrowRight, Calendar, DumbbellIcon, Weight, Bike, Activity, Heart, Clock, Loader, CalendarDays, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { LoadingMascot } from "@/components/ui/loading-mascot";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { BodyPartSelector, bodyPartsList } from "./BodyPartSelector";
+import { useState } from "react";
 
 interface Exercise {
   name: string;
@@ -24,6 +26,7 @@ interface WorkoutPlan {
   plan_data?: {
     workouts?: Workout[];
   };
+  targeted_body_parts?: string[];
 }
 
 interface WorkoutPlanCardProps {
@@ -33,6 +36,7 @@ interface WorkoutPlanCardProps {
   onDaysChange: (days: number) => void;
   onGeneratePlan: () => void;
   onSavePlan: () => void;
+  onBodyPartSelect?: (bodyParts: string[]) => void;
 }
 
 const getExerciseIcon = (exerciseName: string) => {
@@ -62,7 +66,38 @@ export const WorkoutPlanCard = ({
   onDaysChange,
   onGeneratePlan,
   onSavePlan,
+  onBodyPartSelect,
 }: WorkoutPlanCardProps) => {
+  // State for tracking selected body parts
+  const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>(
+    workoutPlan?.targeted_body_parts || []
+  );
+
+  // Handle body part selection toggle
+  const handleBodyPartToggle = (part: string) => {
+    setSelectedBodyParts(prev => {
+      const isAlreadySelected = prev.includes(part);
+      const newSelection = isAlreadySelected
+        ? prev.filter(p => p !== part)
+        : [...prev, part];
+      
+      // Notify parent component if callback provided
+      if (onBodyPartSelect) {
+        onBodyPartSelect(newSelection);
+      }
+      
+      return newSelection;
+    });
+  };
+
+  // Function to handle generate plan with selected body parts
+  const handleGeneratePlan = () => {
+    if (onBodyPartSelect) {
+      onBodyPartSelect(selectedBodyParts);
+    }
+    onGeneratePlan();
+  };
+
   return (
     <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10 overflow-hidden h-full">
       <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-purple-100/20">
@@ -103,7 +138,7 @@ export const WorkoutPlanCard = ({
               </Button>
             )}
             <Button 
-              onClick={onGeneratePlan} 
+              onClick={handleGeneratePlan} 
               disabled={generatingPlan} 
               className="bg-gradient-to-r from-[#5C2D91] to-[#8E44AD] hover:from-[#5C2D91]/90 hover:to-[#8E44AD]/90 text-white transition-all duration-200 flex items-center gap-2 px-4"
             >
@@ -114,7 +149,7 @@ export const WorkoutPlanCard = ({
                 </>
               ) : (
                 <>
-                  <Loader className="h-4 w-4" />
+                  <Target className="h-4 w-4" />
                   Generate Plan
                 </>
               )}
@@ -124,76 +159,99 @@ export const WorkoutPlanCard = ({
       </div>
       
       <CardContent className="p-0">
-        {generatingPlan ? (
-          <div className="flex items-center justify-center py-20 px-6 bg-gradient-to-br from-purple-50/50 to-white/80">
-            <LoadingMascot size="lg" showText={true} />
+        <div className="grid grid-cols-1 md:grid-cols-4">
+          {/* Body part selector section */}
+          <div className="p-4 bg-purple-50/30 md:border-r border-purple-100/20">
+            <div className="mb-3">
+              <h3 className="font-semibold text-[#5C2D91] flex items-center gap-2">
+                <Target className="h-4 w-4 text-[#8E44AD]" />
+                Target Areas
+              </h3>
+              <p className="text-sm text-[#8E44AD]/70">
+                Select specific body parts to target in your workout plan
+              </p>
+            </div>
+            <BodyPartSelector 
+              selectedParts={selectedBodyParts}
+              onSelectPart={handleBodyPartToggle}
+              className="mt-2"
+            />
           </div>
-        ) : workoutPlan?.plan_data?.workouts ? (
-          <div className="p-4 max-h-[500px] overflow-y-auto">
-            {workoutPlan.plan_data.workouts.map((workout, index) => (
-              <div key={index} className="mb-6 last:mb-0">
-                <div className="flex items-center mb-3">
-                  <Badge variant="purple" className="px-3 py-1 mr-3">
-                    <Calendar className="h-3 w-3 mr-1" />
-                    Day {workout.day}
-                  </Badge>
-                  <h3 className="font-semibold text-[#5C2D91]">Workout Plan</h3>
-                </div>
-                
-                <div className="bg-white rounded-lg border border-purple-100 overflow-hidden">
-                  <Table>
-                    <TableHeader className="bg-purple-50">
-                      <TableRow>
-                        <TableHead className="text-[#5C2D91] font-semibold">Exercise</TableHead>
-                        <TableHead className="text-[#5C2D91] font-semibold text-center">Sets</TableHead>
-                        <TableHead className="text-[#5C2D91] font-semibold text-center">Reps/Duration</TableHead>
-                        <TableHead className="text-[#5C2D91] font-semibold text-center">Rest</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {workout.exercises.map((exercise, exerciseIndex) => (
-                        <TableRow key={exerciseIndex}>
-                          <TableCell className="font-medium flex items-center py-3">
-                            {getExerciseIcon(exercise.name)}
-                            {exercise.name}
-                          </TableCell>
-                          <TableCell className="text-center">{exercise.sets}</TableCell>
-                          <TableCell className="text-center">
-                            {exercise.duration ? `${exercise.duration} sec` : `${exercise.reps} reps`}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            <span className="inline-flex items-center bg-purple-50 px-2 py-1 rounded text-sm">
-                              <Clock className="h-3 w-3 text-[#8E44AD] mr-1" />
-                              {Math.floor(exercise.rest / 60)} min
-                            </span>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+        
+          {/* Workout plan display section */}
+          <div className="col-span-1 md:col-span-3">
+            {generatingPlan ? (
+              <div className="flex items-center justify-center py-20 px-6 bg-gradient-to-br from-purple-50/50 to-white/80">
+                <LoadingMascot size="lg" showText={true} />
+              </div>
+            ) : workoutPlan?.plan_data?.workouts ? (
+              <div className="p-4 max-h-[500px] overflow-y-auto">
+                {workoutPlan.plan_data.workouts.map((workout, index) => (
+                  <div key={index} className="mb-6 last:mb-0">
+                    <div className="flex items-center mb-3">
+                      <Badge variant="purple" className="px-3 py-1 mr-3">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        Day {workout.day}
+                      </Badge>
+                      <h3 className="font-semibold text-[#5C2D91]">Workout Plan</h3>
+                    </div>
+                    
+                    <div className="bg-white rounded-lg border border-purple-100 overflow-hidden">
+                      <Table>
+                        <TableHeader className="bg-purple-50">
+                          <TableRow>
+                            <TableHead className="text-[#5C2D91] font-semibold">Exercise</TableHead>
+                            <TableHead className="text-[#5C2D91] font-semibold text-center">Sets</TableHead>
+                            <TableHead className="text-[#5C2D91] font-semibold text-center">Reps/Duration</TableHead>
+                            <TableHead className="text-[#5C2D91] font-semibold text-center">Rest</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {workout.exercises.map((exercise, exerciseIndex) => (
+                            <TableRow key={exerciseIndex}>
+                              <TableCell className="font-medium flex items-center py-3">
+                                {getExerciseIcon(exercise.name)}
+                                {exercise.name}
+                              </TableCell>
+                              <TableCell className="text-center">{exercise.sets}</TableCell>
+                              <TableCell className="text-center">
+                                {exercise.duration ? `${exercise.duration} sec` : `${exercise.reps} reps`}
+                              </TableCell>
+                              <TableCell className="text-center">
+                                <span className="inline-flex items-center bg-purple-50 px-2 py-1 rounded text-sm">
+                                  <Clock className="h-3 w-3 text-[#8E44AD] mr-1" />
+                                  {Math.floor(exercise.rest / 60)} min
+                                </span>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 px-6">
+                <div className="bg-purple-50/30 p-6 rounded-2xl border border-purple-100/30 max-w-md mx-auto">
+                  <DumbbellIcon className="h-12 w-12 text-purple-200 mx-auto mb-3" />
+                  <h3 className="text-lg font-semibold text-[#5C2D91] mb-2">No Workout Plan Yet</h3>
+                  <p className="text-[#8E44AD]/70 mb-4">
+                    Generate your personalized workout plan based on your fitness goals and preferences.
+                  </p>
+                  <Button 
+                    onClick={handleGeneratePlan} 
+                    disabled={generatingPlan}
+                    className="bg-[#8E44AD] hover:bg-[#7D3C98] text-white"
+                  >
+                    <Target className="h-4 w-4 mr-2" />
+                    {generatingPlan ? "Generating..." : "Generate Workout Plan"}
+                  </Button>
                 </div>
               </div>
-            ))}
+            )}
           </div>
-        ) : (
-          <div className="text-center py-8 px-6">
-            <div className="bg-purple-50/30 p-6 rounded-2xl border border-purple-100/30 max-w-md mx-auto">
-              <DumbbellIcon className="h-12 w-12 text-purple-200 mx-auto mb-3" />
-              <h3 className="text-lg font-semibold text-[#5C2D91] mb-2">No Workout Plan Yet</h3>
-              <p className="text-[#8E44AD]/70 mb-4">
-                Generate your personalized workout plan based on your fitness goals and preferences.
-              </p>
-              <Button 
-                onClick={onGeneratePlan} 
-                disabled={generatingPlan}
-                className="bg-[#8E44AD] hover:bg-[#7D3C98] text-white"
-              >
-                <Loader className="h-4 w-4 mr-2" />
-                {generatingPlan ? "Generating..." : "Generate Workout Plan"}
-              </Button>
-            </div>
-          </div>
-        )}
+        </div>
       </CardContent>
     </Card>
   );

@@ -16,7 +16,8 @@ export const useWorkoutPlan = <T extends {
 }>(
   profile: T | null, 
   workoutPlan: any, 
-  setWorkoutPlan: (plan: any) => void
+  setWorkoutPlan: (plan: any) => void,
+  selectedBodyParts: string[] = []
 ) => {
   const navigate = useNavigate();
   const [numberOfDays, setNumberOfDays] = useState<number>(3);
@@ -81,7 +82,8 @@ export const useWorkoutPlan = <T extends {
           workoutLocation: workoutLocationToUse,
           equipment: profile.equipment,
           intensityLevel: intensityToUse,
-          numberOfDays: numberOfDays
+          numberOfDays: numberOfDays,
+          targetedBodyParts: selectedBodyParts // Pass the selected body parts to the function
         }
       });
       
@@ -103,7 +105,8 @@ export const useWorkoutPlan = <T extends {
         workoutLocation: workoutLocationToUse,
         intensityLevel: intensityToUse,
         equipment: profile.equipment,
-        planData: aiResponse
+        planData: aiResponse,
+        targetedBodyParts: selectedBodyParts
       });
       
       const { error: deactivateError } = await supabase.from("workout_plans").update({
@@ -124,7 +127,8 @@ export const useWorkoutPlan = <T extends {
         equipment: profile.equipment,
         plan_data: aiResponse as Json,
         is_active: true,
-        workout_frequency: numberOfDays
+        workout_frequency: numberOfDays,
+        targeted_body_parts: selectedBodyParts // Save the targeted body parts
       }).select().single();
       
       if (createError) {
@@ -162,7 +166,8 @@ export const useWorkoutPlan = <T extends {
       const { error } = await supabase.from("saved_workout_plans").insert({
         user_id: session.session.user.id,
         plan_data: workoutPlan.plan_data,
-        name: `Workout Plan - ${new Date().toLocaleDateString()}`
+        name: `Workout Plan - ${new Date().toLocaleDateString()}`,
+        targeted_body_parts: workoutPlan.targeted_body_parts || [] // Save the targeted body parts
       });
       
       if (error) throw error;

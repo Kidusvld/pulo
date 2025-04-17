@@ -197,6 +197,7 @@ export type Database = {
           name: string | null
           plan_data: Json
           saved_at: string | null
+          targeted_body_parts: string[] | null
           user_id: string | null
         }
         Insert: {
@@ -204,6 +205,7 @@ export type Database = {
           name?: string | null
           plan_data: Json
           saved_at?: string | null
+          targeted_body_parts?: string[] | null
           user_id?: string | null
         }
         Update: {
@@ -211,6 +213,7 @@ export type Database = {
           name?: string | null
           plan_data?: Json
           saved_at?: string | null
+          targeted_body_parts?: string[] | null
           user_id?: string | null
         }
         Relationships: [
@@ -269,6 +272,7 @@ export type Database = {
           intensity_level: Database["public"]["Enums"]["intensity_level"]
           is_active: boolean | null
           plan_data: Json
+          targeted_body_parts: string[] | null
           user_id: string
           workout_frequency: number
           workout_location: Database["public"]["Enums"]["workout_location"]
@@ -283,6 +287,7 @@ export type Database = {
           intensity_level?: Database["public"]["Enums"]["intensity_level"]
           is_active?: boolean | null
           plan_data: Json
+          targeted_body_parts?: string[] | null
           user_id: string
           workout_frequency: number
           workout_location?: Database["public"]["Enums"]["workout_location"]
@@ -297,6 +302,7 @@ export type Database = {
           intensity_level?: Database["public"]["Enums"]["intensity_level"]
           is_active?: boolean | null
           plan_data?: Json
+          targeted_body_parts?: string[] | null
           user_id?: string
           workout_frequency?: number
           workout_location?: Database["public"]["Enums"]["workout_location"]
@@ -319,6 +325,19 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      body_part:
+        | "chest"
+        | "back"
+        | "shoulders"
+        | "biceps"
+        | "triceps"
+        | "forearms"
+        | "abs"
+        | "lower_back"
+        | "glutes"
+        | "quadriceps"
+        | "hamstrings"
+        | "calves"
       fitness_goal: "build_muscle" | "lose_fat" | "increase_mobility"
       intensity_level: "beginner" | "intermediate" | "advanced"
       muscle_group:
@@ -447,6 +466,20 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      body_part: [
+        "chest",
+        "back",
+        "shoulders",
+        "biceps",
+        "triceps",
+        "forearms",
+        "abs",
+        "lower_back",
+        "glutes",
+        "quadriceps",
+        "hamstrings",
+        "calves",
+      ],
       fitness_goal: ["build_muscle", "lose_fat", "increase_mobility"],
       intensity_level: ["beginner", "intermediate", "advanced"],
       muscle_group: [

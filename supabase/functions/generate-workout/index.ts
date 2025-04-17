@@ -12,13 +12,14 @@ const corsHeaders = {
 
 // Input validation schema
 const WorkoutRequestSchema = z.object({
-  age: z.number().min(18).max(100), // Updated from 80 to 100
+  age: z.number().min(18).max(100),
   weight: z.number().min(30).max(500),
   fitnessGoal: z.enum(['build_muscle', 'lose_fat', 'increase_mobility', 'stay_active']),
   workoutLocation: z.enum(['home', 'gym']),
   equipment: z.array(z.string()),
   intensityLevel: z.enum(['beginner', 'intermediate', 'advanced']),
-  numberOfDays: z.number().min(1).max(7)
+  numberOfDays: z.number().min(1).max(7),
+  targetedBodyParts: z.array(z.string()).optional().default([]) // New field for body part targeting
 });
 
 serve(async (req: Request) => {
@@ -39,22 +40,31 @@ serve(async (req: Request) => {
     const body = await req.json();
     console.log("Request body:", body);
     const validatedData = WorkoutRequestSchema.parse(body);
-
+    
     // Get OpenAI API key from environment variable
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
     if (!openaiApiKey) {
       throw new Error('OpenAI API key not configured');
     }
 
-    // Create updated system prompt based on user profile
-    const systemPrompt = `You are a professional fitness trainer tasked with creating a personalized workout plan.
+    // Create updated system prompt based on user profile and targeted body parts
+    let systemPrompt = `You are a professional fitness trainer tasked with creating a personalized workout plan.
     Design a detailed workout plan with the following specifications:
     
     1. The plan is for a person who is ${validatedData.age} years old and weighs ${validatedData.weight} lbs.
     2. Their primary fitness goal is to ${validatedData.fitnessGoal.replace('_', ' ')}.
     3. They will workout at ${validatedData.workoutLocation === 'home' ? 'home with limited equipment' : 'a fully equipped gym'}.
     4. Their fitness level is ${validatedData.intensityLevel}.
-    5. Create workouts for ${validatedData.numberOfDays} days per week.
+    5. Create workouts for ${validatedData.numberOfDays} days per week.`;
+    
+    // Add body part targeting if specified
+    if (validatedData.targetedBodyParts && validatedData.targetedBodyParts.length > 0) {
+      systemPrompt += `
+    6. IMPORTANT: Focus primarily on these specific body parts: ${validatedData.targetedBodyParts.join(', ')}.
+       Ensure at least 60% of the exercises target these areas directly.`;
+    }
+    
+    systemPrompt += `
     
     For each day, include the following:
     - 4 to 8 exercises (based on fitness level)

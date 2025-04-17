@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Dumbbell, Calendar, Sparkles, LightbulbIcon } from "lucide-react";
 import { WorkoutPlanCard } from "@/components/dashboard/WorkoutPlanCard";
@@ -30,6 +29,7 @@ interface WorkoutPlan {
       }>;
     }>;
   };
+  targeted_body_parts?: string[];
 }
 
 interface ProgressStats {
@@ -48,6 +48,7 @@ interface HomeViewProps {
   onDaysChange: (days: number) => void;
   onGeneratePlan: () => void;
   onSavePlan: () => void;
+  onBodyPartSelect?: (bodyParts: string[]) => void;
 }
 
 export const HomeView = ({
@@ -58,29 +59,24 @@ export const HomeView = ({
   progressStats,
   onDaysChange,
   onGeneratePlan,
-  onSavePlan
+  onSavePlan,
+  onBodyPartSelect
 }: HomeViewProps) => {
-  // Add state for the motivational quote
   const [motivationalQuote, setMotivationalQuote] = useState(() => getRandomQuote());
   
-  // Use effect to set a new quote when the workout plan changes
   useEffect(() => {
     setMotivationalQuote(getRandomQuote());
   }, [workoutPlan]);
   
-  // Function to handle generating a plan with quote refresh
   const handleGeneratePlan = () => {
     onGeneratePlan();
-    // Note: We don't need to set a new quote here since the useEffect will handle it when workoutPlan changes
   };
   
-  // Calculate this week's workouts
   const calculateWeeklyStats = () => {
     const today = new Date();
     const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay()); // Start of week (Sunday)
+    startOfWeek.setDate(today.getDate() - today.getDay());
     
-    // Mock data for now - in a real app this would come from the database
     return {
       workoutsThisWeek: Math.min(progressStats.consistencyStreak, 7),
       activeDays: Math.min(progressStats.consistencyStreak, 7),
@@ -90,7 +86,6 @@ export const HomeView = ({
   
   const weeklyStats = calculateWeeklyStats();
   
-  // Generate motivational message based on stats
   const getMotivationalMessage = () => {
     if (progressStats.consistencyStreak > 5) {
       return "Amazing consistency! You're building great habits.";
@@ -103,7 +98,6 @@ export const HomeView = ({
     }
   };
   
-  // Generate advice based on profile
   const getAdviceMessage = () => {
     if (!profile) return "";
     
@@ -120,7 +114,6 @@ export const HomeView = ({
 
   return (
     <div className="space-y-4">
-      {/* Motivational Banner */}
       <Card className="bg-[#6E59A5]/90 text-white border-none shadow-lg overflow-hidden">
         <CardContent className="p-3">
           <div className="flex items-center">
@@ -133,9 +126,7 @@ export const HomeView = ({
         </CardContent>
       </Card>
 
-      {/* Main Content in a more compact layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Left Column - Workout Plan (Spans 8 columns on lg screens) */}
         <div className="lg:col-span-8 order-2 lg:order-1">
           <WorkoutPlanCard 
             workoutPlan={workoutPlan}
@@ -144,12 +135,11 @@ export const HomeView = ({
             onDaysChange={onDaysChange}
             onGeneratePlan={handleGeneratePlan}
             onSavePlan={onSavePlan}
+            onBodyPartSelect={onBodyPartSelect}
           />
         </div>
         
-        {/* Right Column - Stats and Fit Index (Spans 4 columns on lg screens) */}
         <div className="lg:col-span-4 space-y-4 order-1 lg:order-2">
-          {/* Weekly Stats Card */}
           <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-semibold flex items-center gap-2 text-[#5C2D91]">
@@ -162,7 +152,6 @@ export const HomeView = ({
             </CardContent>
           </Card>
 
-          {/* PULO Fit Index - More compact format */}
           {profile && (
             <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
               <CardHeader className="pb-2">
