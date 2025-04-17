@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { HomeView } from "@/components/dashboard/HomeView";
 import { ProfileView } from "@/components/dashboard/ProfileView";
@@ -23,7 +23,8 @@ interface Profile {
 }
 
 const Dashboard = () => {
-  const [activeSection, setActiveSection] = useState<"home" | "profile">("home");
+  // Set default section to "profile" to show the VisualBodySelector
+  const [activeSection, setActiveSection] = useState<"home" | "profile">("profile");
   const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
   
   // Check authentication status

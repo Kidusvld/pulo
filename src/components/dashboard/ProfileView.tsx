@@ -3,10 +3,10 @@ import { ProfileCard } from "@/components/dashboard/ProfileCard";
 import { ProgressStats } from "@/components/progress/ProgressStats";
 import { WorkoutForm } from "@/components/progress/WorkoutForm";
 import { MuscleGroupChart } from "@/components/progress/MuscleGroupChart";
-import { BodyPartSelector, bodyPartsList } from "@/components/dashboard/BodyPartSelector";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target } from "lucide-react";
+import { VisualBodySelector } from "@/components/dashboard/VisualBodySelector";
 
 interface Profile {
   first_name?: string;
@@ -115,7 +115,7 @@ export const ProfileView = ({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <BodyPartSelector 
+            <VisualBodySelector 
               selectedParts={selectedBodyParts}
               onSelectPart={handleBodyPartToggle}
             />
