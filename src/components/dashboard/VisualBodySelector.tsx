@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { Lock } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 interface BodyPartMap {
   id: string;
@@ -113,12 +115,14 @@ interface VisualBodySelectorProps {
   selectedParts: string[];
   onSelectPart: (part: string) => void;
   className?: string;
+  showComingSoon?: boolean;
 }
 
 export const VisualBodySelector = ({
   selectedParts,
   onSelectPart,
-  className
+  className,
+  showComingSoon = true
 }: VisualBodySelectorProps) => {
   const [view, setView] = useState<"front" | "back">("front");
   
@@ -126,7 +130,7 @@ export const VisualBodySelector = ({
   const isSelected = (partId: string) => selectedParts.includes(partId);
   
   return (
-    <div className={cn("flex flex-col items-center gap-4", className)}>
+    <div className={cn("flex flex-col items-center gap-4 relative", className)}>
       {/* View toggle buttons */}
       <div className="flex rounded-lg overflow-hidden border border-purple-200 mb-2">
         <button
@@ -304,6 +308,17 @@ export const VisualBodySelector = ({
             <circle cx="65" cy="170" r="2" />
           </g>
         </svg>
+        
+        {/* Coming Soon Overlay */}
+        {showComingSoon && (
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center">
+            <Lock className="h-12 w-12 text-white/90 mb-3" />
+            <p className="text-white text-xl font-bold font-montserrat">Coming Soon</p>
+            <p className="text-white/80 text-sm max-w-[200px] text-center mt-2 font-opensans">
+              This feature is still under development
+            </p>
+          </div>
+        )}
       </div>
       
       {/* Selected muscle groups display */}
@@ -326,6 +341,18 @@ export const VisualBodySelector = ({
             })}
           </div>
         </div>
+      )}
+      
+      {/* Informational Alert */}
+      {showComingSoon && (
+        <Alert className="bg-purple-50 border-purple-200 mt-2">
+          <AlertTitle className="text-purple-800 flex items-center gap-2">
+            <Lock className="h-4 w-4" /> Feature In Development
+          </AlertTitle>
+          <AlertDescription className="text-purple-700/80">
+            The body area selector is coming soon to help you target specific muscle groups in your workouts.
+          </AlertDescription>
+        </Alert>
       )}
     </div>
   );
