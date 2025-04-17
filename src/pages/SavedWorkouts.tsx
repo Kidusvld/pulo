@@ -9,23 +9,30 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Json } from "@/integrations/supabase/types";
+
+interface Exercise {
+  name: string;
+  sets: number;
+  reps?: number;
+  duration?: number;
+  rest: number;
+}
+
+interface Workout {
+  day: number;
+  exercises: Exercise[];
+}
 
 interface SavedWorkout {
   id: string;
   user_id: string;
   plan_data: {
-    workouts: Array<{
-      day: number;
-      exercises: Array<{
-        name: string;
-        sets: number;
-        reps: number;
-        rest: number;
-      }>;
-    }>;
+    workouts: Workout[];
   };
   saved_at: string;
   name: string | null;
+  targeted_body_parts?: string[];
 }
 
 const getExerciseIcon = (exerciseName: string) => {
@@ -72,7 +79,14 @@ const SavedWorkouts = () => {
         .order("saved_at", { ascending: false });
 
       if (error) throw error;
-      setSavedWorkouts(data as SavedWorkout[]);
+      
+      // Properly cast the data to ensure type safety
+      const typedData = data?.map(item => ({
+        ...item,
+        plan_data: item.plan_data as unknown as { workouts: Workout[] }
+      })) as SavedWorkout[];
+      
+      setSavedWorkouts(typedData);
     } catch (error) {
       console.error("Error loading saved workouts:", error);
       toast.error("Failed to load saved workouts");
@@ -141,7 +155,10 @@ const SavedWorkouts = () => {
     workout.plan_data.workouts.forEach(day => {
       smsText += `Day ${day.day}:\n`;
       day.exercises.forEach(exercise => {
-        smsText += `- ${exercise.name}: ${exercise.sets} sets x ${exercise.reps} reps (${exercise.rest}s rest)\n`;
+        const repsOrDuration = exercise.duration 
+          ? `${exercise.duration} seconds` 
+          : `${exercise.reps} reps`;
+        smsText += `- ${exercise.name}: ${exercise.sets} sets x ${repsOrDuration} (${exercise.rest}s rest)\n`;
       });
       smsText += "\n";
     });
@@ -280,7 +297,7 @@ const SavedWorkouts = () => {
                                 {exercise.name}
                               </p>
                               <p className="text-sm text-purple-200 ml-6">
-                                {exercise.sets} sets × {exercise.reps} reps
+                                {exercise.sets} sets × {exercise.duration ? `${exercise.duration} sec` : `${exercise.reps} reps`}
                                 (Rest: {exercise.rest}s)
                               </p>
                             </div>

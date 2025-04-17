@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Human, Muscle, Brain } from "lucide-react";
+import { User2, Dumbbell, Brain } from "lucide-react";
 
 // Define the body parts with their display names and descriptions
 const bodyParts = [
@@ -56,7 +56,7 @@ export const BodyPartSelector = ({
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="p-3 bg-purple-50 rounded-full">
-                  <Human className="h-8 w-8 text-[#5C2D91]" />
+                  <User2 className="h-8 w-8 text-[#5C2D91]" />
                 </div>
               </TooltipTrigger>
               <TooltipContent>
@@ -69,7 +69,7 @@ export const BodyPartSelector = ({
         {/* Upper body section */}
         <div className="flex flex-col space-y-2">
           <div className="flex items-center gap-2 text-sm font-medium text-[#5C2D91]">
-            <Muscle className="h-4 w-4" />
+            <Dumbbell className="h-4 w-4" />
             Upper Body
           </div>
           <div className="flex flex-wrap gap-2">
@@ -129,7 +129,7 @@ export const BodyPartSelector = ({
         {/* Lower body section */}
         <div className="flex flex-col space-y-2">
           <div className="flex items-center gap-2 text-sm font-medium text-[#5C2D91]">
-            <Muscle className="h-4 w-4" />
+            <Dumbbell className="h-4 w-4" />
             Lower Body
           </div>
           <div className="flex flex-wrap gap-2">
