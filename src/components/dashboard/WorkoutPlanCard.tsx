@@ -92,7 +92,7 @@ export const WorkoutPlanCard = ({
           </div>
           
           <div className="flex gap-2">
-            {workoutPlan && (
+            {workoutPlan && !generatingPlan && (
               <Button 
                 variant="outline" 
                 onClick={onSavePlan} 
@@ -124,7 +124,7 @@ export const WorkoutPlanCard = ({
       </div>
       
       <CardContent className="p-0">
-        {generatingPlan && !workoutPlan?.plan_data?.workouts ? (
+        {generatingPlan ? (
           <div className="flex items-center justify-center py-20 px-6 bg-gradient-to-br from-purple-50/50 to-white/80">
             <LoadingMascot size="lg" showText={true} />
           </div>
