@@ -129,7 +129,6 @@ const Dashboard = () => {
           onDaysChange={setNumberOfDays}
           onGeneratePlan={generateNewPlan}
           onSavePlan={handleSaveWorkout}
-          onBodyPartSelect={handleBodyPartSelect}
         />
       ) : (
         <ProfileView
@@ -149,6 +148,7 @@ const Dashboard = () => {
           onEditFitnessGoal={setEditedFitnessGoal}
           onEditWorkoutLocation={setEditedWorkoutLocation}
           onUpdateProfile={handleUpdateProfile}
+          onBodyPartSelect={handleBodyPartSelect}
         />
       )}
     </DashboardLayout>

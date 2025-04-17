@@ -48,7 +48,6 @@ interface HomeViewProps {
   onDaysChange: (days: number) => void;
   onGeneratePlan: () => void;
   onSavePlan: () => void;
-  onBodyPartSelect?: (bodyParts: string[]) => void;
 }
 
 export const HomeView = ({
@@ -59,8 +58,7 @@ export const HomeView = ({
   progressStats,
   onDaysChange,
   onGeneratePlan,
-  onSavePlan,
-  onBodyPartSelect
+  onSavePlan
 }: HomeViewProps) => {
   const [motivationalQuote, setMotivationalQuote] = useState(() => getRandomQuote());
   
@@ -135,7 +133,6 @@ export const HomeView = ({
             onDaysChange={onDaysChange}
             onGeneratePlan={handleGeneratePlan}
             onSavePlan={onSavePlan}
-            onBodyPartSelect={onBodyPartSelect}
           />
         </div>
         
@@ -148,7 +145,7 @@ export const HomeView = ({
               </CardTitle>
             </CardHeader>
             <CardContent className="py-3 px-4">
-              <WeeklySummaryStats stats={weeklyStats} consistencyStreak={progressStats.consistencyStreak} />
+              <WeeklySummaryStats stats={calculateWeeklyStats()} consistencyStreak={progressStats.consistencyStreak} />
             </CardContent>
           </Card>
 
