@@ -29,7 +29,7 @@ export const LoadingMascot = ({
           "animate-spin-slow transform-gpu rounded-full transition-all duration-300"
         )}>
           <img 
-            src="/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png" 
+            src="/lovable-uploads/86389a74-c5a8-46d6-ad34-62aced3faed1.png" 
             alt="PULO Loading"
             className="w-full h-full object-contain"
           />
@@ -50,3 +50,4 @@ export const LoadingMascot = ({
     </div>
   );
 };
+
