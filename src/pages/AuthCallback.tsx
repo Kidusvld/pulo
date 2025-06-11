@@ -64,19 +64,19 @@ const AuthCallback = () => {
   }, [navigate, next]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100">
-      <div className="absolute inset-0 bg-grid-slate-100/50"></div>
-      <div className="absolute bottom-0 left-0 w-full h-full opacity-5 pointer-events-none flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-gray-50">
+      <div className="absolute inset-0 bg-grid-slate-100/30"></div>
+      <div className="absolute bottom-0 left-0 w-full h-full opacity-3 pointer-events-none flex items-center justify-center">
         <img 
           src="/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png"
           alt="PULO Watermark"
           className="h-64 opacity-10"
         />
       </div>
-      <div className="z-10 flex flex-col items-center bg-white/90 backdrop-blur-sm p-8 rounded-2xl border border-slate-200/60 shadow-xl">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-indigo-600 mb-4"></div>
-        <p className="text-slate-700 font-medium font-montserrat">Authenticating... Please wait</p>
-        <p className="text-slate-500 text-sm mt-2">Preparing your personalized experience</p>
+      <div className="z-10 flex flex-col items-center bg-white/95 backdrop-blur-sm p-10 rounded-3xl border border-slate-200/60 shadow-2xl">
+        <div className="animate-spin rounded-full h-14 w-14 border-4 border-slate-200 border-t-indigo-600 mb-6"></div>
+        <p className="text-slate-800 font-semibold text-lg font-montserrat">Authenticating... Please wait</p>
+        <p className="text-slate-600 text-base mt-3">Preparing your personalized experience</p>
       </div>
     </div>
   );

@@ -29,30 +29,30 @@ const Subscription = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-gray-50">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 border-t-indigo-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100">
-      <div className="absolute inset-0 bg-grid-slate-100/50"></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
+      <div className="absolute inset-0 bg-grid-slate-100/30"></div>
       
       {/* Header */}
-      <div className="relative z-10 bg-white/90 backdrop-blur-sm border-b border-slate-200/60 shadow-sm">
+      <div className="relative z-10 bg-white/95 backdrop-blur-sm border-b border-slate-200/60 shadow-sm">
         <div className="max-w-4xl mx-auto p-6">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate("/dashboard")}
-              className="text-slate-600 hover:text-slate-900"
+              className="text-slate-700 hover:text-slate-900 font-medium"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Dashboard
             </Button>
-            <h1 className="text-2xl font-bold text-slate-800 font-montserrat">
+            <h1 className="text-3xl font-bold text-slate-900 font-montserrat">
               Subscription
             </h1>
           </div>
@@ -60,67 +60,67 @@ const Subscription = () => {
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto p-8">
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-xl p-8 mb-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold text-slate-800 font-montserrat">Free Access</h2>
-            <Badge className="py-2 px-4 flex items-center gap-2 font-medium bg-emerald-100 text-emerald-700 border-emerald-200">
-              <CheckCircle2 className="h-4 w-4" />
+        <div className="bg-white/95 backdrop-blur-sm rounded-3xl border border-slate-200/60 shadow-2xl p-10 mb-8">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-semibold text-slate-900 font-montserrat">Free Access</h2>
+            <Badge className="py-3 px-6 flex items-center gap-2 font-semibold text-lg bg-emerald-100 text-emerald-800 border-emerald-200">
+              <CheckCircle2 className="h-5 w-5" />
               All Features Unlocked
             </Badge>
           </div>
-          <p className="text-slate-600 mb-6 text-lg leading-relaxed">
+          <p className="text-slate-700 mb-8 text-xl leading-relaxed">
             All premium features are currently free to use. We're still working on our subscription plans.
           </p>
-          <div className="bg-slate-50 rounded-xl p-6 mb-6">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">What's Included:</h3>
-            <ul className="space-y-3 text-slate-600">
-              <li className="flex items-center gap-3">
-                <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
-                Unlimited workout tracking
+          <div className="bg-slate-50/80 rounded-2xl p-8 mb-8">
+            <h3 className="text-xl font-semibold text-slate-900 mb-6 font-montserrat">What's Included:</h3>
+            <ul className="space-y-4 text-slate-700">
+              <li className="flex items-center gap-4">
+                <CheckCircle2 className="h-6 w-6 text-emerald-600 flex-shrink-0" />
+                <span className="text-lg">Unlimited workout tracking</span>
               </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
-                Advanced AI-powered workout plans
+              <li className="flex items-center gap-4">
+                <CheckCircle2 className="h-6 w-6 text-emerald-600 flex-shrink-0" />
+                <span className="text-lg">Advanced AI-powered workout plans</span>
               </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
-                Progress analytics and insights
+              <li className="flex items-center gap-4">
+                <CheckCircle2 className="h-6 w-6 text-emerald-600 flex-shrink-0" />
+                <span className="text-lg">Progress analytics and insights</span>
               </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle2 className="h-5 w-5 text-emerald-500 flex-shrink-0" />
-                Priority support
+              <li className="flex items-center gap-4">
+                <CheckCircle2 className="h-6 w-6 text-emerald-600 flex-shrink-0" />
+                <span className="text-lg">Priority support</span>
               </li>
             </ul>
           </div>
           <Button 
             onClick={() => navigate("/dashboard")} 
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 text-lg"
           >
             Return to Dashboard
           </Button>
         </div>
 
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-xl p-8">
-          <h3 className="text-xl font-semibold mb-6 text-slate-800 font-montserrat">Features Overview</h3>
+        <div className="bg-white/95 backdrop-blur-sm rounded-3xl border border-slate-200/60 shadow-2xl p-10">
+          <h3 className="text-2xl font-semibold mb-8 text-slate-900 font-montserrat">Features Overview</h3>
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
-              <span className="text-slate-700 font-medium">Workout Tracking</span>
-              <CheckCircle2 className="text-emerald-500 h-5 w-5" />
+            <div className="flex items-center justify-between p-6 bg-slate-50/80 rounded-2xl">
+              <span className="text-slate-800 font-medium text-lg">Workout Tracking</span>
+              <CheckCircle2 className="text-emerald-600 h-6 w-6" />
             </div>
-            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
-              <span className="text-slate-700 font-medium">Advanced Workout Plans</span>
-              <CheckCircle2 className="text-emerald-500 h-5 w-5" />
+            <div className="flex items-center justify-between p-6 bg-slate-50/80 rounded-2xl">
+              <span className="text-slate-800 font-medium text-lg">Advanced Workout Plans</span>
+              <CheckCircle2 className="text-emerald-600 h-6 w-6" />
             </div>
-            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
-              <span className="text-slate-700 font-medium">Progress Analytics</span>
-              <CheckCircle2 className="text-emerald-500 h-5 w-5" />
+            <div className="flex items-center justify-between p-6 bg-slate-50/80 rounded-2xl">
+              <span className="text-slate-800 font-medium text-lg">Progress Analytics</span>
+              <CheckCircle2 className="text-emerald-600 h-6 w-6" />
             </div>
-            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
-              <span className="text-slate-700 font-medium">Priority Support</span>
-              <CheckCircle2 className="text-emerald-500 h-5 w-5" />
+            <div className="flex items-center justify-between p-6 bg-slate-50/80 rounded-2xl">
+              <span className="text-slate-800 font-medium text-lg">Priority Support</span>
+              <CheckCircle2 className="text-emerald-600 h-6 w-6" />
             </div>
-            <div className="mt-6 p-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-100">
-              <p className="text-sm text-slate-600 leading-relaxed">
+            <div className="mt-8 p-8 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl border border-indigo-200">
+              <p className="text-slate-700 leading-relaxed text-lg">
                 We're currently developing our subscription model. For now, enjoy full access to all features at no cost! 
                 Stay tuned for exciting updates and new features coming soon.
               </p>
