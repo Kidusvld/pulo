@@ -1,4 +1,5 @@
-import { WeeklySummaryStats } from "@/components/progress/WeeklySummaryStats";
+
+import { WeeklySummaryStats } from "@/components/dashboard/WeeklySummaryStats";
 import { PuloFitIndex } from "@/components/dashboard/PuloFitIndex";
 import { WorkoutPlanCard } from "@/components/dashboard/WorkoutPlanCard";
 
@@ -28,12 +29,17 @@ export const HomeView = ({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-6">
           <WeeklySummaryStats 
-            totalWorkouts={progressStats.totalWorkouts}
-            totalVolume={progressStats.totalVolume}
-            averageDuration={progressStats.averageDuration}
-            consistencyStreak={progressStats.consistencyStreak}
+            stats={{
+              workoutsThisWeek: progressStats.totalWorkouts || 0,
+              activeDays: Math.min(progressStats.consistencyStreak || 0, 7),
+              totalWorkouts: progressStats.totalWorkouts || 0
+            }}
+            consistencyStreak={progressStats.consistencyStreak || 0}
           />
-          <PuloFitIndex profile={profile} />
+          <PuloFitIndex 
+            age={profile?.age || 25}
+            weight={profile?.weight || 150}
+          />
         </div>
         
         <div className="space-y-6">
