@@ -1,4 +1,3 @@
-
 /**
  * Application version following semantic versioning (SemVer) principles
  * MAJOR.MINOR.PATCH
@@ -7,9 +6,9 @@
  * - PATCH: Bug fixes and small improvements
  */
 
-export const APP_VERSION = "1.2.1";
+export const APP_VERSION = "1.2.2";
 
-export const APP_BUILD_DATE = "2025-04-12";
+export const APP_BUILD_DATE = "2025-06-11";
 
 /**
  * Returns a formatted version string for display
