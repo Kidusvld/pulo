@@ -70,9 +70,9 @@ export const VisualBodySelector = ({
             />
             
             {/* Clickable overlay areas for front view */}
-            {/* Chest */}
+            {/* Chest - moved down from 25% to 30% */}
             <div
-              className={`absolute top-[25%] left-[35%] w-[30%] h-[15%] cursor-pointer rounded-lg transition-all ${
+              className={`absolute top-[30%] left-[35%] w-[30%] h-[15%] cursor-pointer rounded-lg transition-all ${
                 selectedParts.includes('Chest') 
                   ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
                   : showPositioningMode 
