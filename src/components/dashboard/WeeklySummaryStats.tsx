@@ -34,50 +34,63 @@ export const WeeklySummaryStats = ({ stats, consistencyStreak }: WeeklySummarySt
   return (
     <div>
       {/* Stats Cards in a horizontal grid */}
-      <div className="grid grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-3 gap-3 mb-6">
         {/* Weekly Workouts */}
-        <div className="bg-purple-50/70 rounded-lg p-3 border border-purple-100 flex flex-col items-center">
-          <Calendar className="h-5 w-5 text-[#8E44AD] mb-1" />
-          <p className="text-2xl font-bold text-[#5C2D91]">{stats.workoutsThisWeek}</p>
-          <p className="text-xs text-[#8E44AD]/70 text-center">weekly workouts</p>
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200 flex flex-col items-center shadow-sm hover:shadow-md transition-all">
+          <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mb-2">
+            <Calendar className="h-4 w-4 text-white" />
+          </div>
+          <p className="text-2xl font-bold text-slate-800">{stats.workoutsThisWeek}</p>
+          <p className="text-xs text-slate-600 text-center font-medium">weekly workouts</p>
         </div>
         
         {/* Active Days */}
-        <div className="bg-purple-50/70 rounded-lg p-3 border border-purple-100 flex flex-col items-center">
-          <Activity className="h-5 w-5 text-[#8E44AD] mb-1" />
-          <p className="text-2xl font-bold text-[#5C2D91]">{stats.activeDays}</p>
-          <p className="text-xs text-[#8E44AD]/70 text-center">active days</p>
+        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-200 flex flex-col items-center shadow-sm hover:shadow-md transition-all">
+          <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full mb-2">
+            <Activity className="h-4 w-4 text-white" />
+          </div>
+          <p className="text-2xl font-bold text-slate-800">{stats.activeDays}</p>
+          <p className="text-xs text-slate-600 text-center font-medium">active days</p>
         </div>
         
         {/* Total Workouts */}
-        <div className="bg-purple-50/70 rounded-lg p-3 border border-purple-100 flex flex-col items-center">
-          <Trophy className="h-5 w-5 text-[#8E44AD] mb-1" />
-          <p className="text-2xl font-bold text-[#5C2D91]">{stats.totalWorkouts}</p>
-          <p className="text-xs text-[#8E44AD]/70 text-center">all-time</p>
+        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-200 flex flex-col items-center shadow-sm hover:shadow-md transition-all">
+          <div className="p-2 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full mb-2">
+            <Trophy className="h-4 w-4 text-white" />
+          </div>
+          <p className="text-2xl font-bold text-slate-800">{stats.totalWorkouts}</p>
+          <p className="text-xs text-slate-600 text-center font-medium">all-time</p>
         </div>
       </div>
       
       {/* Weekly Activity Visualization */}
-      <div className="bg-purple-50/40 rounded-lg p-3 border border-purple-100">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-sm text-[#5C2D91] font-semibold">Weekly Activity</p>
-          <Badge variant="purple" className="bg-[#8E44AD]/90 text-xs">
+      <div className="bg-gradient-to-br from-slate-50 to-gray-50 rounded-lg p-4 border border-slate-200 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm text-slate-700 font-semibold">Weekly Activity</p>
+          <Badge 
+            variant="outline" 
+            className={`text-xs font-medium ${
+              consistencyStreak > 0 
+                ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-emerald-400" 
+                : "bg-slate-100 text-slate-600 border-slate-300"
+            }`}
+          >
             {consistencyStreak > 0 
               ? `${consistencyStreak} Day Streak` 
               : "No Current Streak"}
           </Badge>
         </div>
-        <div className="flex justify-between gap-1 mt-2">
+        <div className="flex justify-between gap-1 mt-3">
           {activeDaysData.map((isActive, index) => (
             <div key={index} className="flex flex-col items-center flex-1">
               <div 
-                className={`w-full aspect-square rounded-md ${
+                className={`w-full aspect-square rounded-md transition-all duration-200 ${
                   isActive 
-                    ? 'bg-[#8E44AD] shadow-sm shadow-[#8E44AD]/30' 
-                    : 'bg-gray-200/80 border border-gray-300/30'
+                    ? 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-md shadow-emerald-200' 
+                    : 'bg-slate-200 border border-slate-300 hover:bg-slate-300'
                 }`}
               />
-              <span className="text-xs text-[#5C2D91]/80 mt-1">{dayLabels[index]}</span>
+              <span className="text-xs text-slate-600 mt-1 font-medium">{dayLabels[index]}</span>
             </div>
           ))}
         </div>

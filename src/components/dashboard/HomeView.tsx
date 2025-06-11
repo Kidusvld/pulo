@@ -90,17 +90,19 @@ export const HomeView = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Target Body Areas Card */}
-        <Card className="lg:col-span-1 bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-gray-900">
-              <Target className="h-5 w-5 text-[#8E44AD]" />
+        <Card className="lg:col-span-1 bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 group">
+          <CardHeader className="pb-4 border-b border-slate-100">
+            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-slate-800 group-hover:text-indigo-600 transition-colors">
+              <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
+                <Target className="h-5 w-5 text-white" />
+              </div>
               Target Body Areas
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <VisualBodySelector 
               selectedParts={selectedBodyParts}
               onSelectPart={handleBodyPartToggle}
@@ -110,7 +112,7 @@ export const HomeView = ({
         </Card>
 
         {/* Workout Generator Card */}
-        <Card className="lg:col-span-2 bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+        <Card className="lg:col-span-2 bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
           <CardContent className="p-0">
             <EnhancedWorkoutGenerator
               selectedMuscleGroups={selectedBodyParts}
@@ -124,14 +126,16 @@ export const HomeView = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Progress Stats */}
-        <Card className="bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-gray-900">
-              <TrendingUp className="h-5 w-5 text-[#8E44AD]" />
+        <Card className="bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 group">
+          <CardHeader className="pb-4 border-b border-slate-100">
+            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-slate-800 group-hover:text-emerald-600 transition-colors">
+              <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-white" />
+              </div>
               Progress Overview
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <ProgressStats 
               totalWorkouts={progressStats.totalWorkouts}
               totalVolume={progressStats.totalVolume}

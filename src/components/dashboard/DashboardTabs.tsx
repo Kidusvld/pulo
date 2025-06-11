@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Home, User } from "lucide-react";
 
@@ -10,12 +9,14 @@ interface DashboardTabsProps {
 
 export const DashboardTabs = ({ activeSection, setActiveSection }: DashboardTabsProps) => {
   return (
-    <div className="bg-white/10 backdrop-blur-sm border border-white/10 p-2 rounded-lg flex w-[280px] mx-auto">
+    <div className="inline-flex bg-slate-100 p-1 rounded-xl shadow-inner border border-slate-200">
       <Button
         variant={activeSection === "home" ? "default" : "ghost"}
-        className={`flex-1 ${activeSection === "home" 
-          ? "bg-[#8E44AD] hover:bg-[#7D3C98]" 
-          : "text-white hover:bg-white/10"}`}
+        className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
+          activeSection === "home" 
+            ? "bg-white text-slate-900 shadow-sm border border-slate-200" 
+            : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
+        }`}
         onClick={() => setActiveSection("home")}
       >
         <Home className="h-4 w-4 mr-2" />
@@ -23,9 +24,11 @@ export const DashboardTabs = ({ activeSection, setActiveSection }: DashboardTabs
       </Button>
       <Button
         variant={activeSection === "profile" ? "default" : "ghost"}
-        className={`flex-1 ${activeSection === "profile" 
-          ? "bg-[#8E44AD] hover:bg-[#7D3C98]" 
-          : "text-white hover:bg-white/10"}`}
+        className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
+          activeSection === "profile" 
+            ? "bg-white text-slate-900 shadow-sm border border-slate-200" 
+            : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
+        }`}
         onClick={() => setActiveSection("profile")}
       >
         <User className="h-4 w-4 mr-2" />
