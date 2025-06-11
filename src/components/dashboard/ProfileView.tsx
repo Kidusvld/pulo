@@ -118,7 +118,7 @@ export const ProfileView = ({
             <VisualBodySelector 
               selectedParts={selectedBodyParts}
               onSelectPart={handleBodyPartToggle}
-              showComingSoon={true}
+              showComingSoon={false}
             />
           </CardContent>
         </Card>

@@ -2,8 +2,7 @@
 import React, { useState } from "react";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Lock } from "lucide-react";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { motion } from "framer-motion";
 
 interface BodyPartMap {
   id: string;
@@ -122,7 +121,7 @@ export const VisualBodySelector = ({
   selectedParts,
   onSelectPart,
   className,
-  showComingSoon = true
+  showComingSoon = false
 }: VisualBodySelectorProps) => {
   const [view, setView] = useState<"front" | "back">("front");
   
@@ -133,7 +132,9 @@ export const VisualBodySelector = ({
     <div className={cn("flex flex-col items-center gap-4 relative", className)}>
       {/* View toggle buttons */}
       <div className="flex rounded-lg overflow-hidden border border-purple-200 mb-2">
-        <button
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           className={`px-4 py-2 text-sm font-medium transition-colors ${
             view === "front"
               ? "bg-[#5C2D91] text-white"
@@ -142,8 +143,10 @@ export const VisualBodySelector = ({
           onClick={() => setView("front")}
         >
           Front View
-        </button>
-        <button
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           className={`px-4 py-2 text-sm font-medium transition-colors ${
             view === "back"
               ? "bg-[#5C2D91] text-white"
@@ -152,7 +155,7 @@ export const VisualBodySelector = ({
           onClick={() => setView("back")}
         >
           Back View
-        </button>
+        </motion.button>
       </div>
       
       {/* Body figure SVG with improved anatomy */}
@@ -206,16 +209,24 @@ export const VisualBodySelector = ({
             <TooltipProvider key={part.id}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <path
+                  <motion.path
                     d={part.path}
-                    fill={isSelected(part.id) ? "rgba(156, 45, 145, 0.55)" : "rgba(232, 121, 249, 0.15)"}
+                    fill={isSelected(part.id) ? "rgba(156, 45, 145, 0.7)" : "rgba(232, 121, 249, 0.15)"}
                     stroke={isSelected(part.id) ? "#9b87f5" : "#e9d7ff"}
                     strokeWidth="0.8"
                     className={cn(
-                      "cursor-pointer transition-all duration-200 hover:fill-purple-300/40",
-                      isSelected(part.id) && "animate-pulse"
+                      "cursor-pointer transition-all duration-200",
+                      isSelected(part.id) 
+                        ? "filter drop-shadow-lg" 
+                        : "hover:fill-purple-300/40 hover:stroke-purple-400"
                     )}
                     onClick={() => onSelectPart(part.id)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    animate={isSelected(part.id) ? {
+                      filter: ["drop-shadow(0 0 8px rgba(156, 45, 145, 0.5))", "drop-shadow(0 0 12px rgba(156, 45, 145, 0.8))", "drop-shadow(0 0 8px rgba(156, 45, 145, 0.5))"]
+                    } : {}}
+                    transition={{ duration: 1.5, repeat: isSelected(part.id) ? Infinity : 0 }}
                   />
                 </TooltipTrigger>
                 <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
@@ -233,16 +244,24 @@ export const VisualBodySelector = ({
             <TooltipProvider key={part.id}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <path
+                  <motion.path
                     d={part.path}
-                    fill={isSelected(part.id) ? "rgba(156, 45, 145, 0.55)" : "rgba(232, 121, 249, 0.15)"}
+                    fill={isSelected(part.id) ? "rgba(156, 45, 145, 0.7)" : "rgba(232, 121, 249, 0.15)"}
                     stroke={isSelected(part.id) ? "#9b87f5" : "#e9d7ff"}
                     strokeWidth="0.8"
                     className={cn(
-                      "cursor-pointer transition-all duration-200 hover:fill-purple-300/40",
-                      isSelected(part.id) && "animate-pulse"
+                      "cursor-pointer transition-all duration-200",
+                      isSelected(part.id) 
+                        ? "filter drop-shadow-lg" 
+                        : "hover:fill-purple-300/40 hover:stroke-purple-400"
                     )}
                     onClick={() => onSelectPart(part.id)}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    animate={isSelected(part.id) ? {
+                      filter: ["drop-shadow(0 0 8px rgba(156, 45, 145, 0.5))", "drop-shadow(0 0 12px rgba(156, 45, 145, 0.8))", "drop-shadow(0 0 8px rgba(156, 45, 145, 0.5))"]
+                    } : {}}
+                    transition={{ duration: 1.5, repeat: isSelected(part.id) ? Infinity : 0 }}
                   />
                 </TooltipTrigger>
                 <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
@@ -308,51 +327,52 @@ export const VisualBodySelector = ({
             <circle cx="65" cy="170" r="2" />
           </g>
         </svg>
-        
-        {/* Coming Soon Overlay */}
-        {showComingSoon && (
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center">
-            <Lock className="h-12 w-12 text-white/90 mb-3" />
-            <p className="text-white text-xl font-bold font-montserrat">Coming Soon</p>
-            <p className="text-white/80 text-sm max-w-[200px] text-center mt-2 font-opensans">
-              This feature is still under development
-            </p>
-          </div>
-        )}
       </div>
       
       {/* Selected muscle groups display */}
       {selectedParts.length > 0 && (
-        <div className="w-full mt-2 p-3 bg-purple-50/50 rounded-lg border border-purple-100">
-          <p className="text-sm font-medium text-[#5C2D91] mb-1">Selected Areas:</p>
-          <div className="flex flex-wrap gap-1.5">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full mt-2 p-4 bg-gradient-to-r from-purple-50 to-purple-100/50 rounded-lg border border-purple-200"
+        >
+          <p className="text-sm font-semibold text-[#5C2D91] mb-2 flex items-center gap-2">
+            🎯 Targeting: 
+            <span className="text-purple-600">
+              {selectedParts.length} muscle group{selectedParts.length !== 1 ? 's' : ''}
+            </span>
+          </p>
+          <div className="flex flex-wrap gap-2">
             {selectedParts.map(partId => {
               const part = [...frontBodyParts, ...backBodyParts].find(p => p.id === partId);
               return (
-                <div
+                <motion.div
                   key={partId}
-                  className="px-2 py-1 bg-[#5C2D91] text-white text-xs rounded-full flex items-center"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  whileHover={{ scale: 1.05 }}
+                  className="px-3 py-1.5 bg-[#5C2D91] text-white text-sm rounded-full flex items-center gap-2 cursor-pointer hover:bg-[#4A2375] transition-colors"
                   onClick={() => onSelectPart(partId)}
                 >
                   {part?.name || partId}
-                  <span className="ml-1 text-purple-200 cursor-pointer">×</span>
-                </div>
+                  <span className="text-purple-200 hover:text-white text-lg leading-none">×</span>
+                </motion.div>
               );
             })}
           </div>
-        </div>
+        </motion.div>
       )}
       
-      {/* Informational Alert */}
-      {showComingSoon && (
-        <Alert className="bg-purple-50 border-purple-200 mt-2">
-          <AlertTitle className="text-purple-800 flex items-center gap-2">
-            <Lock className="h-4 w-4" /> Feature In Development
-          </AlertTitle>
-          <AlertDescription className="text-purple-700/80">
-            The body area selector is coming soon to help you target specific muscle groups in your workouts.
-          </AlertDescription>
-        </Alert>
+      {/* Instruction text when no parts selected */}
+      {selectedParts.length === 0 && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center text-purple-600 text-sm mt-2"
+        >
+          Click on body parts to target specific muscle groups
+        </motion.div>
       )}
     </div>
   );
