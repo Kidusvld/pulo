@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -35,50 +35,48 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* SaaS-specific variables */
+    --saas-bg-primary: 248 250 252;
+    --saas-bg-secondary: 255 255 255;
+    --saas-border: 226 232 240;
+    --saas-text-primary: 15 23 42;
+    --saas-text-secondary: 71 85 105;
+    --saas-text-muted: 148 163 184;
+    --saas-brand-primary: 263 50% 35%;
+    --saas-brand-secondary: 263 50% 55%;
+    --saas-success: 34 197 94;
+    --saas-warning: 245 158 11;
+    --saas-error: 239 68 68;
   }
 
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
-
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
-
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
@@ -99,43 +97,228 @@
   }
 
   body {
-    @apply bg-background text-foreground font-opensans;
+    @apply bg-saas-bg-primary text-saas-text-primary font-opensans antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-montserrat font-bold;
+    @apply font-montserrat font-semibold tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl lg:text-5xl font-bold;
+  }
+
+  h2 {
+    @apply text-3xl lg:text-4xl font-bold;
+  }
+
+  h3 {
+    @apply text-2xl lg:text-3xl font-semibold;
+  }
+
+  h4 {
+    @apply text-xl lg:text-2xl font-semibold;
+  }
+
+  h5 {
+    @apply text-lg lg:text-xl font-medium;
+  }
+
+  h6 {
+    @apply text-base lg:text-lg font-medium;
   }
 }
 
 @layer utilities {
+  /* SaaS Layout Utilities */
+  .saas-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .saas-section {
+    @apply py-12 lg:py-20;
+  }
+
+  .saas-card {
+    @apply bg-white rounded-2xl border border-saas-border shadow-sm hover:shadow-md transition-all duration-200;
+  }
+
+  .saas-card-hover {
+    @apply hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300;
+  }
+
+  .saas-input {
+    @apply bg-white border-saas-border rounded-xl px-4 py-3 text-saas-text-primary placeholder:text-saas-text-muted focus:border-saas-brand-primary focus:ring-2 focus:ring-saas-brand-primary/20 focus:outline-none transition-all duration-200;
+  }
+
+  .saas-button-primary {
+    @apply bg-gradient-to-r from-saas-brand-primary to-saas-brand-secondary text-white font-semibold px-6 py-3 rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-saas-brand-primary/50;
+  }
+
+  .saas-button-secondary {
+    @apply bg-white text-saas-text-primary border border-saas-border font-medium px-6 py-3 rounded-xl shadow-sm hover:bg-gray-50 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-saas-brand-primary/20;
+  }
+
+  .saas-text-gradient {
+    @apply bg-gradient-to-r from-saas-brand-primary to-saas-brand-secondary bg-clip-text text-transparent;
+  }
+
+  .saas-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .saas-badge-success {
+    @apply bg-green-50 text-green-700 border border-green-200;
+  }
+
+  .saas-badge-warning {
+    @apply bg-yellow-50 text-yellow-700 border border-yellow-200;
+  }
+
+  .saas-badge-error {
+    @apply bg-red-50 text-red-700 border border-red-200;
+  }
+
+  .saas-badge-info {
+    @apply bg-blue-50 text-blue-700 border border-blue-200;
+  }
+
+  /* Grid patterns for backgrounds */
+  .bg-grid-slate-100 {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(148 163 184 / 0.05)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+  }
+
   .bg-grid-white {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.05)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
   }
-  
-  .bg-grid-purple-100 {
-    background-size: 32px 32px;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(143 107 236 / 0.05)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+
+  /* Custom animations */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
   }
 
-  .bg-pulo-gradient {
-    @apply bg-gradient-to-br from-[#5C2D91] via-[#6D3CAA] to-[#502680];
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
   }
-  
-  .bg-pulo-watermark {
-    @apply relative;
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
   }
-  
-  .bg-pulo-watermark::after {
-    content: '';
-    @apply absolute inset-0 bg-contain bg-center bg-no-repeat opacity-10 pointer-events-none z-0;
-    background-image: url('/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png');
+
+  .animate-bounce-in {
+    animation: bounceIn 0.6s ease-out forwards;
   }
-  
-  .auth-tab-active {
-    @apply border-b-2 border-[#8E44AD] text-white font-semibold;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-  
-  .auth-tab-inactive {
-    @apply border-b-2 border-transparent text-purple-200 hover:text-white;
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes bounceIn {
+    from {
+      opacity: 0;
+      transform: scale(0.3);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300 hover:shadow-xl hover:shadow-saas-brand-primary/20;
+  }
+
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+
+  /* Focus states */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-saas-brand-primary/50 focus:ring-offset-2;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-white/80 backdrop-blur-xl border border-white/20 shadow-xl;
+  }
+
+  .glass-dark {
+    @apply bg-black/20 backdrop-blur-xl border border-white/10 shadow-xl;
+  }
+}
+
+/* Color Variables for Consistency */
+:root {
+  --color-saas-bg-primary: rgb(248 250 252);
+  --color-saas-bg-secondary: rgb(255 255 255);
+  --color-saas-border: rgb(226 232 240);
+  --color-saas-text-primary: rgb(15 23 42);
+  --color-saas-text-secondary: rgb(71 85 105);
+  --color-saas-text-muted: rgb(148 163 184);
+  --color-saas-brand-primary: rgb(92 45 145);
+  --color-saas-brand-secondary: rgb(142 68 173);
+  --color-saas-success: rgb(34 197 94);
+  --color-saas-warning: rgb(245 158 11);
+  --color-saas-error: rgb(239 68 68);
+}
+
+/* Scrollbar styling for modern look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(248 250 252);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(148 163 184);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(100 116 139);
 }
