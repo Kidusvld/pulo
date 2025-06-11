@@ -15,10 +15,10 @@ interface VisualBodySelectorProps {
 const defaultFrontPositions = {
   Chest: { top: 30, left: 35, width: 30, height: 15, rotation: 0 },
   Abs: { top: 40, left: 40, width: 20, height: 20, rotation: 0 },
-  'Left Shoulder': { top: 20, left: 20, width: 15, height: 15, rotation: 0 },
-  'Right Shoulder': { top: 20, left: 65, width: 15, height: 15, rotation: 0 },
+  'Left Shoulder': { top: 20, left: 20, width: 10, height: 10, rotation: 0 },
+  'Right Shoulder': { top: 20, left: 70, width: 10, height: 10, rotation: 0 },
   'Left Bicep': { top: 35, left: 15, width: 12, height: 20, rotation: 0 },
-  'Right Bicep': { top: 35, left: 73, width: 12, height: 20, rotation: 0 },
+  'Right Bicep': { top: 73, left: 73, width: 12, height: 20, rotation: 0 },
   'Left Quadricep': { top: 65, left: 25, width: 15, height: 25, rotation: 0 },
   'Right Quadricep': { top: 65, left: 60, width: 15, height: 25, rotation: 0 }
 };
