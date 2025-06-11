@@ -1,5 +1,6 @@
 
 import { LucideIcon } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface StatCardProps {
   title: string;
@@ -17,12 +18,27 @@ export const StatCard = ({
   bgColor
 }: StatCardProps) => {
   return (
-    <div className="bg-white/90 backdrop-blur-sm rounded-xl border border-slate-200 p-4 flex flex-col items-center text-center shadow-md hover:shadow-lg transition-all duration-300 group">
-      <div className={`${bgColor} p-3 rounded-full mb-3 group-hover:scale-110 transition-transform duration-200`}>
-        <Icon className={`h-5 w-5 ${color}`} />
-      </div>
-      <span className="text-2xl font-bold text-slate-800 mb-1">{value}</span>
-      <span className="text-sm text-slate-600 font-medium">{title}</span>
-    </div>
+    <motion.div 
+      className="bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200/50 p-6 flex flex-col items-center text-center shadow-lg hover:shadow-xl transition-all duration-300 group hover:scale-105"
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.2 }}
+    >
+      <motion.div 
+        className={`${bgColor} p-4 rounded-2xl mb-4 group-hover:scale-110 transition-transform duration-300 shadow-md`}
+        whileHover={{ scale: 1.15 }}
+        transition={{ duration: 0.2 }}
+      >
+        <Icon className={`h-6 w-6 ${color}`} />
+      </motion.div>
+      <motion.span 
+        className="text-3xl md:text-4xl font-montserrat font-extrabold text-slate-800 mb-2 tracking-tight"
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        {value}
+      </motion.span>
+      <span className="text-sm md:text-base text-slate-600 font-opensans font-semibold tracking-wide">{title}</span>
+    </motion.div>
   );
 };

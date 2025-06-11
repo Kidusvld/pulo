@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Home, User } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface DashboardTabsProps {
   activeSection: "home" | "profile";
@@ -9,31 +10,36 @@ interface DashboardTabsProps {
 
 export const DashboardTabs = ({ activeSection, setActiveSection }: DashboardTabsProps) => {
   return (
-    <div className="inline-flex bg-slate-100 p-1 rounded-xl shadow-inner border border-slate-200">
+    <motion.div 
+      className="inline-flex bg-white/20 backdrop-blur-sm p-1.5 rounded-2xl shadow-lg border border-white/30"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.3 }}
+    >
       <Button
         variant={activeSection === "home" ? "default" : "ghost"}
-        className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
+        className={`px-8 py-3 rounded-xl font-montserrat font-semibold text-base tracking-wide transition-all duration-300 ${
           activeSection === "home" 
-            ? "bg-white text-slate-900 shadow-sm border border-slate-200" 
-            : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
+            ? "bg-white text-slate-900 shadow-lg border border-slate-200 scale-105" 
+            : "text-slate-700 hover:text-slate-900 hover:bg-white/70 hover:scale-102"
         }`}
         onClick={() => setActiveSection("home")}
       >
-        <Home className="h-4 w-4 mr-2" />
+        <Home className="h-5 w-5 mr-3" />
         Home
       </Button>
       <Button
         variant={activeSection === "profile" ? "default" : "ghost"}
-        className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
+        className={`px-8 py-3 rounded-xl font-montserrat font-semibold text-base tracking-wide transition-all duration-300 ${
           activeSection === "profile" 
-            ? "bg-white text-slate-900 shadow-sm border border-slate-200" 
-            : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
+            ? "bg-white text-slate-900 shadow-lg border border-slate-200 scale-105" 
+            : "text-slate-700 hover:text-slate-900 hover:bg-white/70 hover:scale-102"
         }`}
         onClick={() => setActiveSection("profile")}
       >
-        <User className="h-4 w-4 mr-2" />
+        <User className="h-5 w-5 mr-3" />
         Profile
       </Button>
-    </div>
+    </motion.div>
   );
 };

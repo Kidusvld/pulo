@@ -1,3 +1,4 @@
+
 import { Activity, Dumbbell, Clock, Target, RotateCcw, BarChart } from "lucide-react";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,6 +18,7 @@ import {
 import { StatCard } from "./StatCard";
 import { calculateStreak } from "./utils/calculateStreak";
 import { ProgressStats as ProgressStatsType, ProgressStatsProps, WorkoutData } from "./types";
+import { motion } from "framer-motion";
 
 export const ProgressStats = ({ 
   totalWorkouts, 
@@ -146,11 +148,41 @@ export const ProgressStats = ({
     },
   ], [stats]);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
+    }
+  };
+
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-          <BarChart className="h-5 w-5 text-indigo-600" />
+    <motion.div 
+      className="space-y-6"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.div 
+        className="flex justify-between items-center mb-4"
+        variants={itemVariants}
+      >
+        <h2 className="text-xl md:text-2xl font-montserrat font-bold text-slate-800 flex items-center gap-3 tracking-tight">
+          <BarChart className="h-6 w-6 text-indigo-600" />
           Your Progress
         </h2>
         <AlertDialog>
@@ -158,36 +190,41 @@ export const ProgressStats = ({
             <Button
               variant="outline"
               size="sm"
-              className="bg-red-50 hover:bg-red-100 border-red-200 text-red-600 hover:text-red-700 transition-all duration-200"
+              className="bg-red-50 hover:bg-red-100 border-red-200 text-red-600 hover:text-red-700 transition-all duration-300 font-montserrat font-semibold shadow-sm hover:shadow-md"
             >
-              <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
+              <RotateCcw className="h-4 w-4 mr-2" />
               Reset
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Reset Progress Statistics</AlertDialogTitle>
-              <AlertDialogDescription>
+              <AlertDialogTitle className="font-montserrat font-bold text-xl">Reset Progress Statistics</AlertDialogTitle>
+              <AlertDialogDescription className="font-opensans text-base leading-relaxed">
                 Are you sure you want to reset all your progress statistics? This action cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="font-montserrat font-semibold">Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleResetStats}
-                className="bg-red-600 hover:bg-red-700 text-white"
+                className="bg-red-600 hover:bg-red-700 text-white font-montserrat font-semibold"
               >
                 Reset
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {statItems.map((stat) => (
-          <StatCard key={stat.title} {...stat} />
+      </motion.div>
+      <motion.div 
+        className="grid grid-cols-2 md:grid-cols-4 gap-4"
+        variants={containerVariants}
+      >
+        {statItems.map((stat, index) => (
+          <motion.div key={stat.title} variants={itemVariants} custom={index}>
+            <StatCard {...stat} />
+          </motion.div>
         ))}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

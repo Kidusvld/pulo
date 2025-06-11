@@ -1,4 +1,3 @@
-
 import { ProfileCard } from "@/components/dashboard/ProfileCard";
 import { ProgressStats } from "@/components/progress/ProgressStats";
 import { WorkoutPlanCard } from "@/components/dashboard/WorkoutPlanCard";
@@ -7,6 +6,7 @@ import { VisualBodySelector } from "@/components/dashboard/VisualBodySelector";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, TrendingUp } from "lucide-react";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 interface Profile {
   first_name?: string;
@@ -89,20 +89,51 @@ export const HomeView = ({
     onGeneratePlan(enhancedConfig);
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
+    }
+  };
+
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <motion.div 
+      className="space-y-10"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <motion.div 
+        className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+        variants={itemVariants}
+      >
         {/* Target Body Areas Card */}
-        <Card className="lg:col-span-1 bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 group">
-          <CardHeader className="pb-4 border-b border-slate-100">
-            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-slate-800 group-hover:text-indigo-600 transition-colors">
-              <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
-                <Target className="h-5 w-5 text-white" />
+        <Card className="lg:col-span-1 bg-white/95 backdrop-blur-sm border-slate-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 group hover:scale-[1.02]">
+          <CardHeader className="pb-6 border-b border-slate-100">
+            <CardTitle className="text-xl md:text-2xl font-montserrat font-bold flex items-center gap-3 text-slate-800 group-hover:text-indigo-600 transition-colors duration-300">
+              <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg">
+                <Target className="h-6 w-6 text-white" />
               </div>
-              Target Body Areas
+              <span className="tracking-tight">Target Body Areas</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-6">
+          <CardContent className="pt-8">
             <VisualBodySelector 
               selectedParts={selectedBodyParts}
               onSelectPart={handleBodyPartToggle}
@@ -112,7 +143,7 @@ export const HomeView = ({
         </Card>
 
         {/* Workout Generator Card */}
-        <Card className="lg:col-span-2 bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300">
+        <Card className="lg:col-span-2 bg-white/95 backdrop-blur-sm border-slate-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.01]">
           <CardContent className="p-0">
             <EnhancedWorkoutGenerator
               selectedMuscleGroups={selectedBodyParts}
@@ -122,20 +153,23 @@ export const HomeView = ({
             />
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div 
+        className="grid grid-cols-1 lg:grid-cols-2 gap-8"
+        variants={itemVariants}
+      >
         {/* Progress Stats */}
-        <Card className="bg-white/90 backdrop-blur-sm border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 group">
-          <CardHeader className="pb-4 border-b border-slate-100">
-            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-slate-800 group-hover:text-emerald-600 transition-colors">
-              <div className="p-2 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg">
-                <TrendingUp className="h-5 w-5 text-white" />
+        <Card className="bg-white/95 backdrop-blur-sm border-slate-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 group hover:scale-[1.02]">
+          <CardHeader className="pb-6 border-b border-slate-100">
+            <CardTitle className="text-xl md:text-2xl font-montserrat font-bold flex items-center gap-3 text-slate-800 group-hover:text-emerald-600 transition-colors duration-300">
+              <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl shadow-lg">
+                <TrendingUp className="h-6 w-6 text-white" />
               </div>
-              Progress Overview
+              <span className="tracking-tight">Progress Overview</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-6">
+          <CardContent className="pt-8">
             <ProgressStats 
               totalWorkouts={progressStats.totalWorkouts}
               totalVolume={progressStats.totalVolume}
@@ -146,20 +180,22 @@ export const HomeView = ({
         </Card>
 
         {/* Today's Workout Plan */}
-        <WorkoutPlanCard
-          workoutPlan={workoutPlan}
-          numberOfDays={numberOfDays}
-          generatingPlan={generatingPlan}
-          onDaysChange={onDaysChange}
-          onGeneratePlan={() => handleGenerateWorkout({
-            selectedMuscles: selectedBodyParts,
-            numberOfDays,
-            intensityLevel: profile?.intensity_level || "intermediate",
-            workoutDuration: 45
-          })}
-          onSavePlan={onSavePlan}
-        />
-      </div>
-    </div>
+        <motion.div variants={itemVariants}>
+          <WorkoutPlanCard
+            workoutPlan={workoutPlan}
+            numberOfDays={numberOfDays}
+            generatingPlan={generatingPlan}
+            onDaysChange={onDaysChange}
+            onGeneratePlan={() => handleGenerateWorkout({
+              selectedMuscles: selectedBodyParts,
+              numberOfDays,
+              intensityLevel: profile?.intensity_level || "intermediate",
+              workoutDuration: 45
+            })}
+            onSavePlan={onSavePlan}
+          />
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 };
