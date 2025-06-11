@@ -33,13 +33,14 @@ export const Hero = () => {
 
         {/* Main Heading */}
         <motion.h1 
-          className="text-5xl lg:text-7xl font-bold text-slate-900 leading-tight tracking-tight"
+          className="text-5xl lg:text-7xl font-bold leading-tight tracking-tight"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          Meet{" "}
-          <span className="bg-gradient-to-r from-saas-brand-primary to-saas-brand-secondary bg-clip-text text-transparent">PULO</span>,{" "}
+          <span className="text-slate-900">Meet{" "}</span>
+          <span className="bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-700 bg-clip-text text-transparent font-black drop-shadow-sm">PULO</span>
+          <span className="text-slate-900">,{" "}</span>
           <span className="block text-slate-900">Your AI Fitness Friend</span>
         </motion.h1>
         
@@ -51,7 +52,7 @@ export const Hero = () => {
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           Think of{" "}
-          <span className="font-bold bg-gradient-to-r from-saas-brand-primary to-saas-brand-secondary bg-clip-text text-transparent">PULO</span>{" "}
+          <span className="font-bold bg-gradient-to-r from-purple-600 to-indigo-700 bg-clip-text text-transparent">PULO</span>{" "}
           as your supportive workout buddy who's always there to guide, motivate, and adapt to your unique fitness journey. No judgment, just personalized support that grows with you.
         </motion.p>
 
