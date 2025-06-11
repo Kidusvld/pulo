@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -84,7 +85,7 @@ export const VisualBodySelector = ({
     return (
       <div
         key={bodyPart}
-        className={`absolute cursor-pointer rounded-lg transition-all ${
+        className={`absolute cursor-pointer rounded-full transition-all ${
           isSelected
             ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
             : isEditMode
@@ -106,7 +107,7 @@ export const VisualBodySelector = ({
         title={title}
       >
         {(showPositioningMode || isEditMode) && (
-          <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800 bg-white/80 rounded border">
+          <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800 bg-white/80 rounded-full border">
             {isEditMode ? (
               <div className="text-center leading-tight">
                 <div className="font-semibold">{bodyPart}</div>
