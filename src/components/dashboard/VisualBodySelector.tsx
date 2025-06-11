@@ -106,12 +106,21 @@ export const VisualBodySelector = ({
         title={title}
       >
         {(showPositioningMode || isEditMode) && (
-          <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800 bg-white/70 rounded">
-            {isEditMode ? (isRotatingThis ? '🔄' : '✋') : bodyPart.toUpperCase()}
+          <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800 bg-white/80 rounded border">
+            {isEditMode ? (
+              <div className="text-center leading-tight">
+                <div className="font-semibold">{bodyPart}</div>
+                <div className="text-[10px] text-gray-600">
+                  {isRotatingThis ? '🔄 Rotating' : isDraggingThis ? '✋ Dragging' : 'Drag to move'}
+                </div>
+              </div>
+            ) : (
+              bodyPart.toUpperCase()
+            )}
           </div>
         )}
         {isEditMode && (
-          <div className="absolute -top-8 left-0 text-xs bg-blue-600 text-white px-1 rounded whitespace-nowrap">
+          <div className="absolute -top-8 left-0 text-xs bg-blue-600 text-white px-1 rounded whitespace-nowrap z-10">
             {position.top.toFixed(1)}%, {position.left.toFixed(1)}%
             {position.rotation !== 0 && (
               <div className="bg-purple-600 text-white px-1 rounded mt-1">
@@ -404,7 +413,7 @@ export const VisualBodySelector = ({
           <p className="text-xs text-blue-600">
             <strong>Drag</strong> to move • <strong>Alt + Drag</strong> to rotate
             <br />
-            Live coordinates shown above each area. Use "Copy Code" when done.
+            Body part names and live coordinates shown. Use "Copy Code" when done.
           </p>
         </div>
       )}
