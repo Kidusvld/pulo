@@ -1,585 +1,337 @@
-import React, { useState } from "react";
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
 
-interface BodyPartMap {
-  id: string;
-  name: string;
-  path: string;
-  viewBox: string;
-  description: string;
-}
-
-// Updated body parts with anatomically accurate paths
-const frontBodyParts: BodyPartMap[] = [
-  {
-    id: "chest",
-    name: "Chest",
-    description: "Pectoralis major and minor",
-    viewBox: "0 0 100 240",
-    path: "M35,65 C35,73 40,80 50,85 C60,80 65,73 65,65 C65,60 60,55 50,55 C40,55 35,60 35,65 Z"
-  },
-  {
-    id: "abs",
-    name: "Abs",
-    description: "Rectus abdominis and obliques",
-    viewBox: "0 0 100 240",
-    path: "M40,85 L60,85 L58,125 L42,125 Z M45,95 L55,95 M45,105 L55,105 M45,115 L55,115"
-  },
-  {
-    id: "shoulders",
-    name: "Shoulders",
-    description: "Deltoids and rotator cuff",
-    viewBox: "0 0 100 240",
-    path: "M25,65 C25,60 30,55 35,60 C35,65 35,70 35,70 M65,60 C70,55 75,60 75,65 C75,70 65,70 65,70"
-  },
-  {
-    id: "biceps",
-    name: "Biceps",
-    description: "Biceps brachii",
-    viewBox: "0 0 100 240",
-    path: "M25,65 C22,75 20,85 20,95 C20,100 22,105 25,105 C30,105 35,90 35,75 M75,65 C78,75 80,85 80,95 C80,100 78,105 75,105 C70,105 65,90 65,75"
-  },
-  {
-    id: "forearms",
-    name: "Forearms",
-    description: "Flexors and extensors",
-    viewBox: "0 0 100 240",
-    path: "M25,105 C22,115 20,125 20,130 C20,135 22,140 25,140 C30,140 35,125 35,105 M75,105 C78,115 80,125 80,130 C80,135 78,140 75,140 C70,140 65,125 65,105"
-  },
-  {
-    id: "quadriceps",
-    name: "Quadriceps",
-    description: "Front thigh muscles",
-    viewBox: "0 0 100 240", 
-    path: "M42,125 C38,140 35,155 35,170 C35,175 40,175 45,170 C47,155 48,140 48,125 M58,125 C62,140 65,155 65,170 C65,175 60,175 55,170 C53,155 52,140 52,125"
-  },
-  {
-    id: "calves",
-    name: "Calves",
-    description: "Gastrocnemius and soleus",
-    viewBox: "0 0 100 240",
-    path: "M35,170 C32,185 30,200 30,210 C30,215 35,215 40,210 C42,195 45,180 45,170 M65,170 C68,185 70,200 70,210 C70,215 65,215 60,210 C58,195 55,180 55,170"
-  }
-];
-
-const backBodyParts: BodyPartMap[] = [
-  {
-    id: "back",
-    name: "Back",
-    description: "Latissimus dorsi, rhomboids, and trapezius",
-    viewBox: "0 0 100 240",
-    path: "M35,55 C35,60 36,65 40,75 C43,80 50,85 50,85 C50,85 57,80 60,75 C64,65 65,60 65,55 L62,45 L58,35 L50,30 L42,35 L38,45 L35,55 Z M40,65 L60,65 M40,75 L60,75"
-  },
-  {
-    id: "lower_back",
-    name: "Lower Back",
-    description: "Erector spinae",
-    viewBox: "0 0 100 240",
-    path: "M40,85 L60,85 L60,110 L40,110 Z M45,85 L45,110 M50,85 L50,110 M55,85 L55,110"
-  },
-  {
-    id: "glutes",
-    name: "Glutes",
-    description: "Gluteus maximus, medius, and minimus",
-    viewBox: "0 0 100 240",
-    path: "M40,110 C36,120 35,125 38,135 C40,140 46,140 50,135 C54,140 60,140 62,135 C65,125 64,120 60,110 L55,110 L50,115 L45,110 L40,110 Z"
-  },
-  {
-    id: "triceps",
-    name: "Triceps",
-    description: "Triceps brachii",
-    viewBox: "0 0 100 240",
-    path: "M25,65 C22,75 20,85 18,95 C18,100 20,105 25,105 C30,105 35,90 35,70 M75,65 C78,75 80,85 82,95 C82,100 80,105 75,105 C70,105 65,90 65,70"
-  },
-  {
-    id: "hamstrings",
-    name: "Hamstrings",
-    description: "Back thigh muscles",
-    viewBox: "0 0 100 240", 
-    path: "M38,135 C38,145 38,150 35,160 C34,165 30,165 28,160 C28,155 36,140 38,135 M62,135 C62,145 62,150 65,160 C66,165 70,165 72,160 C72,155 64,140 62,135"
-  },
-  {
-    id: "calves_back",
-    name: "Calves",
-    description: "Gastrocnemius and soleus (back view)",
-    viewBox: "0 0 100 240",
-    path: "M35,160 C34,170 33,180 34,190 C35,200 38,200 40,190 C42,180 41,165 41,160 M65,160 C66,170 67,180 66,190 C65,200 62,200 60,190 C58,180 59,165 59,160"
-  }
-];
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 interface VisualBodySelectorProps {
   selectedParts: string[];
   onSelectPart: (part: string) => void;
-  className?: string;
   showComingSoon?: boolean;
 }
 
-export const VisualBodySelector = ({
-  selectedParts,
-  onSelectPart,
-  className,
-  showComingSoon = false
+export const VisualBodySelector = ({ 
+  selectedParts, 
+  onSelectPart, 
+  showComingSoon = true 
 }: VisualBodySelectorProps) => {
-  const [view, setView] = useState<"front" | "back">("front");
-  
-  // Helper function to check if a body part is selected
-  const isSelected = (partId: string) => selectedParts.includes(partId);
-  
+  const [currentView, setCurrentView] = useState<'front' | 'back'>('front');
+
+  const bodyParts = {
+    front: ['Chest', 'Abs', 'Shoulders', 'Biceps', 'Quadriceps'],
+    back: ['Back', 'Lower Back', 'Glutes', 'Triceps', 'Hamstrings']
+  };
+
+  const handlePartClick = (part: string) => {
+    onSelectPart(part);
+  };
+
   return (
-    <div className={cn("flex flex-col items-center gap-4 relative", className)}>
-      {/* View toggle buttons */}
-      <div className="flex rounded-lg overflow-hidden border border-purple-200 mb-2">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className={`px-4 py-2 text-sm font-medium transition-colors ${
-            view === "front"
-              ? "bg-[#5C2D91] text-white"
-              : "bg-purple-50 text-[#5C2D91] hover:bg-purple-100"
-          }`}
-          onClick={() => setView("front")}
+    <div className="flex flex-col items-center space-y-4">
+      {/* View Toggle */}
+      <div className="flex bg-purple-100 rounded-lg p-1">
+        <Button
+          variant={currentView === 'front' ? 'default' : 'ghost'}
+          size="sm"
+          onClick={() => setCurrentView('front')}
+          className={currentView === 'front' ? 'bg-[#8E44AD] text-white' : 'text-[#8E44AD]'}
         >
-          Front View
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className={`px-4 py-2 text-sm font-medium transition-colors ${
-            view === "back"
-              ? "bg-[#5C2D91] text-white"
-              : "bg-purple-50 text-[#5C2D91] hover:bg-purple-100"
-          }`}
-          onClick={() => setView("back")}
+          Front
+        </Button>
+        <Button
+          variant={currentView === 'back' ? 'default' : 'ghost'}
+          size="sm"
+          onClick={() => setCurrentView('back')}
+          className={currentView === 'back' ? 'bg-[#8E44AD] text-white' : 'text-[#8E44AD]'}
         >
-          Back View
-        </motion.button>
+          Back
+        </Button>
       </div>
-      
-      {/* Body figure - Front view uses uploaded image, Back view uses SVG */}
-      <div className="relative w-64 h-96 mx-auto">
-        {view === "front" ? (
-          // Front view - using uploaded image with clickable overlay areas
+
+      {/* Body Diagram */}
+      <div className="relative w-64 h-80 mx-auto">
+        {currentView === 'front' ? (
           <div className="relative w-full h-full">
             <img 
-              src="/lovable-uploads/efd47857-cb5e-412b-822f-68ec94e165cd.png"
-              alt="Front view body diagram"
+              src="/lovable-uploads/efd47857-cb5e-412b-822f-68ec94e165cd.png" 
+              alt="Front body view" 
               className="w-full h-full object-contain"
             />
             
-            {/* Clickable overlay areas for front view muscle groups */}
-            <div className="absolute inset-0">
-              {/* Chest area */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <motion.div
-                      className={cn(
-                        "absolute cursor-pointer rounded-lg transition-all duration-200",
-                        isSelected("chest") 
-                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
-                          : "bg-transparent hover:bg-purple-300/20"
-                      )}
-                      style={{
-                        top: "28%",
-                        left: "38%",
-                        width: "24%",
-                        height: "15%"
-                      }}
-                      onClick={() => onSelectPart("chest")}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
-                    <div>
-                      <p className="font-bold">Chest</p>
-                      <p className="text-xs">Pectoralis major and minor</p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              {/* Abs area */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <motion.div
-                      className={cn(
-                        "absolute cursor-pointer rounded-lg transition-all duration-200",
-                        isSelected("abs") 
-                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
-                          : "bg-transparent hover:bg-purple-300/20"
-                      )}
-                      style={{
-                        top: "43%",
-                        left: "40%",
-                        width: "20%",
-                        height: "20%"
-                      }}
-                      onClick={() => onSelectPart("abs")}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
-                    <div>
-                      <p className="font-bold">Abs</p>
-                      <p className="text-xs">Rectus abdominis and obliques</p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              {/* Left Shoulder */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <motion.div
-                      className={cn(
-                        "absolute cursor-pointer rounded-full transition-all duration-200",
-                        isSelected("shoulders") 
-                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
-                          : "bg-transparent hover:bg-purple-300/20"
-                      )}
-                      style={{
-                        top: "25%",
-                        left: "25%",
-                        width: "12%",
-                        height: "10%"
-                      }}
-                      onClick={() => onSelectPart("shoulders")}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
-                    <div>
-                      <p className="font-bold">Shoulders</p>
-                      <p className="text-xs">Deltoids and rotator cuff</p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              {/* Right Shoulder */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <motion.div
-                      className={cn(
-                        "absolute cursor-pointer rounded-full transition-all duration-200",
-                        isSelected("shoulders") 
-                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
-                          : "bg-transparent hover:bg-purple-300/20"
-                      )}
-                      style={{
-                        top: "25%",
-                        right: "25%",
-                        width: "12%",
-                        height: "10%"
-                      }}
-                      onClick={() => onSelectPart("shoulders")}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
-                    <div>
-                      <p className="font-bold">Shoulders</p>
-                      <p className="text-xs">Deltoids and rotator cuff</p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              {/* Left Bicep */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <motion.div
-                      className={cn(
-                        "absolute cursor-pointer rounded-lg transition-all duration-200",
-                        isSelected("biceps") 
-                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
-                          : "bg-transparent hover:bg-purple-300/20"
-                      )}
-                      style={{
-                        top: "35%",
-                        left: "15%",
-                        width: "10%",
-                        height: "15%"
-                      }}
-                      onClick={() => onSelectPart("biceps")}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
-                    <div>
-                      <p className="font-bold">Biceps</p>
-                      <p className="text-xs">Biceps brachii</p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              {/* Right Bicep */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <motion.div
-                      className={cn(
-                        "absolute cursor-pointer rounded-lg transition-all duration-200",
-                        isSelected("biceps") 
-                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
-                          : "bg-transparent hover:bg-purple-300/20"
-                      )}
-                      style={{
-                        top: "35%",
-                        right: "15%",
-                        width: "10%",
-                        height: "15%"
-                      }}
-                      onClick={() => onSelectPart("biceps")}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
-                    <div>
-                      <p className="font-bold">Biceps</p>
-                      <p className="text-xs">Biceps brachii</p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              {/* Left Quad */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <motion.div
-                      className={cn(
-                        "absolute cursor-pointer rounded-lg transition-all duration-200",
-                        isSelected("quadriceps") 
-                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
-                          : "bg-transparent hover:bg-purple-300/20"
-                      )}
-                      style={{
-                        top: "63%",
-                        left: "35%",
-                        width: "12%",
-                        height: "20%"
-                      }}
-                      onClick={() => onSelectPart("quadriceps")}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
-                    <div>
-                      <p className="font-bold">Quadriceps</p>
-                      <p className="text-xs">Front thigh muscles</p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              {/* Right Quad */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <motion.div
-                      className={cn(
-                        "absolute cursor-pointer rounded-lg transition-all duration-200",
-                        isSelected("quadriceps") 
-                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
-                          : "bg-transparent hover:bg-purple-300/20"
-                      )}
-                      style={{
-                        top: "63%",
-                        right: "35%",
-                        width: "12%",
-                        height: "20%"
-                      }}
-                      onClick={() => onSelectPart("quadriceps")}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
-                    <div>
-                      <p className="font-bold">Quadriceps</p>
-                      <p className="text-xs">Front thigh muscles</p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+            {/* Clickable overlay areas for front view */}
+            {/* Chest */}
+            <div
+              className={`absolute top-[25%] left-[35%] w-[30%] h-[15%] cursor-pointer rounded-lg transition-all ${
+                selectedParts.includes('Chest') 
+                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
+                  : 'hover:bg-purple-200/30'
+              }`}
+              onClick={() => handlePartClick('Chest')}
+              title="Chest"
+            />
+            
+            {/* Abs */}
+            <div
+              className={`absolute top-[40%] left-[40%] w-[20%] h-[20%] cursor-pointer rounded-lg transition-all ${
+                selectedParts.includes('Abs') 
+                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
+                  : 'hover:bg-purple-200/30'
+              }`}
+              onClick={() => handlePartClick('Abs')}
+              title="Abs"
+            />
+            
+            {/* Shoulders */}
+            <div
+              className={`absolute top-[20%] left-[20%] w-[15%] h-[15%] cursor-pointer rounded-lg transition-all ${
+                selectedParts.includes('Shoulders') 
+                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
+                  : 'hover:bg-purple-200/30'
+              }`}
+              onClick={() => handlePartClick('Shoulders')}
+              title="Left Shoulder"
+            />
+            <div
+              className={`absolute top-[20%] right-[20%] w-[15%] h-[15%] cursor-pointer rounded-lg transition-all ${
+                selectedParts.includes('Shoulders') 
+                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
+                  : 'hover:bg-purple-200/30'
+              }`}
+              onClick={() => handlePartClick('Shoulders')}
+              title="Right Shoulder"
+            />
+            
+            {/* Biceps */}
+            <div
+              className={`absolute top-[35%] left-[15%] w-[12%] h-[20%] cursor-pointer rounded-lg transition-all ${
+                selectedParts.includes('Biceps') 
+                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
+                  : 'hover:bg-purple-200/30'
+              }`}
+              onClick={() => handlePartClick('Biceps')}
+              title="Left Bicep"
+            />
+            <div
+              className={`absolute top-[35%] right-[15%] w-[12%] h-[20%] cursor-pointer rounded-lg transition-all ${
+                selectedParts.includes('Biceps') 
+                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
+                  : 'hover:bg-purple-200/30'
+              }`}
+              onClick={() => handlePartClick('Biceps')}
+              title="Right Bicep"
+            />
+            
+            {/* Quadriceps */}
+            <div
+              className={`absolute top-[65%] left-[25%] w-[15%] h-[25%] cursor-pointer rounded-lg transition-all ${
+                selectedParts.includes('Quadriceps') 
+                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
+                  : 'hover:bg-purple-200/30'
+              }`}
+              onClick={() => handlePartClick('Quadriceps')}
+              title="Left Quadricep"
+            />
+            <div
+              className={`absolute top-[65%] right-[25%] w-[15%] h-[25%] cursor-pointer rounded-lg transition-all ${
+                selectedParts.includes('Quadriceps') 
+                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
+                  : 'hover:bg-purple-200/30'
+              }`}
+              onClick={() => handlePartClick('Quadriceps')}
+              title="Right Quadricep"
+            />
           </div>
         ) : (
-          // Back view - keep existing SVG
-          <svg
-            viewBox="0 0 100 240"
-            className="w-full h-full"
-            style={{ filter: "drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.1))" }}
-          >
-            {/* Enhanced body outline */}
-            <path
-              d="M50,20 
-                 C65,20 70,30 70,40 
-                 C70,45 68,50 65,60 
-                 C62,70 60,80 60,90 
-                 C60,100 62,110 65,125 
-                 C65,140 60,155 55,170 
-                 C50,185 48,200 50,220 
-                 C52,200 50,185 45,170 
-                 C40,155 35,140 35,125 
-                 C38,110 40,100 40,90 
-                 C40,80 38,70 35,60 
-                 C32,50 30,45 30,40 
-                 C30,30 35,20 50,20Z"
-              fill="#fcf8ff"
-              stroke="#e9d7ff"
-              strokeWidth="0.8"
-            />
-            
-            {/* Enhanced head shape */}
-            <ellipse 
-              cx="50" 
-              cy="15" 
-              rx="10" 
-              ry="15" 
-              fill="#fcf8ff" 
-              stroke="#e9d7ff" 
-              strokeWidth="0.8"
-            />
-            
-            {/* Neck */}
-            <path
-              d="M45,20 C45,25 47,30 50,30 C53,30 55,25 55,20"
-              fill="#fcf8ff"
-              stroke="#e9d7ff"
-              strokeWidth="0.5"
-            />
-            
-            {/* Back view selectable muscle groups */}
-            {backBodyParts.map(part => (
-              <TooltipProvider key={part.id}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <motion.path
-                      d={part.path}
-                      fill={isSelected(part.id) ? "rgba(156, 45, 145, 0.7)" : "rgba(232, 121, 249, 0.15)"}
-                      stroke={isSelected(part.id) ? "#9b87f5" : "#e9d7ff"}
-                      strokeWidth="0.8"
-                      className={cn(
-                        "cursor-pointer transition-all duration-200",
-                        isSelected(part.id) 
-                          ? "filter drop-shadow-lg" 
-                          : "hover:fill-purple-300/40 hover:stroke-purple-400"
-                      )}
-                      onClick={() => onSelectPart(part.id)}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      animate={isSelected(part.id) ? {
-                        filter: ["drop-shadow(0 0 8px rgba(156, 45, 145, 0.5))", "drop-shadow(0 0 12px rgba(156, 45, 145, 0.8))", "drop-shadow(0 0 8px rgba(156, 45, 145, 0.5))"]
-                      } : {}}
-                      transition={{ duration: 1.5, repeat: isSelected(part.id) ? Infinity : 0 }}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
-                    <div>
-                      <p className="font-bold">{part.name}</p>
-                      <p className="text-xs">{part.description}</p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ))}
+          <div className="relative w-full h-full">
+            <svg 
+              viewBox="0 0 200 300" 
+              className="w-full h-full"
+              style={{ filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.1))' }}
+            >
+              {/* Back Body Outline */}
+              <path
+                d="M100 20 
+                   C85 20, 75 30, 75 45
+                   L75 60
+                   C70 65, 65 70, 60 80
+                   L60 120
+                   C60 130, 65 140, 75 150
+                   L75 180
+                   C70 190, 65 200, 60 210
+                   L60 250
+                   C60 260, 70 270, 80 270
+                   L80 280
+                   C85 285, 95 285, 100 280
+                   C105 285, 115 285, 120 280
+                   L120 270
+                   C130 270, 140 260, 140 250
+                   L140 210
+                   C135 200, 130 190, 125 180
+                   L125 150
+                   C135 140, 140 130, 140 120
+                   L140 80
+                   C135 70, 130 65, 125 60
+                   L125 45
+                   C125 30, 115 20, 100 20 Z"
+                fill="#E8E0F5"
+                stroke="#8E44AD"
+                strokeWidth="2"
+                className="transition-all duration-200"
+              />
 
-            {/* Enhanced muscle fiber details */}
-            <g opacity="0.15" stroke="#bf0fff" strokeWidth="0.3">
-              {/* Back detail lines */}
-              <path d="M40,55 C45,53 55,53 60,55" />
-              <path d="M40,65 C45,63 55,63 60,65" />
-              <path d="M40,75 C45,73 55,73 60,75" />
+              {/* Back muscle groups - clickable areas */}
               
-              {/* Lower back lines */}
-              <path d="M45,95 C48,96 52,96 55,95" />
-              <path d="M45,105 C48,106 52,106 55,105" />
-              
-              {/* Glutes definition */}
-              <path d="M45,120 C48,125 52,125 55,120" />
-              
-              {/* Leg muscle definition */}
-              <path d="M40,145 C42,150 45,155 48,150" />
-              <path d="M60,145 C58,150 55,155 52,150" />
-            </g>
-            
-            {/* Additional anatomical details */}
-            <g opacity="0.1" stroke="#333" strokeWidth="0.2">
-              {/* Joint indicators */}
-              <circle cx="25" cy="105" r="2" />
-              <circle cx="75" cy="105" r="2" />
-              <circle cx="35" cy="170" r="2" />
-              <circle cx="65" cy="170" r="2" />
-            </g>
-          </svg>
+              {/* Upper Back */}
+              <rect
+                x="80" y="50" width="40" height="30"
+                fill={selectedParts.includes('Back') ? '#8E44AD' : 'transparent'}
+                fillOpacity={selectedParts.includes('Back') ? '0.4' : '0'}
+                stroke={selectedParts.includes('Back') ? '#8E44AD' : 'transparent'}
+                strokeWidth="2"
+                rx="5"
+                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
+                onClick={() => handlePartClick('Back')}
+              >
+                <title>Back</title>
+              </rect>
+
+              {/* Lower Back */}
+              <rect
+                x="85" y="85" width="30" height="25"
+                fill={selectedParts.includes('Lower Back') ? '#8E44AD' : 'transparent'}
+                fillOpacity={selectedParts.includes('Lower Back') ? '0.4' : '0'}
+                stroke={selectedParts.includes('Lower Back') ? '#8E44AD' : 'transparent'}
+                strokeWidth="2"
+                rx="5"
+                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
+                onClick={() => handlePartClick('Lower Back')}
+              >
+                <title>Lower Back</title>
+              </rect>
+
+              {/* Glutes */}
+              <ellipse
+                cx="100" cy="130" rx="20" ry="15"
+                fill={selectedParts.includes('Glutes') ? '#8E44AD' : 'transparent'}
+                fillOpacity={selectedParts.includes('Glutes') ? '0.4' : '0'}
+                stroke={selectedParts.includes('Glutes') ? '#8E44AD' : 'transparent'}
+                strokeWidth="2"
+                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
+                onClick={() => handlePartClick('Glutes')}
+              >
+                <title>Glutes</title>
+              </ellipse>
+
+              {/* Left Tricep */}
+              <ellipse
+                cx="65" cy="75" rx="8" ry="20"
+                fill={selectedParts.includes('Triceps') ? '#8E44AD' : 'transparent'}
+                fillOpacity={selectedParts.includes('Triceps') ? '0.4' : '0'}
+                stroke={selectedParts.includes('Triceps') ? '#8E44AD' : 'transparent'}
+                strokeWidth="2"
+                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
+                onClick={() => handlePartClick('Triceps')}
+              >
+                <title>Left Tricep</title>
+              </ellipse>
+
+              {/* Right Tricep */}
+              <ellipse
+                cx="135" cy="75" rx="8" ry="20"
+                fill={selectedParts.includes('Triceps') ? '#8E44AD' : 'transparent'}
+                fillOpacity={selectedParts.includes('Triceps') ? '0.4' : '0'}
+                stroke={selectedParts.includes('Triceps') ? '#8E44AD' : 'transparent'}
+                strokeWidth="2"
+                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
+                onClick={() => handlePartClick('Triceps')}
+              >
+                <title>Right Tricep</title>
+              </ellipse>
+
+              {/* Left Hamstring */}
+              <ellipse
+                cx="85" cy="180" rx="10" ry="25"
+                fill={selectedParts.includes('Hamstrings') ? '#8E44AD' : 'transparent'}
+                fillOpacity={selectedParts.includes('Hamstrings') ? '0.4' : '0'}
+                stroke={selectedParts.includes('Hamstrings') ? '#8E44AD' : 'transparent'}
+                strokeWidth="2"
+                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
+                onClick={() => handlePartClick('Hamstrings')}
+              >
+                <title>Left Hamstring</title>
+              </ellipse>
+
+              {/* Right Hamstring */}
+              <ellipse
+                cx="115" cy="180" rx="10" ry="25"
+                fill={selectedParts.includes('Hamstrings') ? '#8E44AD' : 'transparent'}
+                fillOpacity={selectedParts.includes('Hamstrings') ? '0.4' : '0'}
+                stroke={selectedParts.includes('Hamstrings') ? '#8E44AD' : 'transparent'}
+                strokeWidth="2"
+                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
+                onClick={() => handlePartClick('Hamstrings')}
+              >
+                <title>Right Hamstring</title>
+              </ellipse>
+
+              {/* Left Calf */}
+              <ellipse
+                cx="85" cy="230" rx="8" ry="20"
+                fill={selectedParts.includes('Calves') ? '#8E44AD' : 'transparent'}
+                fillOpacity={selectedParts.includes('Calves') ? '0.4' : '0'}
+                stroke={selectedParts.includes('Calves') ? '#8E44AD' : 'transparent'}
+                strokeWidth="2"
+                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
+                onClick={() => handlePartClick('Calves')}
+              >
+                <title>Left Calf</title>
+              </ellipse>
+
+              {/* Right Calf */}
+              <ellipse
+                cx="115" cy="230" rx="8" ry="20"
+                fill={selectedParts.includes('Calves') ? '#8E44AD' : 'transparent'}
+                fillOpacity={selectedParts.includes('Calves') ? '0.4' : '0'}
+                stroke={selectedParts.includes('Calves') ? '#8E44AD' : 'transparent'}
+                strokeWidth="2"
+                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
+                onClick={() => handlePartClick('Calves')}
+              >
+                <title>Right Calf</title>
+              </ellipse>
+            </svg>
+          </div>
         )}
       </div>
-      
-      {/* Selected muscle groups display */}
-      {selectedParts.length > 0 && (
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="w-full mt-2 p-4 bg-gradient-to-r from-purple-50 to-purple-100/50 rounded-lg border border-purple-200"
-        >
-          <p className="text-sm font-semibold text-[#5C2D91] mb-2 flex items-center gap-2">
-            🎯 Targeting: 
-            <span className="text-purple-600">
-              {selectedParts.length} muscle group{selectedParts.length !== 1 ? 's' : ''}
-            </span>
+
+      {/* Selected Body Parts Display */}
+      <div className="w-full max-w-md">
+        <h4 className="text-sm font-semibold text-[#5C2D91] mb-2">Selected Areas:</h4>
+        <div className="flex flex-wrap gap-2 min-h-[2rem]">
+          {selectedParts.length > 0 ? (
+            selectedParts.map((part) => (
+              <Badge 
+                key={part} 
+                variant="purple" 
+                className="bg-[#8E44AD]/10 text-[#5C2D91] border-[#8E44AD]/20 cursor-pointer hover:bg-[#8E44AD]/20 transition-colors"
+                onClick={() => handlePartClick(part)}
+              >
+                {part} ×
+              </Badge>
+            ))
+          ) : (
+            <p className="text-sm text-[#8E44AD]/60 italic">Click on body areas to select them</p>
+          )}
+        </div>
+      </div>
+
+      {/* Coming Soon Notice */}
+      {showComingSoon && (
+        <div className="bg-purple-50/50 border border-purple-200/50 rounded-lg p-3 text-center">
+          <p className="text-sm text-[#8E44AD]/80">
+            🚀 <strong>Body part targeting coming soon!</strong> This feature will help you create workouts focused on specific muscle groups.
           </p>
-          <div className="flex flex-wrap gap-2">
-            {selectedParts.map(partId => {
-              const part = [...frontBodyParts, ...backBodyParts].find(p => p.id === partId);
-              return (
-                <motion.div
-                  key={partId}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="px-3 py-1.5 bg-[#5C2D91] text-white text-sm rounded-full flex items-center gap-2 cursor-pointer hover:bg-[#4A2375] transition-colors"
-                  onClick={() => onSelectPart(partId)}
-                >
-                  {part?.name || partId}
-                  <span className="text-purple-200 hover:text-white text-lg leading-none">×</span>
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
-      )}
-      
-      {/* Instruction text when no parts selected */}
-      {selectedParts.length === 0 && (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center text-purple-600 text-sm mt-2"
-        >
-          Click on body parts to target specific muscle groups
-        </motion.div>
+        </div>
       )}
     </div>
   );
 };
-
-export const bodyPartsList = [...frontBodyParts, ...backBodyParts].map(part => part.id);
-
-}
