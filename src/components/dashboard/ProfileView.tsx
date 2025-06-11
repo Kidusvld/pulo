@@ -3,10 +3,6 @@ import { ProfileCard } from "@/components/dashboard/ProfileCard";
 import { ProgressStats } from "@/components/progress/ProgressStats";
 import { WorkoutForm } from "@/components/progress/WorkoutForm";
 import { MuscleGroupChart } from "@/components/progress/MuscleGroupChart";
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target } from "lucide-react";
-import { VisualBodySelector } from "@/components/dashboard/VisualBodySelector";
 
 interface Profile {
   first_name?: string;
@@ -64,29 +60,8 @@ export const ProfileView = ({
   onEditIntensity,
   onEditFitnessGoal,
   onEditWorkoutLocation,
-  onUpdateProfile,
-  onBodyPartSelect
+  onUpdateProfile
 }: ProfileViewProps) => {
-  // State for tracking selected body parts
-  const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
-
-  // Handle body part selection toggle
-  const handleBodyPartToggle = (part: string) => {
-    setSelectedBodyParts(prev => {
-      const isAlreadySelected = prev.includes(part);
-      const newSelection = isAlreadySelected
-        ? prev.filter(p => p !== part)
-        : [...prev, part];
-      
-      // Notify parent component if callback provided
-      if (onBodyPartSelect) {
-        onBodyPartSelect(newSelection);
-      }
-      
-      return newSelection;
-    });
-  };
-
   return (
     <div className="space-y-6">
       <ProfileCard 
@@ -107,22 +82,6 @@ export const ProfileView = ({
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-[#5C2D91]">
-              <Target className="h-5 w-5 text-[#8E44AD]" />
-              Target Body Areas
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <VisualBodySelector 
-              selectedParts={selectedBodyParts}
-              onSelectPart={handleBodyPartToggle}
-              showComingSoon={false}
-            />
-          </CardContent>
-        </Card>
-
         <div className="space-y-6">
           <ProgressStats 
             totalWorkouts={progressStats.totalWorkouts}
@@ -132,9 +91,9 @@ export const ProfileView = ({
           />
           <MuscleGroupChart data={muscleGroupData} />
         </div>
+        
+        <WorkoutForm />
       </div>
-
-      <WorkoutForm />
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { HomeView } from "@/components/dashboard/HomeView";
@@ -66,11 +65,6 @@ const Dashboard = () => {
     generateNewPlan,
     handleSaveWorkout
   } = useWorkoutPlan(profile, workoutPlan, setWorkoutPlan, selectedBodyParts);
-  
-  // Handle body part selection
-  const handleBodyPartSelect = (bodyParts: string[]) => {
-    setSelectedBodyParts(bodyParts);
-  };
   
   // Handle sign out
   const handleSignOut = async () => {
@@ -149,7 +143,6 @@ const Dashboard = () => {
           onEditFitnessGoal={setEditedFitnessGoal}
           onEditWorkoutLocation={setEditedWorkoutLocation}
           onUpdateProfile={handleUpdateProfile}
-          onBodyPartSelect={handleBodyPartSelect}
         />
       )}
     </DashboardLayout>
