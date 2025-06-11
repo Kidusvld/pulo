@@ -64,35 +64,43 @@ export const ProfileView = ({
 }: ProfileViewProps) => {
   return (
     <div className="space-y-6">
-      <ProfileCard 
-        profile={profile}
-        isEditing={isEditing}
-        editedWeight={editedWeight}
-        editedAge={editedAge}
-        editedIntensity={editedIntensity}
-        editedFitnessGoal={editedFitnessGoal}
-        editedWorkoutLocation={editedWorkoutLocation}
-        onEditToggle={onEditToggle}
-        onEditWeight={onEditWeight}
-        onEditAge={onEditAge}
-        onEditIntensity={onEditIntensity}
-        onEditFitnessGoal={onEditFitnessGoal}
-        onEditWorkoutLocation={onEditWorkoutLocation}
-        onUpdateProfile={onUpdateProfile}
-      />
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+        <ProfileCard 
+          profile={profile}
+          isEditing={isEditing}
+          editedWeight={editedWeight}
+          editedAge={editedAge}
+          editedIntensity={editedIntensity}
+          editedFitnessGoal={editedFitnessGoal}
+          editedWorkoutLocation={editedWorkoutLocation}
+          onEditToggle={onEditToggle}
+          onEditWeight={onEditWeight}
+          onEditAge={onEditAge}
+          onEditIntensity={onEditIntensity}
+          onEditFitnessGoal={onEditFitnessGoal}
+          onEditWorkoutLocation={onEditWorkoutLocation}
+          onUpdateProfile={onUpdateProfile}
+        />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-6">
-          <ProgressStats 
-            totalWorkouts={progressStats.totalWorkouts}
-            totalVolume={progressStats.totalVolume}
-            averageDuration={progressStats.averageDuration}
-            consistencyStreak={progressStats.consistencyStreak}
-          />
-          <MuscleGroupChart data={muscleGroupData} />
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <ProgressStats 
+              totalWorkouts={progressStats.totalWorkouts}
+              totalVolume={progressStats.totalVolume}
+              averageDuration={progressStats.averageDuration}
+              consistencyStreak={progressStats.consistencyStreak}
+            />
+          </div>
+          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+            <MuscleGroupChart data={muscleGroupData} />
+          </div>
         </div>
         
-        <WorkoutForm />
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+          <WorkoutForm />
+        </div>
       </div>
     </div>
   );

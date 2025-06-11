@@ -93,9 +93,9 @@ export const HomeView = ({
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Target Body Areas Card */}
-        <Card className="lg:col-span-1 bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
+        <Card className="lg:col-span-1 bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-[#5C2D91]">
+            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-gray-900">
               <Target className="h-5 w-5 text-[#8E44AD]" />
               Target Body Areas
             </CardTitle>
@@ -110,7 +110,7 @@ export const HomeView = ({
         </Card>
 
         {/* Workout Generator Card */}
-        <Card className="lg:col-span-2 bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
+        <Card className="lg:col-span-2 bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="p-0">
             <EnhancedWorkoutGenerator
               selectedMuscleGroups={selectedBodyParts}
@@ -124,9 +124,9 @@ export const HomeView = ({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Progress Stats */}
-        <Card className="bg-white/90 backdrop-blur-sm border-purple-300/20 shadow-xl shadow-purple-900/10">
+        <Card className="bg-white border-gray-200 shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-[#5C2D91]">
+            <CardTitle className="text-lg font-semibold flex items-center gap-2 text-gray-900">
               <TrendingUp className="h-5 w-5 text-[#8E44AD]" />
               Progress Overview
             </CardTitle>

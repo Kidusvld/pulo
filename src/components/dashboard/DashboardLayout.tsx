@@ -19,9 +19,8 @@ export const DashboardLayout = ({
   children
 }: DashboardLayoutProps) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#5C2D91] via-[#6D3CAA] to-[#502680] text-white">
-      <div className="absolute inset-0 bg-grid-white/[0.05]"></div>
-      <div className="absolute bottom-0 left-0 w-full h-full opacity-10 pointer-events-none">
+    <div className="min-h-screen bg-gray-50">
+      <div className="absolute bottom-0 left-0 w-full h-full opacity-5 pointer-events-none">
         <img 
           src="/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png"
           alt="PULO Watermark"
