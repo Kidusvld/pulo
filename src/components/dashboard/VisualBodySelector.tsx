@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -158,175 +157,378 @@ export const VisualBodySelector = ({
         </motion.button>
       </div>
       
-      {/* Body figure SVG with improved anatomy */}
+      {/* Body figure - Front view uses uploaded image, Back view uses SVG */}
       <div className="relative w-64 h-96 mx-auto">
-        <svg
-          viewBox="0 0 100 240"
-          className="w-full h-full"
-          style={{ filter: "drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.1))" }}
-        >
-          {/* Enhanced body outline */}
-          <path
-            d="M50,20 
-               C65,20 70,30 70,40 
-               C70,45 68,50 65,60 
-               C62,70 60,80 60,90 
-               C60,100 62,110 65,125 
-               C65,140 60,155 55,170 
-               C50,185 48,200 50,220 
-               C52,200 50,185 45,170 
-               C40,155 35,140 35,125 
-               C38,110 40,100 40,90 
-               C40,80 38,70 35,60 
-               C32,50 30,45 30,40 
-               C30,30 35,20 50,20Z"
-            fill="#fcf8ff"
-            stroke="#e9d7ff"
-            strokeWidth="0.8"
-          />
-          
-          {/* Enhanced head shape */}
-          <ellipse 
-            cx="50" 
-            cy="15" 
-            rx="10" 
-            ry="15" 
-            fill="#fcf8ff" 
-            stroke="#e9d7ff" 
-            strokeWidth="0.8"
-          />
-          
-          {/* Neck */}
-          <path
-            d="M45,20 C45,25 47,30 50,30 C53,30 55,25 55,20"
-            fill="#fcf8ff"
-            stroke="#e9d7ff"
-            strokeWidth="0.5"
-          />
-          
-          {/* Front view selectable muscle groups */}
-          {view === "front" && frontBodyParts.map(part => (
-            <TooltipProvider key={part.id}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <motion.path
-                    d={part.path}
-                    fill={isSelected(part.id) ? "rgba(156, 45, 145, 0.7)" : "rgba(232, 121, 249, 0.15)"}
-                    stroke={isSelected(part.id) ? "#9b87f5" : "#e9d7ff"}
-                    strokeWidth="0.8"
-                    className={cn(
-                      "cursor-pointer transition-all duration-200",
-                      isSelected(part.id) 
-                        ? "filter drop-shadow-lg" 
-                        : "hover:fill-purple-300/40 hover:stroke-purple-400"
-                    )}
-                    onClick={() => onSelectPart(part.id)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    animate={isSelected(part.id) ? {
-                      filter: ["drop-shadow(0 0 8px rgba(156, 45, 145, 0.5))", "drop-shadow(0 0 12px rgba(156, 45, 145, 0.8))", "drop-shadow(0 0 8px rgba(156, 45, 145, 0.5))"]
-                    } : {}}
-                    transition={{ duration: 1.5, repeat: isSelected(part.id) ? Infinity : 0 }}
-                  />
-                </TooltipTrigger>
-                <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
-                  <div>
-                    <p className="font-bold">{part.name}</p>
-                    <p className="text-xs">{part.description}</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ))}
-          
-          {/* Back view selectable muscle groups */}
-          {view === "back" && backBodyParts.map(part => (
-            <TooltipProvider key={part.id}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <motion.path
-                    d={part.path}
-                    fill={isSelected(part.id) ? "rgba(156, 45, 145, 0.7)" : "rgba(232, 121, 249, 0.15)"}
-                    stroke={isSelected(part.id) ? "#9b87f5" : "#e9d7ff"}
-                    strokeWidth="0.8"
-                    className={cn(
-                      "cursor-pointer transition-all duration-200",
-                      isSelected(part.id) 
-                        ? "filter drop-shadow-lg" 
-                        : "hover:fill-purple-300/40 hover:stroke-purple-400"
-                    )}
-                    onClick={() => onSelectPart(part.id)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    animate={isSelected(part.id) ? {
-                      filter: ["drop-shadow(0 0 8px rgba(156, 45, 145, 0.5))", "drop-shadow(0 0 12px rgba(156, 45, 145, 0.8))", "drop-shadow(0 0 8px rgba(156, 45, 145, 0.5))"]
-                    } : {}}
-                    transition={{ duration: 1.5, repeat: isSelected(part.id) ? Infinity : 0 }}
-                  />
-                </TooltipTrigger>
-                <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
-                  <div>
-                    <p className="font-bold">{part.name}</p>
-                    <p className="text-xs">{part.description}</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ))}
+        {view === "front" ? (
+          // Front view - using uploaded image with clickable overlay areas
+          <div className="relative w-full h-full">
+            <img 
+              src="/lovable-uploads/efd47857-cb5e-412b-822f-68ec94e165cd.png"
+              alt="Front view body diagram"
+              className="w-full h-full object-contain"
+            />
+            
+            {/* Clickable overlay areas for front view muscle groups */}
+            <div className="absolute inset-0">
+              {/* Chest area */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <motion.div
+                      className={cn(
+                        "absolute cursor-pointer rounded-lg transition-all duration-200",
+                        isSelected("chest") 
+                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
+                          : "bg-transparent hover:bg-purple-300/20"
+                      )}
+                      style={{
+                        top: "28%",
+                        left: "38%",
+                        width: "24%",
+                        height: "15%"
+                      }}
+                      onClick={() => onSelectPart("chest")}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
+                    <div>
+                      <p className="font-bold">Chest</p>
+                      <p className="text-xs">Pectoralis major and minor</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
 
-          {/* Enhanced muscle fiber details */}
-          <g opacity="0.15" stroke="#bf0fff" strokeWidth="0.3">
-            {view === "front" && (
-              <>
-                {/* Chest detail lines */}
-                <path d="M40,65 C45,68 50,70 55,68" />
-                <path d="M50,70 C48,72 45,73 42,72" />
-                
-                {/* Ab definition lines */}
-                <path d="M45,90 C48,91 52,91 55,90" />
-                <path d="M45,100 C48,101 52,101 55,100" />
-                <path d="M45,110 C48,111 52,111 55,110" />
-                <path d="M45,120 C48,121 52,121 55,120" />
-                
-                {/* Arm muscle definition */}
-                <path d="M30,70 C28,80 25,90 25,95" />
-                <path d="M70,70 C72,80 75,90 75,95" />
-                
-                {/* Leg muscle definition */}
-                <path d="M40,140 C42,145 45,150 48,145" />
-                <path d="M60,140 C58,145 55,150 52,145" />
-              </>
-            )}
-            {view === "back" && (
-              <>
-                {/* Back detail lines */}
-                <path d="M40,55 C45,53 55,53 60,55" />
-                <path d="M40,65 C45,63 55,63 60,65" />
-                <path d="M40,75 C45,73 55,73 60,75" />
-                
-                {/* Lower back lines */}
-                <path d="M45,95 C48,96 52,96 55,95" />
-                <path d="M45,105 C48,106 52,106 55,105" />
-                
-                {/* Glutes definition */}
-                <path d="M45,120 C48,125 52,125 55,120" />
-                
-                {/* Leg muscle definition */}
-                <path d="M40,145 C42,150 45,155 48,150" />
-                <path d="M60,145 C58,150 55,155 52,150" />
-              </>
-            )}
-          </g>
-          
-          {/* Additional anatomical details */}
-          <g opacity="0.1" stroke="#333" strokeWidth="0.2">
-            {/* Joint indicators */}
-            <circle cx="25" cy="105" r="2" />
-            <circle cx="75" cy="105" r="2" />
-            <circle cx="35" cy="170" r="2" />
-            <circle cx="65" cy="170" r="2" />
-          </g>
-        </svg>
+              {/* Abs area */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <motion.div
+                      className={cn(
+                        "absolute cursor-pointer rounded-lg transition-all duration-200",
+                        isSelected("abs") 
+                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
+                          : "bg-transparent hover:bg-purple-300/20"
+                      )}
+                      style={{
+                        top: "43%",
+                        left: "40%",
+                        width: "20%",
+                        height: "20%"
+                      }}
+                      onClick={() => onSelectPart("abs")}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
+                    <div>
+                      <p className="font-bold">Abs</p>
+                      <p className="text-xs">Rectus abdominis and obliques</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* Left Shoulder */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <motion.div
+                      className={cn(
+                        "absolute cursor-pointer rounded-full transition-all duration-200",
+                        isSelected("shoulders") 
+                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
+                          : "bg-transparent hover:bg-purple-300/20"
+                      )}
+                      style={{
+                        top: "25%",
+                        left: "25%",
+                        width: "12%",
+                        height: "10%"
+                      }}
+                      onClick={() => onSelectPart("shoulders")}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
+                    <div>
+                      <p className="font-bold">Shoulders</p>
+                      <p className="text-xs">Deltoids and rotator cuff</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* Right Shoulder */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <motion.div
+                      className={cn(
+                        "absolute cursor-pointer rounded-full transition-all duration-200",
+                        isSelected("shoulders") 
+                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
+                          : "bg-transparent hover:bg-purple-300/20"
+                      )}
+                      style={{
+                        top: "25%",
+                        right: "25%",
+                        width: "12%",
+                        height: "10%"
+                      }}
+                      onClick={() => onSelectPart("shoulders")}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
+                    <div>
+                      <p className="font-bold">Shoulders</p>
+                      <p className="text-xs">Deltoids and rotator cuff</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* Left Bicep */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <motion.div
+                      className={cn(
+                        "absolute cursor-pointer rounded-lg transition-all duration-200",
+                        isSelected("biceps") 
+                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
+                          : "bg-transparent hover:bg-purple-300/20"
+                      )}
+                      style={{
+                        top: "35%",
+                        left: "15%",
+                        width: "10%",
+                        height: "15%"
+                      }}
+                      onClick={() => onSelectPart("biceps")}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
+                    <div>
+                      <p className="font-bold">Biceps</p>
+                      <p className="text-xs">Biceps brachii</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* Right Bicep */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <motion.div
+                      className={cn(
+                        "absolute cursor-pointer rounded-lg transition-all duration-200",
+                        isSelected("biceps") 
+                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
+                          : "bg-transparent hover:bg-purple-300/20"
+                      )}
+                      style={{
+                        top: "35%",
+                        right: "15%",
+                        width: "10%",
+                        height: "15%"
+                      }}
+                      onClick={() => onSelectPart("biceps")}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
+                    <div>
+                      <p className="font-bold">Biceps</p>
+                      <p className="text-xs">Biceps brachii</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* Left Quad */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <motion.div
+                      className={cn(
+                        "absolute cursor-pointer rounded-lg transition-all duration-200",
+                        isSelected("quadriceps") 
+                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
+                          : "bg-transparent hover:bg-purple-300/20"
+                      )}
+                      style={{
+                        top: "63%",
+                        left: "35%",
+                        width: "12%",
+                        height: "20%"
+                      }}
+                      onClick={() => onSelectPart("quadriceps")}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
+                    <div>
+                      <p className="font-bold">Quadriceps</p>
+                      <p className="text-xs">Front thigh muscles</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* Right Quad */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <motion.div
+                      className={cn(
+                        "absolute cursor-pointer rounded-lg transition-all duration-200",
+                        isSelected("quadriceps") 
+                          ? "bg-purple-500/40 ring-2 ring-purple-400" 
+                          : "bg-transparent hover:bg-purple-300/20"
+                      )}
+                      style={{
+                        top: "63%",
+                        right: "35%",
+                        width: "12%",
+                        height: "20%"
+                      }}
+                      onClick={() => onSelectPart("quadriceps")}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
+                    <div>
+                      <p className="font-bold">Quadriceps</p>
+                      <p className="text-xs">Front thigh muscles</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          </div>
+        ) : (
+          // Back view - keep existing SVG
+          <svg
+            viewBox="0 0 100 240"
+            className="w-full h-full"
+            style={{ filter: "drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.1))" }}
+          >
+            {/* Enhanced body outline */}
+            <path
+              d="M50,20 
+                 C65,20 70,30 70,40 
+                 C70,45 68,50 65,60 
+                 C62,70 60,80 60,90 
+                 C60,100 62,110 65,125 
+                 C65,140 60,155 55,170 
+                 C50,185 48,200 50,220 
+                 C52,200 50,185 45,170 
+                 C40,155 35,140 35,125 
+                 C38,110 40,100 40,90 
+                 C40,80 38,70 35,60 
+                 C32,50 30,45 30,40 
+                 C30,30 35,20 50,20Z"
+              fill="#fcf8ff"
+              stroke="#e9d7ff"
+              strokeWidth="0.8"
+            />
+            
+            {/* Enhanced head shape */}
+            <ellipse 
+              cx="50" 
+              cy="15" 
+              rx="10" 
+              ry="15" 
+              fill="#fcf8ff" 
+              stroke="#e9d7ff" 
+              strokeWidth="0.8"
+            />
+            
+            {/* Neck */}
+            <path
+              d="M45,20 C45,25 47,30 50,30 C53,30 55,25 55,20"
+              fill="#fcf8ff"
+              stroke="#e9d7ff"
+              strokeWidth="0.5"
+            />
+            
+            {/* Back view selectable muscle groups */}
+            {backBodyParts.map(part => (
+              <TooltipProvider key={part.id}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <motion.path
+                      d={part.path}
+                      fill={isSelected(part.id) ? "rgba(156, 45, 145, 0.7)" : "rgba(232, 121, 249, 0.15)"}
+                      stroke={isSelected(part.id) ? "#9b87f5" : "#e9d7ff"}
+                      strokeWidth="0.8"
+                      className={cn(
+                        "cursor-pointer transition-all duration-200",
+                        isSelected(part.id) 
+                          ? "filter drop-shadow-lg" 
+                          : "hover:fill-purple-300/40 hover:stroke-purple-400"
+                      )}
+                      onClick={() => onSelectPart(part.id)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      animate={isSelected(part.id) ? {
+                        filter: ["drop-shadow(0 0 8px rgba(156, 45, 145, 0.5))", "drop-shadow(0 0 12px rgba(156, 45, 145, 0.8))", "drop-shadow(0 0 8px rgba(156, 45, 145, 0.5))"]
+                      } : {}}
+                      transition={{ duration: 1.5, repeat: isSelected(part.id) ? Infinity : 0 }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="bg-[#5C2D91] text-white border-purple-400">
+                    <div>
+                      <p className="font-bold">{part.name}</p>
+                      <p className="text-xs">{part.description}</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ))}
+
+            {/* Enhanced muscle fiber details */}
+            <g opacity="0.15" stroke="#bf0fff" strokeWidth="0.3">
+              {/* Back detail lines */}
+              <path d="M40,55 C45,53 55,53 60,55" />
+              <path d="M40,65 C45,63 55,63 60,65" />
+              <path d="M40,75 C45,73 55,73 60,75" />
+              
+              {/* Lower back lines */}
+              <path d="M45,95 C48,96 52,96 55,95" />
+              <path d="M45,105 C48,106 52,106 55,105" />
+              
+              {/* Glutes definition */}
+              <path d="M45,120 C48,125 52,125 55,120" />
+              
+              {/* Leg muscle definition */}
+              <path d="M40,145 C42,150 45,155 48,150" />
+              <path d="M60,145 C58,150 55,155 52,150" />
+            </g>
+            
+            {/* Additional anatomical details */}
+            <g opacity="0.1" stroke="#333" strokeWidth="0.2">
+              {/* Joint indicators */}
+              <circle cx="25" cy="105" r="2" />
+              <circle cx="75" cy="105" r="2" />
+              <circle cx="35" cy="170" r="2" />
+              <circle cx="65" cy="170" r="2" />
+            </g>
+          </svg>
+        )}
       </div>
       
       {/* Selected muscle groups display */}
@@ -379,3 +581,5 @@ export const VisualBodySelector = ({
 };
 
 export const bodyPartsList = [...frontBodyParts, ...backBodyParts].map(part => part.id);
+
+}
