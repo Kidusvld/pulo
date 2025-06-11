@@ -40,7 +40,10 @@ const loadSavedPositions = (view: 'front' | 'back') => {
   try {
     const saved = localStorage.getItem(`bodyPartPositions_${view}`);
     if (saved) {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      // Ensure all required body parts have positions
+      const defaults = view === 'front' ? defaultFrontPositions : defaultBackPositions;
+      return { ...defaults, ...parsed };
     }
   } catch (error) {
     console.error('Error loading saved positions:', error);
@@ -155,6 +158,13 @@ export const VisualBodySelector = ({
 
   const renderBodyPart = (bodyPart: string, title: string) => {
     const position = positions[bodyPart];
+    
+    // Add null check to prevent the error
+    if (!position) {
+      console.warn(`No position data found for body part: ${bodyPart}`);
+      return null;
+    }
+
     const isSelected = selectedParts.includes(bodyPart.includes('Left') || bodyPart.includes('Right') ? 
       bodyPart.replace('Left ', '').replace('Right ', '') : bodyPart);
     const isDraggingThis = isDragging === bodyPart;
