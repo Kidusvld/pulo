@@ -187,34 +187,6 @@ export const VisualBodySelector = ({
             )}
           </div>
         )}
-        
-        {isEditMode && (
-          <div className="absolute -top-12 left-0 text-xs bg-blue-600 text-white px-1 rounded whitespace-nowrap z-10">
-            {position.top.toFixed(1)}%, {position.left.toFixed(1)}%
-            <div className="bg-green-600 text-white px-1 rounded mt-1">
-              {position.width.toFixed(1)}% × {position.height.toFixed(1)}%
-            </div>
-            {position.rotation !== 0 && (
-              <div className="bg-purple-600 text-white px-1 rounded mt-1">
-                ↻ {position.rotation.toFixed(1)}°
-              </div>
-            )}
-            {position.shape === 'polygon' && (
-              <div className="bg-orange-600 text-white px-1 rounded mt-1 flex items-center gap-1">
-                🔷 {position.points?.length || 0} pts
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    resetToCircle(bodyPart);
-                  }}
-                  className="ml-1 text-xs hover:bg-orange-700 px-1 rounded"
-                >
-                  ↺
-                </button>
-              </div>
-            )}
-          </div>
-        )}
       </div>
     );
   };
