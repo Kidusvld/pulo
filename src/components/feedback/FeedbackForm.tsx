@@ -70,9 +70,9 @@ export const FeedbackForm = ({ onClose }: { onClose: () => void }) => {
   ];
 
   return (
-    <Card className="p-6 w-full max-w-md mx-auto">
-      <h2 className="text-xl font-semibold mb-4 text-center">Share Your Feedback</h2>
-      <p className="text-gray-500 text-sm mb-6 text-center">
+    <Card className="p-6 w-full max-w-md mx-auto bg-white/95 backdrop-blur-sm border-slate-200/60 shadow-xl">
+      <h2 className="text-xl font-semibold mb-4 text-center text-slate-800">Share Your Feedback</h2>
+      <p className="text-slate-600 text-sm mb-6 text-center">
         Help us improve our app by sharing your thoughts, suggestions, or issues.
       </p>
       
@@ -83,10 +83,10 @@ export const FeedbackForm = ({ onClose }: { onClose: () => void }) => {
               key={option.type}
               type="button"
               variant={feedbackType === option.type ? "default" : "outline"}
-              className={`flex items-center gap-2 ${
+              className={`flex items-center gap-2 transition-all duration-200 ${
                 feedbackType === option.type 
-                  ? "bg-purple-600 text-white" 
-                  : "border-purple-200 text-purple-700"
+                  ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg" 
+                  : "border-slate-300 text-slate-700 hover:bg-slate-50"
               }`}
               onClick={() => setFeedbackType(option.type)}
             >
@@ -100,7 +100,7 @@ export const FeedbackForm = ({ onClose }: { onClose: () => void }) => {
           placeholder="Tell us what you think..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="h-32 border-purple-200 focus:border-purple-400"
+          className="h-32 border-slate-300 focus:border-indigo-400 focus:ring-indigo-400/20 bg-white/50"
         />
         
         <div className="relative">
@@ -109,9 +109,9 @@ export const FeedbackForm = ({ onClose }: { onClose: () => void }) => {
             placeholder="Your email (optional)"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 rounded-md border border-purple-200 focus:border-purple-400 focus:outline-none text-sm"
+            className="w-full p-3 rounded-lg border border-slate-300 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 focus:outline-none text-sm bg-white/50"
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Leave your email if you'd like us to follow up with you
           </p>
         </div>
@@ -121,14 +121,14 @@ export const FeedbackForm = ({ onClose }: { onClose: () => void }) => {
             type="button" 
             variant="outline" 
             onClick={onClose}
-            className="border-purple-200 text-purple-700"
+            className="border-slate-300 text-slate-700 hover:bg-slate-50"
           >
             Cancel
           </Button>
           <Button 
             type="submit" 
             disabled={isSubmitting}
-            className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800"
+            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
           >
             {isSubmitting ? (
               <div className="flex items-center gap-2">
