@@ -33,25 +33,25 @@ export const Hero = () => {
 
         {/* Main Heading */}
         <motion.h1 
-          className="text-5xl lg:text-7xl font-bold text-saas-text-primary leading-tight tracking-tight"
+          className="text-5xl lg:text-7xl font-bold text-slate-900 leading-tight tracking-tight"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
           Meet{" "}
-          <span className="saas-text-gradient">PULO</span>,{" "}
-          <span className="block text-saas-text-primary">Your AI Fitness Friend</span>
+          <span className="bg-gradient-to-r from-saas-brand-primary to-saas-brand-secondary bg-clip-text text-transparent">PULO</span>,{" "}
+          <span className="block text-slate-900">Your AI Fitness Friend</span>
         </motion.h1>
         
         {/* Description */}
         <motion.p 
-          className="text-xl lg:text-2xl text-saas-text-secondary max-w-2xl leading-relaxed"
+          className="text-xl lg:text-2xl text-slate-700 max-w-2xl leading-relaxed"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           Think of{" "}
-          <span className="font-bold saas-text-gradient">PULO</span>{" "}
+          <span className="font-bold bg-gradient-to-r from-saas-brand-primary to-saas-brand-secondary bg-clip-text text-transparent">PULO</span>{" "}
           as your supportive workout buddy who's always there to guide, motivate, and adapt to your unique fitness journey. No judgment, just personalized support that grows with you.
         </motion.p>
 
@@ -65,7 +65,7 @@ export const Hero = () => {
           <Button 
             size="lg" 
             onClick={handleGetStarted} 
-            className="saas-button-primary group px-10 py-5 text-lg font-semibold"
+            className="bg-gradient-to-r from-saas-brand-primary to-saas-brand-secondary text-white font-semibold px-10 py-5 text-lg rounded-xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-saas-brand-primary/50 group"
           >
             Get Started Free
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -75,7 +75,7 @@ export const Hero = () => {
             variant="outline" 
             size="lg" 
             onClick={() => navigate("/#features")} 
-            className="saas-button-secondary px-10 py-5 text-lg font-semibold group"
+            className="bg-white text-slate-700 border border-slate-300 font-semibold px-10 py-5 text-lg rounded-xl shadow-sm hover:bg-slate-50 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-saas-brand-primary/20 group"
           >
             <Info className="mr-2 h-5 w-5" />
             Learn More
@@ -84,22 +84,22 @@ export const Hero = () => {
 
         {/* Social Proof */}
         <motion.div 
-          className="flex items-center gap-6 pt-8 border-t border-saas-border"
+          className="flex items-center gap-6 pt-8 border-t border-slate-200"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.7 }}
         >
           <div className="text-center">
-            <div className="text-2xl font-bold text-saas-text-primary">10k+</div>
-            <div className="text-sm text-saas-text-muted">Active Users</div>
+            <div className="text-2xl font-bold text-slate-900">10k+</div>
+            <div className="text-sm text-slate-600">Active Users</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-saas-text-primary">95%</div>
-            <div className="text-sm text-saas-text-muted">Success Rate</div>
+            <div className="text-2xl font-bold text-slate-900">95%</div>
+            <div className="text-sm text-slate-600">Success Rate</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-saas-text-primary">50k+</div>
-            <div className="text-sm text-saas-text-muted">Workouts</div>
+            <div className="text-2xl font-bold text-slate-900">50k+</div>
+            <div className="text-sm text-slate-600">Workouts</div>
           </div>
         </motion.div>
       </motion.div>
