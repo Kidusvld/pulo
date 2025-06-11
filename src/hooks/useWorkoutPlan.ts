@@ -5,6 +5,13 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Json } from "@/integrations/supabase/types";
 
+interface WorkoutConfig {
+  selectedMuscles: string[];
+  numberOfDays: number;
+  intensityLevel: string;
+  workoutDuration: number;
+}
+
 // Use generic type parameter to ensure consistency with caller's Profile type
 export const useWorkoutPlan = <T extends {
   age: number;
@@ -59,7 +66,7 @@ export const useWorkoutPlan = <T extends {
     return "home";
   };
   
-  const generateNewPlan = async () => {
+  const generateNewPlan = async (config?: WorkoutConfig) => {
     if (!profile) return;
     setGeneratingPlan(true);
     const { data: { session } } = await supabase.auth.getSession();
@@ -74,6 +81,12 @@ export const useWorkoutPlan = <T extends {
       const fitnessGoalToUse = mapToLegacyFitnessGoal(profile.fitness_goal);
       const workoutLocationToUse = mapToWorkoutLocation(profile.workout_location);
       
+      // Use the targeted body parts from config if provided, otherwise use the hook's selectedBodyParts
+      const targetedBodyParts = config?.selectedMuscles || selectedBodyParts;
+      const daysToUse = config?.numberOfDays || numberOfDays;
+      
+      console.log('Generating workout with targeted body parts:', targetedBodyParts);
+      
       const { data: aiResponse, error: aiError } = await supabase.functions.invoke('generate-workout', {
         body: {
           age: profile.age,
@@ -82,8 +95,8 @@ export const useWorkoutPlan = <T extends {
           workoutLocation: workoutLocationToUse,
           equipment: profile.equipment,
           intensityLevel: intensityToUse,
-          numberOfDays: numberOfDays,
-          targetedBodyParts: selectedBodyParts // Pass the selected body parts to the function
+          numberOfDays: daysToUse,
+          targetedBodyParts: targetedBodyParts
         }
       });
       
@@ -99,15 +112,7 @@ export const useWorkoutPlan = <T extends {
         throw new Error('Invalid workout plan structure received from AI');
       }
       
-      console.log('Saving workout plan:', {
-        userId: session.user.id,
-        fitnessGoal: fitnessGoalToUse,
-        workoutLocation: workoutLocationToUse,
-        intensityLevel: intensityToUse,
-        equipment: profile.equipment,
-        planData: aiResponse,
-        targetedBodyParts: selectedBodyParts
-      });
+      console.log('Saving workout plan with targeted body parts:', targetedBodyParts);
       
       const { error: deactivateError } = await supabase.from("workout_plans").update({
         is_active: false
@@ -117,8 +122,6 @@ export const useWorkoutPlan = <T extends {
         throw new Error('Failed to deactivate existing workout plans');
       }
       
-      // Fixed the insert call - using a single object instead of an array
-      // and ensuring proper type casting for workout_location
       const { data: plan, error: createError } = await supabase.from("workout_plans").insert({
         user_id: session.user.id,
         fitness_goal: fitnessGoalToUse,
@@ -127,8 +130,8 @@ export const useWorkoutPlan = <T extends {
         equipment: profile.equipment,
         plan_data: aiResponse as Json,
         is_active: true,
-        workout_frequency: numberOfDays,
-        targeted_body_parts: selectedBodyParts // Save the targeted body parts
+        workout_frequency: daysToUse,
+        targeted_body_parts: targetedBodyParts
       }).select().single();
       
       if (createError) {
@@ -140,7 +143,7 @@ export const useWorkoutPlan = <T extends {
       }
       
       setWorkoutPlan(plan);
-      toast.success("New workout plan generated!");
+      toast.success(`New workout plan generated${targetedBodyParts.length > 0 ? ' with targeted focus areas!' : '!'}`);
     } catch (error) {
       console.error('Error generating workout plan:', error);
       toast.error(error instanceof Error ? error.message : "Failed to generate workout plan");
@@ -167,7 +170,7 @@ export const useWorkoutPlan = <T extends {
         user_id: session.session.user.id,
         plan_data: workoutPlan.plan_data,
         name: `Workout Plan - ${new Date().toLocaleDateString()}`,
-        targeted_body_parts: workoutPlan.targeted_body_parts || [] // Save the targeted body parts
+        targeted_body_parts: workoutPlan.targeted_body_parts || []
       });
       
       if (error) throw error;

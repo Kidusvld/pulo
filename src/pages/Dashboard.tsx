@@ -23,8 +23,8 @@ interface Profile {
 }
 
 const Dashboard = () => {
-  // Set default section to "profile" to show the VisualBodySelector
-  const [activeSection, setActiveSection] = useState<"home" | "profile">("profile");
+  // Set default section to "home" to show the new integrated view
+  const [activeSection, setActiveSection] = useState<"home" | "profile">("home");
   const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
   
   // Check authentication status

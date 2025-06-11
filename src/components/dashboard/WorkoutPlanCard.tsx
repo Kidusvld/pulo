@@ -132,6 +132,23 @@ export const WorkoutPlanCard = ({
           </div>
         ) : workoutPlan?.plan_data?.workouts ? (
           <div className="p-4 max-h-[500px] overflow-y-auto">
+            {/* Show targeted body parts if they exist */}
+            {workoutPlan.targeted_body_parts && workoutPlan.targeted_body_parts.length > 0 && (
+              <div className="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Target className="h-4 w-4 text-[#8E44AD]" />
+                  <span className="text-sm font-semibold text-[#5C2D91]">Targeted Focus Areas:</span>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {workoutPlan.targeted_body_parts.map((part, index) => (
+                    <Badge key={index} variant="secondary" className="bg-[#8E44AD] text-white text-xs">
+                      {part}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             {workoutPlan.plan_data.workouts.map((workout, index) => (
               <div key={index} className="mb-6 last:mb-0">
                 <div className="flex items-center mb-3">
