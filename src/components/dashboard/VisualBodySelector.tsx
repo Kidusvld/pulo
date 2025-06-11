@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Copy, RotateCcw, Edit, RotateCw } from "lucide-react";
+import { Copy, RotateCcw, Edit, Minus, Plus } from "lucide-react";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,14 +12,14 @@ interface VisualBodySelectorProps {
 }
 
 const defaultFrontPositions = {
-  Chest: { top: 30, left: 35, width: 30, height: 15, rotation: 0 },
-  Abs: { top: 40, left: 40, width: 20, height: 20, rotation: 0 },
-  'Left Shoulder': { top: 20, left: 20, width: 10, height: 10, rotation: 0 },
-  'Right Shoulder': { top: 20, left: 70, width: 10, height: 10, rotation: 0 },
-  'Left Bicep': { top: 35, left: 15, width: 12, height: 20, rotation: 0 },
-  'Right Bicep': { top: 73, left: 73, width: 12, height: 20, rotation: 0 },
-  'Left Quadricep': { top: 65, left: 25, width: 15, height: 25, rotation: 0 },
-  'Right Quadricep': { top: 65, left: 60, width: 15, height: 25, rotation: 0 }
+  Chest: { top: 30, left: 35, width: 30, height: 15, rotation: 0, shape: 'circle' as const },
+  Abs: { top: 40, left: 40, width: 20, height: 20, rotation: 0, shape: 'circle' as const },
+  'Left Shoulder': { top: 20, left: 20, width: 8, height: 8, rotation: 0, shape: 'circle' as const },
+  'Right Shoulder': { top: 20, left: 72, width: 8, height: 8, rotation: 0, shape: 'circle' as const },
+  'Left Bicep': { top: 35, left: 15, width: 12, height: 20, rotation: 0, shape: 'circle' as const },
+  'Right Bicep': { top: 73, left: 73, width: 12, height: 20, rotation: 0, shape: 'circle' as const },
+  'Left Quadricep': { top: 65, left: 25, width: 15, height: 25, rotation: 0, shape: 'circle' as const },
+  'Right Quadricep': { top: 65, left: 60, width: 15, height: 25, rotation: 0, shape: 'circle' as const }
 };
 
 export const VisualBodySelector = ({ 
@@ -36,19 +36,25 @@ export const VisualBodySelector = ({
     isDragging,
     isRotating,
     isResizing,
+    isShaping,
+    activePointIndex,
     isEditMode,
     containerRef,
     setIsEditMode,
     handleMouseDown,
+    handlePointMouseDown,
     handleMouseMove,
     handleMouseUp,
+    addPoint,
+    removePoint,
+    resetToCircle,
     resetPositions,
     generateCode
   } = useDragAndDrop(defaultFrontPositions);
 
   // Add global mouse event listeners
   useEffect(() => {
-    if (isDragging || isRotating || isResizing) {
+    if (isDragging || isRotating || isResizing || isShaping) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
       return () => {
@@ -56,7 +62,7 @@ export const VisualBodySelector = ({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, isRotating, isResizing, handleMouseMove, handleMouseUp]);
+  }, [isDragging, isRotating, isResizing, isShaping, handleMouseMove, handleMouseUp]);
 
   const handlePartClick = (part: string, event: React.MouseEvent) => {
     if (isEditMode) {
@@ -75,6 +81,12 @@ export const VisualBodySelector = ({
     });
   };
 
+  const renderPolygonPath = (points: { x: number; y: number }[]) => {
+    return points.map((point, index) => 
+      `${index === 0 ? 'M' : 'L'} ${point.x * 100} ${point.y * 100}`
+    ).join(' ') + ' Z';
+  };
+
   const renderBodyPart = (bodyPart: string, title: string) => {
     const position = positions[bodyPart];
     const isSelected = selectedParts.includes(bodyPart.includes('Left') || bodyPart.includes('Right') ? 
@@ -82,19 +94,20 @@ export const VisualBodySelector = ({
     const isDraggingThis = isDragging === bodyPart;
     const isRotatingThis = isRotating === bodyPart;
     const isResizingThis = isResizing === bodyPart;
+    const isShapingThis = isShaping === bodyPart;
 
     return (
       <div
         key={bodyPart}
-        className={`absolute cursor-pointer rounded-full transition-all ${
+        className={`absolute transition-all ${
           isSelected
-            ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
+            ? 'border-2 border-[#8E44AD]' 
             : isEditMode
-              ? 'bg-blue-300/50 border-2 border-blue-500 hover:bg-blue-400/50'
+              ? 'border-2 border-blue-500 hover:border-blue-400'
               : showPositioningMode 
-                ? 'bg-red-300/50 border-2 border-red-500' 
-                : 'hover:bg-purple-200/30'
-        } ${isDraggingThis || isRotatingThis || isResizingThis ? 'opacity-70 z-50' : ''} ${isEditMode ? 'cursor-move' : 'cursor-pointer'}`}
+                ? 'border-2 border-red-500' 
+                : ''
+        } ${isDraggingThis || isRotatingThis || isResizingThis || isShapingThis ? 'opacity-70 z-50' : ''} ${isEditMode ? 'cursor-move' : 'cursor-pointer'}`}
         style={{
           top: `${position.top}%`,
           left: `${position.left}%`,
@@ -105,15 +118,68 @@ export const VisualBodySelector = ({
         onClick={(e) => handlePartClick(bodyPart.includes('Left') || bodyPart.includes('Right') ? 
           bodyPart.replace('Left ', '').replace('Right ', '') : bodyPart, e)}
         onMouseDown={(e) => handleMouseDown(bodyPart, e)}
+        onDoubleClick={(e) => isEditMode && position.shape === 'polygon' ? addPoint(bodyPart, e) : undefined}
         title={title}
       >
+        {position.shape === 'polygon' && position.points ? (
+          <svg className="w-full h-full" viewBox="0 0 100 100">
+            <path
+              d={renderPolygonPath(position.points)}
+              fill={isSelected ? '#8E44AD40' : isEditMode ? '#3B82F650' : showPositioningMode ? '#EF444450' : 'transparent'}
+              stroke={isSelected ? '#8E44AD' : isEditMode ? '#3B82F6' : showPositioningMode ? '#EF4444' : 'transparent'}
+              strokeWidth="2"
+              className="transition-all"
+            />
+            {isEditMode && (
+              <>
+                {position.points.map((point, index) => (
+                  <circle
+                    key={index}
+                    cx={point.x * 100}
+                    cy={point.y * 100}
+                    r="3"
+                    fill="#3B82F6"
+                    stroke="white"
+                    strokeWidth="1"
+                    className="cursor-pointer hover:fill-blue-400"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handlePointMouseDown(bodyPart, index, e as any);
+                    }}
+                    onDoubleClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      removePoint(bodyPart, index);
+                    }}
+                  />
+                ))}
+              </>
+            )}
+          </svg>
+        ) : (
+          <div className={`w-full h-full rounded-full ${
+            isSelected
+              ? 'bg-[#8E44AD]/40' 
+              : isEditMode
+                ? 'bg-blue-300/50 hover:bg-blue-400/50'
+                : showPositioningMode 
+                  ? 'bg-red-300/50' 
+                  : 'hover:bg-purple-200/30'
+          }`} />
+        )}
+
         {(showPositioningMode || isEditMode) && (
           <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800 bg-white/80 rounded-full border">
             {isEditMode ? (
               <div className="text-center leading-tight">
-                <div className="font-semibold">{bodyPart}</div>
-                <div className="text-[10px] text-gray-600">
-                  {isResizingThis ? '⚡ Resizing' : isRotatingThis ? '🔄 Rotating' : isDraggingThis ? '✋ Dragging' : 'Drag • Alt+Drag • Ctrl+Drag'}
+                <div className="font-semibold text-[10px]">{bodyPart}</div>
+                <div className="text-[8px] text-gray-600">
+                  {isResizingThis ? '⚡ Resizing' : 
+                   isRotatingThis ? '🔄 Rotating' : 
+                   isDraggingThis ? '✋ Dragging' : 
+                   isShapingThis ? '🔷 Shaping' :
+                   position.shape === 'polygon' ? 'Shift+Drag • Double-click' : 'Drag • Alt • Ctrl • Shift'}
                 </div>
               </div>
             ) : (
@@ -121,8 +187,9 @@ export const VisualBodySelector = ({
             )}
           </div>
         )}
+        
         {isEditMode && (
-          <div className="absolute -top-8 left-0 text-xs bg-blue-600 text-white px-1 rounded whitespace-nowrap z-10">
+          <div className="absolute -top-12 left-0 text-xs bg-blue-600 text-white px-1 rounded whitespace-nowrap z-10">
             {position.top.toFixed(1)}%, {position.left.toFixed(1)}%
             <div className="bg-green-600 text-white px-1 rounded mt-1">
               {position.width.toFixed(1)}% × {position.height.toFixed(1)}%
@@ -130,6 +197,20 @@ export const VisualBodySelector = ({
             {position.rotation !== 0 && (
               <div className="bg-purple-600 text-white px-1 rounded mt-1">
                 ↻ {position.rotation.toFixed(1)}°
+              </div>
+            )}
+            {position.shape === 'polygon' && (
+              <div className="bg-orange-600 text-white px-1 rounded mt-1 flex items-center gap-1">
+                🔷 {position.points?.length || 0} pts
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    resetToCircle(bodyPart);
+                  }}
+                  className="ml-1 text-xs hover:bg-orange-700 px-1 rounded"
+                >
+                  ↺
+                </button>
               </div>
             )}
           </div>
@@ -418,7 +499,9 @@ export const VisualBodySelector = ({
           <p className="text-xs text-blue-600">
             <strong>Drag</strong> to move • <strong>Alt + Drag</strong> to rotate • <strong>Ctrl + Drag</strong> to resize
             <br />
-            Body part names, coordinates, and dimensions shown. Use "Copy Code" when done.
+            <strong>Shift + Drag</strong> to create custom shapes • <strong>Double-click</strong> polygon to add points
+            <br />
+            <strong>Double-click point</strong> to remove • Blue dots are control points for custom shapes
           </p>
         </div>
       )}
@@ -440,7 +523,7 @@ export const VisualBodySelector = ({
             ))
           ) : (
             <p className="text-sm text-[#8E44AD]/60 italic">
-              {isEditMode ? 'Edit mode active - drag to move, Alt+drag to rotate, Ctrl+drag to resize' : 'Click on body areas to select them'}
+              {isEditMode ? 'Edit mode active - Shift+drag for custom shapes, double-click to add/remove points' : 'Click on body areas to select them'}
             </p>
           )}
         </div>
