@@ -1,123 +1,143 @@
 
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Info, Sparkles } from "lucide-react";
+import { ArrowRight, Play, Smartphone, Star, Users, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 
 export const Hero = () => {
   const navigate = useNavigate();
-  
-  const handleGetStarted = () => {
-    navigate("/auth?mode=signup");
-  };
-  
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[calc(100vh-8rem)]">
-      {/* Content Section */}
-      <motion.div 
-        className="text-left space-y-8"
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
+    <div className="relative">
+      {/* Hero Content */}
+      <div className="text-center space-y-8">
         {/* Badge */}
-        <motion.div 
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r from-saas-brand-primary/10 to-saas-brand-secondary/10 border border-saas-brand-primary/20 text-saas-brand-primary font-semibold text-sm"
+        <motion.div
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-saas-brand-primary/10 text-saas-brand-primary border border-saas-brand-primary/20 text-sm font-medium"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.5 }}
         >
-          <Sparkles className="w-4 h-4" />
-          AI-Powered Fitness Revolution
+          <Zap className="w-4 h-4" />
+          <span>AI-Powered Fitness Platform</span>
         </motion.div>
 
         {/* Main Heading */}
-        <motion.h1 
-          className="text-5xl lg:text-7xl font-bold text-saas-text-primary leading-tight tracking-tight"
+        <motion.div
+          className="space-y-6"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
         >
-          Meet{" "}
-          <span className="saas-text-gradient">PULO</span>,{" "}
-          <span className="block text-saas-text-primary">Your AI Fitness Friend</span>
-        </motion.h1>
-        
-        {/* Description */}
-        <motion.p 
-          className="text-xl lg:text-2xl text-saas-text-secondary max-w-2xl leading-relaxed"
-          initial={{ opacity: 0, y: 30 }}
+          <h1 className="text-5xl lg:text-7xl font-bold text-saas-text-primary tracking-tight">
+            Transform Your{" "}
+            <span className="saas-text-gradient">Fitness Journey</span>
+          </h1>
+          <p className="text-xl lg:text-2xl text-saas-text-secondary max-w-3xl mx-auto leading-relaxed">
+            Get personalized AI-powered workout plans that adapt to your goals, schedule, and progress. Join thousands who've revolutionized their fitness.
+          </p>
+        </motion.div>
+
+        {/* Stats */}
+        <motion.div
+          className="flex flex-wrap justify-center gap-8 py-6"
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
         >
-          Think of{" "}
-          <span className="font-bold saas-text-gradient">PULO</span>{" "}
-          as your supportive workout buddy who's always there to guide, motivate, and adapt to your unique fitness journey. No judgment, just personalized support that grows with you.
-        </motion.p>
+          <div className="flex items-center gap-2 text-saas-text-secondary">
+            <Users className="w-5 h-5 text-saas-brand-primary" />
+            <span className="font-semibold">10K+ Active Users</span>
+          </div>
+          <div className="flex items-center gap-2 text-saas-text-secondary">
+            <Star className="w-5 h-5 text-yellow-500" />
+            <span className="font-semibold">4.9/5 Rating</span>
+          </div>
+          <div className="flex items-center gap-2 text-saas-text-secondary">
+            <Zap className="w-5 h-5 text-saas-brand-primary" />
+            <span className="font-semibold">AI-Powered</span>
+          </div>
+        </motion.div>
 
         {/* CTA Buttons */}
-        <motion.div 
-          className="flex flex-col sm:flex-row gap-6"
-          initial={{ opacity: 0, y: 30 }}
+        <motion.div
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <Button 
-            size="xl" 
-            onClick={handleGetStarted} 
-            className="saas-button-primary group px-10 py-5 text-lg font-semibold"
+          <Button
+            size="lg"
+            className="saas-button-primary group"
+            onClick={() => navigate("/auth?mode=signup")}
           >
-            Get Started Free
-            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            Start Your Journey
+            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           
-          <Button 
-            variant="outline" 
-            size="xl" 
-            onClick={() => navigate("/#features")} 
-            className="saas-button-secondary px-10 py-5 text-lg font-semibold group"
+          <Button
+            variant="outline"
+            size="lg"
+            className="saas-button-secondary group"
+            onClick={() => setIsVideoPlaying(true)}
           >
-            <Info className="mr-2 h-5 w-5" />
-            Learn More
+            <Play className="mr-2 w-5 h-5" />
+            Watch Demo
           </Button>
         </motion.div>
 
-        {/* Social Proof */}
-        <motion.div 
-          className="flex items-center gap-6 pt-8 border-t border-saas-border"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
+        {/* Coming Soon Badge */}
+        <motion.div
+          className="flex justify-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <div className="text-center">
-            <div className="text-2xl font-bold text-saas-text-primary">10k+</div>
-            <div className="text-sm text-saas-text-muted">Active Users</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-saas-text-primary">95%</div>
-            <div className="text-sm text-saas-text-muted">Success Rate</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-saas-text-primary">50k+</div>
-            <div className="text-sm text-saas-text-muted">Workouts</div>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-saas-border text-saas-text-secondary text-sm font-medium shadow-sm">
+            <Smartphone className="w-4 h-4" />
+            <span>Mobile app coming soon to App Store & Google Play</span>
           </div>
         </motion.div>
-      </motion.div>
+      </div>
 
-      {/* Image Section */}
-      <motion.div 
-        className="hidden lg:flex items-center justify-center"
-        initial={{ opacity: 0, x: 50, scale: 0.8 }}
-        animate={{ opacity: 1, x: 0, scale: 1 }}
-        transition={{ duration: 0.8, delay: 0.3 }}
+      {/* Hero Image/Video */}
+      <motion.div
+        className="mt-16 lg:mt-20"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.5 }}
       >
-        <motion.img 
-          src="/lovable-uploads/0c6ba37f-748f-4f95-97f3-ed0ca45e618b.png" 
-          alt="PULO AI Fitness Companion" 
-          className="w-full max-w-lg h-auto drop-shadow-2xl"
-          whileHover={{ scale: 1.05, y: -10 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-        />
+        <div className="relative max-w-4xl mx-auto">
+          <div className="aspect-video rounded-3xl overflow-hidden shadow-2xl border border-saas-border bg-gradient-to-br from-saas-brand-primary/10 to-saas-brand-secondary/10">
+            {!isVideoPlaying ? (
+              <div 
+                className="relative w-full h-full bg-cover bg-center cursor-pointer group"
+                style={{ backgroundImage: "url('/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png')" }}
+                onClick={() => setIsVideoPlaying(true)}
+              >
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-20 h-20 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <Play className="w-8 h-8 text-saas-brand-primary ml-1" />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full h-full bg-saas-brand-primary/10 flex items-center justify-center">
+                <div className="text-center space-y-4">
+                  <div className="animate-spin w-8 h-8 border-2 border-saas-brand-primary border-t-transparent rounded-full mx-auto" />
+                  <p className="text-saas-text-secondary">Demo video coming soon...</p>
+                </div>
+              </div>
+            )}
+          </div>
+          
+          {/* Floating Elements */}
+          <div className="absolute -top-6 -left-6 w-24 h-24 bg-saas-brand-primary/10 rounded-full blur-xl animate-pulse" />
+          <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-saas-brand-secondary/10 rounded-full blur-xl animate-pulse delay-1000" />
+        </div>
       </motion.div>
     </div>
   );
