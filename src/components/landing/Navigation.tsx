@@ -14,7 +14,7 @@ export const Navigation = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
     >
-      <nav className="h-32 bg-gradient-to-r from-saas-brand-primary via-saas-brand-secondary to-saas-brand-primary shadow-xl border-b border-white/10">
+      <nav className="h-20 bg-white/95 backdrop-blur-xl border-b border-saas-border shadow-sm">
         <div className="saas-container h-full">
           <div className="flex justify-between items-center h-full">
             {/* Logo Section */}
@@ -25,23 +25,23 @@ export const Navigation = () => {
             >
               <img 
                 alt="PULO" 
-                className="h-32 w-72 object-contain cursor-pointer hover:opacity-90 transition-all duration-300 filter drop-shadow-lg" 
+                className="h-12 w-auto object-contain cursor-pointer hover:opacity-90 transition-all duration-300" 
                 onClick={() => navigate("/")} 
                 src="/lovable-uploads/1c8d5492-3bdc-4f1e-895c-19bd9cf6ac54.png" 
               />
             </motion.div>
 
             {/* Actions Section */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               {/* Coming Soon Badge */}
               <motion.div 
-                className="glass text-white px-6 py-3 rounded-2xl text-sm font-semibold flex items-center gap-3 shadow-lg"
+                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-saas-brand-primary/10 to-saas-brand-secondary/10 border border-saas-brand-primary/20 text-saas-brand-primary font-medium text-sm"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
-                <Smartphone className="w-5 h-5" />
-                <span>Coming Soon on the App Store</span>
+                <Smartphone className="w-4 h-4" />
+                <span>Coming Soon on App Store</span>
               </motion.div>
 
               {/* Sign In Button */}
@@ -53,10 +53,10 @@ export const Navigation = () => {
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  className="bg-white/95 backdrop-blur-sm text-saas-brand-primary border-white/30 hover:bg-white hover:shadow-lg hover:-translate-y-0.5 font-semibold rounded-2xl shadow-md transition-all duration-300" 
+                  className="bg-white border-saas-border text-saas-text-primary hover:bg-saas-bg-primary hover:border-saas-brand-primary hover:text-saas-brand-primary font-semibold rounded-xl shadow-sm hover:shadow-md transition-all duration-300" 
                   onClick={() => navigate("/auth?mode=signin")}
                 >
-                  <LogIn className="mr-2 w-5 h-5" />
+                  <LogIn className="mr-2 w-4 h-4" />
                   Sign In
                 </Button>
               </motion.div>

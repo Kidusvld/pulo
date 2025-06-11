@@ -63,7 +63,7 @@ export const Hero = () => {
           transition={{ duration: 0.8, delay: 0.5 }}
         >
           <Button 
-            size="xl" 
+            size="lg" 
             onClick={handleGetStarted} 
             className="saas-button-primary group px-10 py-5 text-lg font-semibold"
           >
@@ -73,7 +73,7 @@ export const Hero = () => {
           
           <Button 
             variant="outline" 
-            size="xl" 
+            size="lg" 
             onClick={() => navigate("/#features")} 
             className="saas-button-secondary px-10 py-5 text-lg font-semibold group"
           >
