@@ -1,12 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Copy, RotateCcw, Edit, Save } from "lucide-react";
+import { useDragAndDrop } from "@/hooks/useDragAndDrop";
+import { useToast } from "@/hooks/use-toast";
 
 interface VisualBodySelectorProps {
   selectedParts: string[];
   onSelectPart: (part: string) => void;
   showComingSoon?: boolean;
 }
+
+const defaultFrontPositions = {
+  Chest: { top: 30, left: 35, width: 30, height: 15 },
+  Abs: { top: 40, left: 40, width: 20, height: 20 },
+  'Left Shoulder': { top: 20, left: 20, width: 15, height: 15 },
+  'Right Shoulder': { top: 20, left: 65, width: 15, height: 15 },
+  'Left Bicep': { top: 35, left: 15, width: 12, height: 20 },
+  'Right Bicep': { top: 35, left: 73, width: 12, height: 20 },
+  'Left Quadricep': { top: 65, left: 25, width: 15, height: 25 },
+  'Right Quadricep': { top: 65, left: 60, width: 15, height: 25 }
+};
 
 export const VisualBodySelector = ({ 
   selectedParts, 
@@ -15,14 +29,91 @@ export const VisualBodySelector = ({
 }: VisualBodySelectorProps) => {
   const [currentView, setCurrentView] = useState<'front' | 'back'>('front');
   const [showPositioningMode, setShowPositioningMode] = useState(false);
+  const { toast } = useToast();
 
-  const bodyParts = {
-    front: ['Chest', 'Abs', 'Shoulders', 'Biceps', 'Quadriceps'],
-    back: ['Back', 'Lower Back', 'Glutes', 'Triceps', 'Hamstrings']
+  const {
+    positions,
+    isDragging,
+    isEditMode,
+    containerRef,
+    setIsEditMode,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    resetPositions,
+    generateCode
+  } = useDragAndDrop(defaultFrontPositions);
+
+  // Add global mouse event listeners
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
+
+  const handlePartClick = (part: string, event: React.MouseEvent) => {
+    if (isEditMode) {
+      event.stopPropagation();
+      return; // Don't select parts in edit mode
+    }
+    onSelectPart(part);
   };
 
-  const handlePartClick = (part: string) => {
-    onSelectPart(part);
+  const copyCodeToClipboard = () => {
+    const code = generateCode();
+    navigator.clipboard.writeText(code);
+    toast({
+      title: "Code copied!",
+      description: "The positioning code has been copied to your clipboard.",
+    });
+  };
+
+  const renderBodyPart = (bodyPart: string, title: string) => {
+    const position = positions[bodyPart];
+    const isSelected = selectedParts.includes(bodyPart.includes('Left') || bodyPart.includes('Right') ? 
+      bodyPart.replace('Left ', '').replace('Right ', '') : bodyPart);
+    const isDraggingThis = isDragging === bodyPart;
+
+    return (
+      <div
+        key={bodyPart}
+        className={`absolute cursor-pointer rounded-lg transition-all ${
+          isSelected
+            ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
+            : isEditMode
+              ? 'bg-blue-300/50 border-2 border-blue-500 hover:bg-blue-400/50'
+              : showPositioningMode 
+                ? 'bg-red-300/50 border-2 border-red-500' 
+                : 'hover:bg-purple-200/30'
+        } ${isDraggingThis ? 'opacity-70 z-50' : ''} ${isEditMode ? 'cursor-move' : 'cursor-pointer'}`}
+        style={{
+          top: `${position.top}%`,
+          left: `${position.left}%`,
+          width: `${position.width}%`,
+          height: `${position.height}%`
+        }}
+        onClick={(e) => handlePartClick(bodyPart.includes('Left') || bodyPart.includes('Right') ? 
+          bodyPart.replace('Left ', '').replace('Right ', '') : bodyPart, e)}
+        onMouseDown={(e) => handleMouseDown(bodyPart, e)}
+        title={title}
+      >
+        {(showPositioningMode || isEditMode) && (
+          <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800 bg-white/70 rounded">
+            {isEditMode ? '✋' : bodyPart.toUpperCase()}
+          </div>
+        )}
+        {isEditMode && (
+          <div className="absolute -top-6 left-0 text-xs bg-blue-600 text-white px-1 rounded">
+            {position.top.toFixed(1)}%, {position.left.toFixed(1)}%
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -47,180 +138,91 @@ export const VisualBodySelector = ({
         </Button>
       </div>
 
-      {/* Positioning Mode Toggle (only for front view) */}
+      {/* Control Buttons */}
       {currentView === 'front' && (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowPositioningMode(!showPositioningMode)}
-          className="text-[#8E44AD] border-[#8E44AD]"
-        >
-          {showPositioningMode ? 'Hide' : 'Show'} Positioning Guide
-        </Button>
+        <div className="flex flex-wrap gap-2 justify-center">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowPositioningMode(!showPositioningMode)}
+            className="text-[#8E44AD] border-[#8E44AD]"
+          >
+            {showPositioningMode ? 'Hide' : 'Show'} Positioning Guide
+          </Button>
+          
+          <Button
+            variant={isEditMode ? "default" : "outline"}
+            size="sm"
+            onClick={() => setIsEditMode(!isEditMode)}
+            className={isEditMode ? "bg-blue-600 text-white" : "text-blue-600 border-blue-600"}
+          >
+            <Edit className="w-4 h-4 mr-1" />
+            {isEditMode ? 'Exit Edit' : 'Edit Positions'}
+          </Button>
+
+          {isEditMode && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetPositions}
+                className="text-orange-600 border-orange-600"
+              >
+                <RotateCcw className="w-4 h-4 mr-1" />
+                Reset
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={copyCodeToClipboard}
+                className="text-green-600 border-green-600"
+              >
+                <Copy className="w-4 h-4 mr-1" />
+                Copy Code
+              </Button>
+            </>
+          )}
+        </div>
       )}
 
       {/* Body Diagram */}
       <div className="relative w-64 h-80 mx-auto">
         {currentView === 'front' ? (
-          <div className="relative w-full h-full">
+          <div 
+            ref={containerRef}
+            className={`relative w-full h-full ${isEditMode ? 'select-none' : ''}`}
+          >
             <img 
               src="/lovable-uploads/efd47857-cb5e-412b-822f-68ec94e165cd.png" 
               alt="Front body view" 
               className="w-full h-full object-contain"
+              draggable={false}
             />
             
-            {/* Clickable overlay areas for front view */}
-            {/* Chest - moved down from 25% to 30% */}
-            <div
-              className={`absolute top-[30%] left-[35%] w-[30%] h-[15%] cursor-pointer rounded-lg transition-all ${
-                selectedParts.includes('Chest') 
-                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : showPositioningMode 
-                    ? 'bg-red-300/50 border-2 border-red-500' 
-                    : 'hover:bg-purple-200/30'
-              }`}
-              onClick={() => handlePartClick('Chest')}
-              title="Chest"
-            >
-              {showPositioningMode && (
-                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-red-800">
-                  CHEST
-                </div>
-              )}
-            </div>
+            {/* Grid overlay for edit mode */}
+            {isEditMode && (
+              <div className="absolute inset-0 pointer-events-none">
+                <svg className="w-full h-full" style={{ opacity: 0.2 }}>
+                  {Array.from({ length: 10 }, (_, i) => (
+                    <line key={`h-${i}`} x1="0" y1={`${i * 10}%`} x2="100%" y2={`${i * 10}%`} stroke="#666" strokeWidth="1" />
+                  ))}
+                  {Array.from({ length: 10 }, (_, i) => (
+                    <line key={`v-${i}`} x1={`${i * 10}%`} y1="0" x2={`${i * 10}%`} y2="100%" stroke="#666" strokeWidth="1" />
+                  ))}
+                </svg>
+              </div>
+            )}
             
-            {/* Abs */}
-            <div
-              className={`absolute top-[40%] left-[40%] w-[20%] h-[20%] cursor-pointer rounded-lg transition-all ${
-                selectedParts.includes('Abs') 
-                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : showPositioningMode 
-                    ? 'bg-blue-300/50 border-2 border-blue-500' 
-                    : 'hover:bg-purple-200/30'
-              }`}
-              onClick={() => handlePartClick('Abs')}
-              title="Abs"
-            >
-              {showPositioningMode && (
-                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-blue-800">
-                  ABS
-                </div>
-              )}
-            </div>
-            
-            {/* Left Shoulder */}
-            <div
-              className={`absolute top-[20%] left-[20%] w-[15%] h-[15%] cursor-pointer rounded-lg transition-all ${
-                selectedParts.includes('Shoulders') 
-                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : showPositioningMode 
-                    ? 'bg-green-300/50 border-2 border-green-500' 
-                    : 'hover:bg-purple-200/30'
-              }`}
-              onClick={() => handlePartClick('Shoulders')}
-              title="Left Shoulder"
-            >
-              {showPositioningMode && (
-                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-green-800">
-                  L.SHLD
-                </div>
-              )}
-            </div>
-
-            {/* Right Shoulder */}
-            <div
-              className={`absolute top-[20%] right-[20%] w-[15%] h-[15%] cursor-pointer rounded-lg transition-all ${
-                selectedParts.includes('Shoulders') 
-                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : showPositioningMode 
-                    ? 'bg-green-300/50 border-2 border-green-500' 
-                    : 'hover:bg-purple-200/30'
-              }`}
-              onClick={() => handlePartClick('Shoulders')}
-              title="Right Shoulder"
-            >
-              {showPositioningMode && (
-                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-green-800">
-                  R.SHLD
-                </div>
-              )}
-            </div>
-            
-            {/* Left Bicep */}
-            <div
-              className={`absolute top-[35%] left-[15%] w-[12%] h-[20%] cursor-pointer rounded-lg transition-all ${
-                selectedParts.includes('Biceps') 
-                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : showPositioningMode 
-                    ? 'bg-yellow-300/50 border-2 border-yellow-500' 
-                    : 'hover:bg-purple-200/30'
-              }`}
-              onClick={() => handlePartClick('Biceps')}
-              title="Left Bicep"
-            >
-              {showPositioningMode && (
-                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-yellow-800">
-                  L.BIC
-                </div>
-              )}
-            </div>
-
-            {/* Right Bicep */}
-            <div
-              className={`absolute top-[35%] right-[15%] w-[12%] h-[20%] cursor-pointer rounded-lg transition-all ${
-                selectedParts.includes('Biceps') 
-                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : showPositioningMode 
-                    ? 'bg-yellow-300/50 border-2 border-yellow-500' 
-                    : 'hover:bg-purple-200/30'
-              }`}
-              onClick={() => handlePartClick('Biceps')}
-              title="Right Bicep"
-            >
-              {showPositioningMode && (
-                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-yellow-800">
-                  R.BIC
-                </div>
-              )}
-            </div>
-            
-            {/* Left Quadricep */}
-            <div
-              className={`absolute top-[65%] left-[25%] w-[15%] h-[25%] cursor-pointer rounded-lg transition-all ${
-                selectedParts.includes('Quadriceps') 
-                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : showPositioningMode 
-                    ? 'bg-purple-300/50 border-2 border-purple-500' 
-                    : 'hover:bg-purple-200/30'
-              }`}
-              onClick={() => handlePartClick('Quadriceps')}
-              title="Left Quadricep"
-            >
-              {showPositioningMode && (
-                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-purple-800">
-                  L.QUAD
-                </div>
-              )}
-            </div>
-
-            {/* Right Quadricep */}
-            <div
-              className={`absolute top-[65%] right-[25%] w-[15%] h-[25%] cursor-pointer rounded-lg transition-all ${
-                selectedParts.includes('Quadriceps') 
-                  ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : showPositioningMode 
-                    ? 'bg-purple-300/50 border-2 border-purple-500' 
-                    : 'hover:bg-purple-200/30'
-              }`}
-              onClick={() => handlePartClick('Quadriceps')}
-              title="Right Quadricep"
-            >
-              {showPositioningMode && (
-                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-purple-800">
-                  R.QUAD
-                </div>
-              )}
-            </div>
+            {/* Render all body parts */}
+            {renderBodyPart('Chest', 'Chest')}
+            {renderBodyPart('Abs', 'Abs')}
+            {renderBodyPart('Left Shoulder', 'Left Shoulder')}
+            {renderBodyPart('Right Shoulder', 'Right Shoulder')}
+            {renderBodyPart('Left Bicep', 'Left Bicep')}
+            {renderBodyPart('Right Bicep', 'Right Bicep')}
+            {renderBodyPart('Left Quadricep', 'Left Quadricep')}
+            {renderBodyPart('Right Quadricep', 'Right Quadricep')}
           </div>
         ) : (
           <div className="relative w-full h-full">
@@ -271,7 +273,7 @@ export const VisualBodySelector = ({
                 strokeWidth="2"
                 rx="5"
                 className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => handlePartClick('Back')}
+                onClick={() => onSelectPart('Back')}
               >
                 <title>Back</title>
               </rect>
@@ -285,7 +287,7 @@ export const VisualBodySelector = ({
                 strokeWidth="2"
                 rx="5"
                 className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => handlePartClick('Lower Back')}
+                onClick={() => onSelectPart('Lower Back')}
               >
                 <title>Lower Back</title>
               </rect>
@@ -298,7 +300,7 @@ export const VisualBodySelector = ({
                 stroke={selectedParts.includes('Glutes') ? '#8E44AD' : 'transparent'}
                 strokeWidth="2"
                 className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => handlePartClick('Glutes')}
+                onClick={() => onSelectPart('Glutes')}
               >
                 <title>Glutes</title>
               </ellipse>
@@ -311,7 +313,7 @@ export const VisualBodySelector = ({
                 stroke={selectedParts.includes('Triceps') ? '#8E44AD' : 'transparent'}
                 strokeWidth="2"
                 className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => handlePartClick('Triceps')}
+                onClick={() => onSelectPart('Triceps')}
               >
                 <title>Left Tricep</title>
               </ellipse>
@@ -324,7 +326,7 @@ export const VisualBodySelector = ({
                 stroke={selectedParts.includes('Triceps') ? '#8E44AD' : 'transparent'}
                 strokeWidth="2"
                 className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => handlePartClick('Triceps')}
+                onClick={() => onSelectPart('Triceps')}
               >
                 <title>Right Tricep</title>
               </ellipse>
@@ -337,7 +339,7 @@ export const VisualBodySelector = ({
                 stroke={selectedParts.includes('Hamstrings') ? '#8E44AD' : 'transparent'}
                 strokeWidth="2"
                 className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => handlePartClick('Hamstrings')}
+                onClick={() => onSelectPart('Hamstrings')}
               >
                 <title>Left Hamstring</title>
               </ellipse>
@@ -350,7 +352,7 @@ export const VisualBodySelector = ({
                 stroke={selectedParts.includes('Hamstrings') ? '#8E44AD' : 'transparent'}
                 strokeWidth="2"
                 className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => handlePartClick('Hamstrings')}
+                onClick={() => onSelectPart('Hamstrings')}
               >
                 <title>Right Hamstring</title>
               </ellipse>
@@ -363,7 +365,7 @@ export const VisualBodySelector = ({
                 stroke={selectedParts.includes('Calves') ? '#8E44AD' : 'transparent'}
                 strokeWidth="2"
                 className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => handlePartClick('Calves')}
+                onClick={() => onSelectPart('Calves')}
               >
                 <title>Left Calf</title>
               </ellipse>
@@ -376,7 +378,7 @@ export const VisualBodySelector = ({
                 stroke={selectedParts.includes('Calves') ? '#8E44AD' : 'transparent'}
                 strokeWidth="2"
                 className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => handlePartClick('Calves')}
+                onClick={() => onSelectPart('Calves')}
               >
                 <title>Right Calf</title>
               </ellipse>
@@ -384,6 +386,18 @@ export const VisualBodySelector = ({
           </div>
         )}
       </div>
+
+      {/* Edit Mode Instructions */}
+      {isEditMode && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center max-w-md">
+          <p className="text-sm text-blue-800 mb-2">
+            <strong>Edit Mode Active</strong>
+          </p>
+          <p className="text-xs text-blue-600">
+            Drag any body part to reposition it. Live coordinates are shown above each area. Use "Copy Code" to get the updated positioning values when you're done.
+          </p>
+        </div>
+      )}
 
       {/* Selected Body Parts Display */}
       <div className="w-full max-w-md">
@@ -395,19 +409,21 @@ export const VisualBodySelector = ({
                 key={part} 
                 variant="purple" 
                 className="bg-[#8E44AD]/10 text-[#5C2D91] border-[#8E44AD]/20 cursor-pointer hover:bg-[#8E44AD]/20 transition-colors"
-                onClick={() => handlePartClick(part)}
+                onClick={() => !isEditMode && onSelectPart(part)}
               >
                 {part} ×
               </Badge>
             ))
           ) : (
-            <p className="text-sm text-[#8E44AD]/60 italic">Click on body areas to select them</p>
+            <p className="text-sm text-[#8E44AD]/60 italic">
+              {isEditMode ? 'Edit mode active - drag to reposition areas' : 'Click on body areas to select them'}
+            </p>
           )}
         </div>
       </div>
 
       {/* Coming Soon Notice */}
-      {showComingSoon && (
+      {showComingSoon && !isEditMode && (
         <div className="bg-purple-50/50 border border-purple-200/50 rounded-lg p-3 text-center">
           <p className="text-sm text-[#8E44AD]/80">
             🚀 <strong>Body part targeting coming soon!</strong> This feature will help you create workouts focused on specific muscle groups.
