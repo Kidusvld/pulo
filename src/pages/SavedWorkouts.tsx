@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,17 +40,17 @@ const getExerciseIcon = (exerciseName: string) => {
   const name = exerciseName.toLowerCase();
   
   if (name.includes("dumbbell") || name.includes("curl") || name.includes("press") || name.includes("fly")) {
-    return <DumbbellIcon className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+    return <DumbbellIcon className="h-4 w-4 text-purple-300 mr-2 flex-shrink-0" />;
   } else if (name.includes("barbell") || name.includes("deadlift") || name.includes("bench") || name.includes("squat")) {
-    return <Weight className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+    return <Weight className="h-4 w-4 text-purple-300 mr-2 flex-shrink-0" />;
   } else if (name.includes("bike") || name.includes("cycling")) {
-    return <Bike className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+    return <Bike className="h-4 w-4 text-purple-300 mr-2 flex-shrink-0" />;
   } else if (name.includes("run") || name.includes("sprint") || name.includes("jog")) {
-    return <Activity className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+    return <Activity className="h-4 w-4 text-purple-300 mr-2 flex-shrink-0" />;
   } else if (name.includes("stretch") || name.includes("yoga") || name.includes("mobility")) {
-    return <Heart className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+    return <Heart className="h-4 w-4 text-purple-300 mr-2 flex-shrink-0" />;
   } else {
-    return <DumbbellIcon className="h-4 w-4 text-purple-600 mr-2 flex-shrink-0" />;
+    return <DumbbellIcon className="h-4 w-4 text-purple-300 mr-2 flex-shrink-0" />;
   }
 };
 
@@ -169,17 +170,17 @@ const SavedWorkouts = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-deep-purple-900 via-deep-purple-800 to-deep-purple-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-deep-purple-900 via-deep-purple-800 to-deep-purple-900">
-      <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] -z-10"></div>
-      <div className="absolute h-64 w-64 rounded-full bg-purple-500/10 blur-3xl top-20 left-20 -z-10"></div>
-      <div className="absolute h-64 w-64 rounded-full bg-purple-600/10 blur-3xl bottom-20 right-20 -z-10"></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-800">
+      <div className="absolute inset-0 bg-grid-white/[0.02] [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] -z-10"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-500/5 blur-3xl top-20 left-20 -z-10"></div>
+      <div className="absolute h-64 w-64 rounded-full bg-purple-600/5 blur-3xl bottom-20 right-20 -z-10"></div>
         
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-8">
         <motion.div 
@@ -204,7 +205,7 @@ const SavedWorkouts = () => {
             <Button 
               variant="outline"
               onClick={() => navigate("/dashboard")}
-              className="bg-white/10 hover:bg-white/20 text-white border-purple-300/20 font-montserrat font-semibold text-base px-6 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30 hover:border-white/50 font-montserrat font-semibold text-base px-6 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
             >
               <ArrowLeft className="mr-2 h-5 w-5" />
               Back to Dashboard
@@ -218,13 +219,13 @@ const SavedWorkouts = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <Card className="bg-white/10 backdrop-blur-sm border-purple-300/20 p-8">
+            <Card className="bg-white/20 backdrop-blur-sm border-white/20 p-8">
               <CardContent className="text-center py-12">
-                <DumbbellIcon className="h-16 w-16 text-purple-200 mx-auto mb-6" />
-                <h3 className="text-card-title text-white/90 font-montserrat font-bold mb-4 tracking-tight">
+                <DumbbellIcon className="h-16 w-16 text-white/70 mx-auto mb-6" />
+                <h3 className="text-card-title text-white font-montserrat font-bold mb-4 tracking-tight">
                   No saved workout plans yet
                 </h3>
-                <p className="text-body text-white/70 font-opensans leading-relaxed max-w-md mx-auto">
+                <p className="text-body text-white/80 font-opensans leading-relaxed max-w-md mx-auto">
                   Generate and save some personalized workout plans from the dashboard to get started on your fitness journey!
                 </p>
               </CardContent>
@@ -239,14 +240,14 @@ const SavedWorkouts = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 + (index * 0.1) }}
               >
-                <Card className="bg-white/10 backdrop-blur-sm border-purple-300/20 hover:bg-white/15 transition-all duration-300">
+                <Card className="bg-white/20 backdrop-blur-sm border-white/20 hover:bg-white/25 transition-all duration-300">
                   <CardHeader className="flex flex-row items-center justify-between pb-4">
                     <CardTitle className="text-card-title font-montserrat font-bold flex items-center gap-3 text-white tracking-tight">
-                      <DumbbellIcon className="h-6 w-6 text-purple-300" />
+                      <DumbbellIcon className="h-6 w-6 text-purple-200" />
                       {workout.name || "Workout Plan"}
                     </CardTitle>
                     <div className="flex items-center gap-4">
-                      <span className="text-sm text-purple-200 font-opensans font-medium">
+                      <span className="text-sm text-white/80 font-opensans font-medium">
                         Saved on {format(new Date(workout.saved_at), 'MMM d, yyyy')}
                       </span>
                       
@@ -256,7 +257,7 @@ const SavedWorkouts = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => setSelectedWorkoutId(workout.id)}
-                            className="text-white bg-purple-600/40 hover:bg-purple-600/60 border-purple-400/20 font-montserrat font-semibold transition-all duration-200 hover:-translate-y-0.5"
+                            className="text-white bg-purple-500/40 hover:bg-purple-500/60 border-white/30 hover:border-white/50 font-montserrat font-semibold transition-all duration-200 hover:-translate-y-0.5"
                           >
                             <Send className="h-4 w-4 mr-2" />
                             Send to Phone
@@ -305,7 +306,7 @@ const SavedWorkouts = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDelete(workout.id)}
-                        className="text-white/70 hover:bg-red-900/30 hover:text-red-300 transition-all duration-200"
+                        className="text-white/70 hover:bg-red-500/30 hover:text-red-200 transition-all duration-200"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -322,14 +323,14 @@ const SavedWorkouts = () => {
                           transition={{ duration: 0.6, delay: 0.6 + (dayIndex * 0.1) }}
                         >
                           <h3 className="font-montserrat font-bold text-lg flex items-center gap-3 text-white tracking-tight">
-                            <Calendar className="h-5 w-5 text-purple-300" />
+                            <Calendar className="h-5 w-5 text-purple-200" />
                             Day {day.day}
                           </h3>
                           <div className="grid gap-4">
                             {day.exercises.map((exercise, exerciseIndex) => (
                               <motion.div
                                 key={exerciseIndex}
-                                className="bg-white/5 p-5 rounded-xl border border-purple-300/20 hover:bg-white/10 transition-all duration-200"
+                                className="bg-white/10 p-5 rounded-xl border border-white/20 hover:bg-white/15 transition-all duration-200"
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: 0.8 + (exerciseIndex * 0.05) }}
@@ -338,7 +339,7 @@ const SavedWorkouts = () => {
                                   {getExerciseIcon(exercise.name)}
                                   {exercise.name}
                                 </p>
-                                <p className="text-sm text-purple-200 ml-6 font-opensans font-medium leading-relaxed">
+                                <p className="text-sm text-white/80 ml-6 font-opensans font-medium leading-relaxed">
                                   {exercise.sets} sets × {exercise.duration ? `${exercise.duration} sec` : `${exercise.reps} reps`}
                                   (Rest: {exercise.rest}s)
                                 </p>
