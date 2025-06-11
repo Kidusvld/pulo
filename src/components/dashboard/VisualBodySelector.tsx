@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Copy, RotateCcw, Edit, Minus, Plus } from "lucide-react";
+import { Copy, RotateCcw, Edit, Minus, Plus, Save } from "lucide-react";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 import { useToast } from "@/hooks/use-toast";
 
@@ -22,6 +22,19 @@ const defaultFrontPositions = {
   'Right Quadricep': { top: 65, left: 60, width: 15, height: 25, rotation: 0, shape: 'circle' as const }
 };
 
+// Load saved positions from localStorage or use defaults
+const loadSavedPositions = () => {
+  try {
+    const saved = localStorage.getItem('bodyPartPositions');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+  } catch (error) {
+    console.error('Error loading saved positions:', error);
+  }
+  return defaultFrontPositions;
+};
+
 export const VisualBodySelector = ({ 
   selectedParts, 
   onSelectPart, 
@@ -30,6 +43,9 @@ export const VisualBodySelector = ({
   const [currentView, setCurrentView] = useState<'front' | 'back'>('front');
   const [showPositioningMode, setShowPositioningMode] = useState(false);
   const { toast } = useToast();
+
+  // Load saved positions on component mount
+  const [initialPositions] = useState(() => loadSavedPositions());
 
   const {
     positions,
@@ -50,7 +66,7 @@ export const VisualBodySelector = ({
     resetToCircle,
     resetPositions,
     generateCode
-  } = useDragAndDrop(defaultFrontPositions);
+  } = useDragAndDrop(initialPositions);
 
   // Add global mouse event listeners
   useEffect(() => {
@@ -72,12 +88,38 @@ export const VisualBodySelector = ({
     onSelectPart(part);
   };
 
+  const savePositions = () => {
+    try {
+      localStorage.setItem('bodyPartPositions', JSON.stringify(positions));
+      toast({
+        title: "Positions saved!",
+        description: "Your custom body part positions have been saved and will be used for targeting.",
+      });
+    } catch (error) {
+      console.error('Error saving positions:', error);
+      toast({
+        title: "Save failed",
+        description: "Could not save positions. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const copyCodeToClipboard = () => {
     const code = generateCode();
     navigator.clipboard.writeText(code);
     toast({
       title: "Code copied!",
       description: "The positioning code has been copied to your clipboard.",
+    });
+  };
+
+  const resetToDefaults = () => {
+    localStorage.removeItem('bodyPartPositions');
+    resetPositions();
+    toast({
+      title: "Reset complete",
+      description: "Body part positions have been reset to defaults.",
     });
   };
 
@@ -240,18 +282,28 @@ export const VisualBodySelector = ({
               <Button
                 variant="outline"
                 size="sm"
-                onClick={resetPositions}
+                onClick={savePositions}
+                className="text-green-600 border-green-600"
+              >
+                <Save className="w-4 h-4 mr-1" />
+                Save Positions
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetToDefaults}
                 className="text-orange-600 border-orange-600"
               >
                 <RotateCcw className="w-4 h-4 mr-1" />
-                Reset
+                Reset to Defaults
               </Button>
               
               <Button
                 variant="outline"
                 size="sm"
                 onClick={copyCodeToClipboard}
-                className="text-green-600 border-green-600"
+                className="text-gray-600 border-gray-600"
               >
                 <Copy className="w-4 h-4 mr-1" />
                 Copy Code
@@ -473,7 +525,7 @@ export const VisualBodySelector = ({
             <br />
             <strong>Shift + Drag</strong> to create custom shapes • <strong>Double-click</strong> polygon to add points
             <br />
-            <strong>Double-click point</strong> to remove • Blue dots are control points for custom shapes
+            <strong>Double-click point</strong> to remove • Click <strong>Save Positions</strong> to store your layout
           </p>
         </div>
       )}
@@ -495,7 +547,7 @@ export const VisualBodySelector = ({
             ))
           ) : (
             <p className="text-sm text-[#8E44AD]/60 italic">
-              {isEditMode ? 'Edit mode active - Shift+drag for custom shapes, double-click to add/remove points' : 'Click on body areas to select them'}
+              {isEditMode ? 'Position the body parts and click Save Positions to store your layout' : 'Click on body areas to select them for targeting'}
             </p>
           )}
         </div>
@@ -505,7 +557,7 @@ export const VisualBodySelector = ({
       {showComingSoon && !isEditMode && (
         <div className="bg-purple-50/50 border border-purple-200/50 rounded-lg p-3 text-center">
           <p className="text-sm text-[#8E44AD]/80">
-            🚀 <strong>Body part targeting coming soon!</strong> This feature will help you create workouts focused on specific muscle groups.
+            🚀 <strong>Body part targeting is now active!</strong> Your custom positioned areas will be used when generating targeted workouts.
           </p>
         </div>
       )}
