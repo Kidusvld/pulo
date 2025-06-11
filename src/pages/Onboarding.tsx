@@ -161,28 +161,31 @@ const Onboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pulo-purple via-[#6D3CAA] to-[#502680] font-opensans">
-      <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(0deg,rgba(255,255,255,0.1),rgba(255,255,255,0.5))] -z-10"></div>
-      <div className="absolute h-64 w-64 rounded-full bg-purple-600/20 blur-3xl top-20 left-20 -z-10 animate-pulse"></div>
-      <div className="absolute h-64 w-64 rounded-full bg-purple-700/20 blur-3xl bottom-20 right-20 -z-10 animate-pulse"></div>
+    <div className="min-h-screen bg-gradient-to-br from-saas-bg-primary via-white to-gray-50">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-grid-slate-100 opacity-30 pointer-events-none" />
+      
+      {/* Subtle Gradient Overlays */}
+      <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-saas-brand-primary/5 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-saas-brand-secondary/5 blur-3xl pointer-events-none" />
       
       {/* Logo and back button */}
-      <div className="w-full max-w-[1440px] mx-auto px-[120px] pt-8 flex items-center justify-between">
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex items-center justify-between">
         <button 
           onClick={() => navigate("/")}
-          className="flex items-center text-white/80 hover:text-white transition-colors"
+          className="flex items-center text-saas-text-secondary hover:text-saas-text-primary transition-colors duration-200"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
-          <span>Back to Home</span>
+          <span className="font-medium">Back to Home</span>
         </button>
         <div className="flex items-center">
           <img 
-            src="/lovable-uploads/21b3ca3c-11f1-4d5e-81e3-9b2dddbec6f7.png"
+            src="/lovable-uploads/1c8d5492-3bdc-4f1e-895c-19bd9cf6ac54.png"
             alt="PULO"
             className="h-10 w-auto rounded-xl" 
           />
-          <span className="ml-2 text-white/90 font-semibold text-lg font-montserrat">
-            <span className="text-pulo-accent">PULO</span> Fitness
+          <span className="ml-3 text-saas-text-primary font-semibold text-lg font-montserrat">
+            <span className="bg-gradient-to-r from-saas-brand-primary to-saas-brand-secondary bg-clip-text text-transparent">PULO</span> Fitness
           </span>
         </div>
       </div>
@@ -194,14 +197,14 @@ const Onboarding = () => {
           transition={{ duration: 0.5 }}
           className="w-full max-w-lg"
         >
-          <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-purple-300">
+          <Card className="bg-white/95 backdrop-blur-xl shadow-xl border border-saas-border rounded-2xl">
             <CardHeader className="pb-8">
-              <CardTitle className="text-3xl font-bold text-center text-purple-900 font-montserrat">
+              <CardTitle className="text-3xl font-bold text-center text-saas-text-primary font-montserrat">
                 {step === 1 ? "Welcome to PULO" : `Step ${step} of 3`}
               </CardTitle>
               <div className="w-full bg-gray-200 h-3 rounded-full mt-4 overflow-hidden">
                 <motion.div 
-                  className="bg-pulo-accent h-3 rounded-full"
+                  className="bg-gradient-to-r from-saas-brand-primary to-saas-brand-secondary h-3 rounded-full"
                   initial={{ width: `${((step - 1) / 3) * 100}%` }}
                   animate={{ width: `${(step / 3) * 100}%` }}
                   transition={{ duration: 0.3 }}
@@ -233,7 +236,7 @@ const Onboarding = () => {
       </div>
       
       {/* Watermark */}
-      <div className="absolute bottom-4 left-8 opacity-10 pointer-events-none">
+      <div className="absolute bottom-4 left-8 opacity-5 pointer-events-none">
         <img
           src="/lovable-uploads/ed14669a-6c42-46ae-83c8-aaced2305f3d.png"
           alt="PULO Watermark"

@@ -32,7 +32,7 @@ export const StepNavigation = ({
             variant="outline"
             onClick={onPrevious}
             disabled={loading}
-            className="flex items-center font-montserrat bg-white border-purple-200 hover:bg-purple-50 hover:text-pulo-accent transition-all duration-300 rounded-lg"
+            className="flex items-center font-montserrat bg-white border-saas-border hover:bg-saas-bg-primary hover:text-saas-brand-primary transition-all duration-300 rounded-xl"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Previous
@@ -48,7 +48,7 @@ export const StepNavigation = ({
           <Button
             onClick={onNext}
             disabled={!canProceed || loading}
-            className="bg-gradient-to-r from-pulo-purple to-pulo-accent hover:from-[#5C2D91] hover:to-[#9D55BD] font-montserrat shadow-md shadow-purple-200/50 rounded-lg"
+            className="bg-gradient-to-r from-saas-brand-primary to-saas-brand-secondary hover:from-saas-brand-primary/90 hover:to-saas-brand-secondary/90 font-montserrat shadow-md hover:shadow-lg rounded-xl"
           >
             Next
             <ArrowRight className="ml-2 h-4 w-4" />
@@ -63,7 +63,7 @@ export const StepNavigation = ({
           <Button
             onClick={onComplete}
             disabled={!canProceed || loading}
-            className="bg-gradient-to-r from-pulo-purple to-pulo-accent hover:from-[#5C2D91] hover:to-[#9D55BD] font-montserrat shadow-md shadow-purple-200/50 px-6 rounded-lg"
+            className="bg-gradient-to-r from-saas-brand-primary to-saas-brand-secondary hover:from-saas-brand-primary/90 hover:to-saas-brand-secondary/90 font-montserrat shadow-md hover:shadow-lg px-6 rounded-xl"
           >
             {loading ? (
               <div className="flex items-center">
