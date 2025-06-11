@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,17 +23,29 @@ const defaultFrontPositions = {
   'Right Quadricep': { top: 65, left: 60, width: 15, height: 25, rotation: 0, shape: 'circle' as const }
 };
 
+const defaultBackPositions = {
+  'Back': { top: 30, left: 35, width: 30, height: 25, rotation: 0, shape: 'circle' as const },
+  'Lower Back': { top: 55, left: 40, width: 20, height: 15, rotation: 0, shape: 'circle' as const },
+  'Glutes': { top: 70, left: 38, width: 24, height: 18, rotation: 0, shape: 'circle' as const },
+  'Left Tricep': { top: 35, left: 15, width: 12, height: 20, rotation: 0, shape: 'circle' as const },
+  'Right Tricep': { top: 35, left: 73, width: 12, height: 20, rotation: 0, shape: 'circle' as const },
+  'Left Hamstring': { top: 88, left: 25, width: 15, height: 25, rotation: 0, shape: 'circle' as const },
+  'Right Hamstring': { top: 88, left: 60, width: 15, height: 25, rotation: 0, shape: 'circle' as const },
+  'Left Calf': { top: 115, left: 28, width: 12, height: 20, rotation: 0, shape: 'circle' as const },
+  'Right Calf': { top: 115, left: 60, width: 12, height: 20, rotation: 0, shape: 'circle' as const }
+};
+
 // Load saved positions from localStorage or use defaults
-const loadSavedPositions = () => {
+const loadSavedPositions = (view: 'front' | 'back') => {
   try {
-    const saved = localStorage.getItem('bodyPartPositions');
+    const saved = localStorage.getItem(`bodyPartPositions_${view}`);
     if (saved) {
       return JSON.parse(saved);
     }
   } catch (error) {
     console.error('Error loading saved positions:', error);
   }
-  return defaultFrontPositions;
+  return view === 'front' ? defaultFrontPositions : defaultBackPositions;
 };
 
 export const VisualBodySelector = ({ 
@@ -44,8 +57,11 @@ export const VisualBodySelector = ({
   const [showPositioningMode, setShowPositioningMode] = useState(false);
   const { toast } = useToast();
 
-  // Load saved positions on component mount
-  const [initialPositions] = useState(() => loadSavedPositions());
+  // Load saved positions for current view
+  const [frontPositions] = useState(() => loadSavedPositions('front'));
+  const [backPositions] = useState(() => loadSavedPositions('back'));
+
+  const currentPositions = currentView === 'front' ? frontPositions : backPositions;
 
   const {
     positions,
@@ -65,8 +81,15 @@ export const VisualBodySelector = ({
     removePoint,
     resetToCircle,
     resetPositions,
-    generateCode
-  } = useDragAndDrop(initialPositions);
+    generateCode,
+    setPositions
+  } = useDragAndDrop(currentPositions);
+
+  // Update positions when view changes
+  useEffect(() => {
+    const newPositions = currentView === 'front' ? frontPositions : backPositions;
+    setPositions(newPositions);
+  }, [currentView, frontPositions, backPositions, setPositions]);
 
   // Add global mouse event listeners
   useEffect(() => {
@@ -90,10 +113,10 @@ export const VisualBodySelector = ({
 
   const savePositions = () => {
     try {
-      localStorage.setItem('bodyPartPositions', JSON.stringify(positions));
+      localStorage.setItem(`bodyPartPositions_${currentView}`, JSON.stringify(positions));
       toast({
         title: "Positions saved!",
-        description: "Your custom body part positions have been saved and will be used for targeting.",
+        description: `Your custom ${currentView} body part positions have been saved and will be used for targeting.`,
       });
     } catch (error) {
       console.error('Error saving positions:', error);
@@ -115,11 +138,12 @@ export const VisualBodySelector = ({
   };
 
   const resetToDefaults = () => {
-    localStorage.removeItem('bodyPartPositions');
-    resetPositions();
+    localStorage.removeItem(`bodyPartPositions_${currentView}`);
+    const defaultPositions = currentView === 'front' ? defaultFrontPositions : defaultBackPositions;
+    setPositions(defaultPositions);
     toast({
       title: "Reset complete",
-      description: "Body part positions have been reset to defaults.",
+      description: `${currentView} body part positions have been reset to defaults.`,
     });
   };
 
@@ -256,269 +280,121 @@ export const VisualBodySelector = ({
       </div>
 
       {/* Control Buttons */}
-      {currentView === 'front' && (
-        <div className="flex flex-wrap gap-2 justify-center">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowPositioningMode(!showPositioningMode)}
-            className="text-[#8E44AD] border-[#8E44AD]"
-          >
-            {showPositioningMode ? 'Hide' : 'Show'} Positioning Guide
-          </Button>
-          
-          <Button
-            variant={isEditMode ? "default" : "outline"}
-            size="sm"
-            onClick={() => setIsEditMode(!isEditMode)}
-            className={isEditMode ? "bg-blue-600 text-white" : "text-blue-600 border-blue-600"}
-          >
-            <Edit className="w-4 h-4 mr-1" />
-            {isEditMode ? 'Exit Edit' : 'Edit Positions'}
-          </Button>
+      <div className="flex flex-wrap gap-2 justify-center">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowPositioningMode(!showPositioningMode)}
+          className="text-[#8E44AD] border-[#8E44AD]"
+        >
+          {showPositioningMode ? 'Hide' : 'Show'} Positioning Guide
+        </Button>
+        
+        <Button
+          variant={isEditMode ? "default" : "outline"}
+          size="sm"
+          onClick={() => setIsEditMode(!isEditMode)}
+          className={isEditMode ? "bg-blue-600 text-white" : "text-blue-600 border-blue-600"}
+        >
+          <Edit className="w-4 h-4 mr-1" />
+          {isEditMode ? 'Exit Edit' : 'Edit Positions'}
+        </Button>
 
-          {isEditMode && (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={savePositions}
-                className="text-green-600 border-green-600"
-              >
-                <Save className="w-4 h-4 mr-1" />
-                Save Positions
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={resetToDefaults}
-                className="text-orange-600 border-orange-600"
-              >
-                <RotateCcw className="w-4 h-4 mr-1" />
-                Reset to Defaults
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={copyCodeToClipboard}
-                className="text-gray-600 border-gray-600"
-              >
-                <Copy className="w-4 h-4 mr-1" />
-                Copy Code
-              </Button>
-            </>
-          )}
-        </div>
-      )}
+        {isEditMode && (
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={savePositions}
+              className="text-green-600 border-green-600"
+            >
+              <Save className="w-4 h-4 mr-1" />
+              Save Positions
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={resetToDefaults}
+              className="text-orange-600 border-orange-600"
+            >
+              <RotateCcw className="w-4 h-4 mr-1" />
+              Reset to Defaults
+            </Button>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={copyCodeToClipboard}
+              className="text-gray-600 border-gray-600"
+            >
+              <Copy className="w-4 h-4 mr-1" />
+              Copy Code
+            </Button>
+          </>
+        )}
+      </div>
 
       {/* Body Diagram */}
       <div className="relative w-64 h-80 mx-auto">
-        {currentView === 'front' ? (
-          <div 
-            ref={containerRef}
-            className={`relative w-full h-full ${isEditMode ? 'select-none' : ''}`}
-          >
-            <img 
-              src="/lovable-uploads/efd47857-cb5e-412b-822f-68ec94e165cd.png" 
-              alt="Front body view" 
-              className="w-full h-full object-contain"
-              draggable={false}
-            />
-            
-            {/* Grid overlay for edit mode */}
-            {isEditMode && (
-              <div className="absolute inset-0 pointer-events-none">
-                <svg className="w-full h-full" style={{ opacity: 0.2 }}>
-                  {Array.from({ length: 10 }, (_, i) => (
-                    <line key={`h-${i}`} x1="0" y1={`${i * 10}%`} x2="100%" y2={`${i * 10}%`} stroke="#666" strokeWidth="1" />
-                  ))}
-                  {Array.from({ length: 10 }, (_, i) => (
-                    <line key={`v-${i}`} x1={`${i * 10}%`} y1="0" x2={`${i * 10}%`} y2="100%" stroke="#666" strokeWidth="1" />
-                  ))}
-                </svg>
-              </div>
-            )}
-            
-            {/* Render all body parts */}
-            {renderBodyPart('Chest', 'Chest')}
-            {renderBodyPart('Abs', 'Abs')}
-            {renderBodyPart('Left Shoulder', 'Left Shoulder')}
-            {renderBodyPart('Right Shoulder', 'Right Shoulder')}
-            {renderBodyPart('Left Bicep', 'Left Bicep')}
-            {renderBodyPart('Right Bicep', 'Right Bicep')}
-            {renderBodyPart('Left Quadricep', 'Left Quadricep')}
-            {renderBodyPart('Right Quadricep', 'Right Quadricep')}
-          </div>
-        ) : (
-          <div className="relative w-full h-full">
-            <svg 
-              viewBox="0 0 200 300" 
-              className="w-full h-full"
-              style={{ filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.1))' }}
-            >
-              {/* Back Body Outline */}
-              <path
-                d="M100 20 
-                   C85 20, 75 30, 75 45
-                   L75 60
-                   C70 65, 65 70, 60 80
-                   L60 120
-                   C60 130, 65 140, 75 150
-                   L75 180
-                   C70 190, 65 200, 60 210
-                   L60 250
-                   C60 260, 70 270, 80 270
-                   L80 280
-                   C85 285, 95 285, 100 280
-                   C105 285, 115 285, 120 280
-                   L120 270
-                   C130 270, 140 260, 140 250
-                   L140 210
-                   C135 200, 130 190, 125 180
-                   L125 150
-                   C135 140, 140 130, 140 120
-                   L140 80
-                   C135 70, 130 65, 125 60
-                   L125 45
-                   C125 30, 115 20, 100 20 Z"
-                fill="#E8E0F5"
-                stroke="#8E44AD"
-                strokeWidth="2"
-                className="transition-all duration-200"
-              />
-
-              {/* Back muscle groups - clickable areas */}
-              
-              {/* Upper Back */}
-              <rect
-                x="80" y="50" width="40" height="30"
-                fill={selectedParts.includes('Back') ? '#8E44AD' : 'transparent'}
-                fillOpacity={selectedParts.includes('Back') ? '0.4' : '0'}
-                stroke={selectedParts.includes('Back') ? '#8E44AD' : 'transparent'}
-                strokeWidth="2"
-                rx="5"
-                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => onSelectPart('Back')}
-              >
-                <title>Back</title>
-              </rect>
-
-              {/* Lower Back */}
-              <rect
-                x="85" y="85" width="30" height="25"
-                fill={selectedParts.includes('Lower Back') ? '#8E44AD' : 'transparent'}
-                fillOpacity={selectedParts.includes('Lower Back') ? '0.4' : '0'}
-                stroke={selectedParts.includes('Lower Back') ? '#8E44AD' : 'transparent'}
-                strokeWidth="2"
-                rx="5"
-                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => onSelectPart('Lower Back')}
-              >
-                <title>Lower Back</title>
-              </rect>
-
-              {/* Glutes */}
-              <ellipse
-                cx="100" cy="130" rx="20" ry="15"
-                fill={selectedParts.includes('Glutes') ? '#8E44AD' : 'transparent'}
-                fillOpacity={selectedParts.includes('Glutes') ? '0.4' : '0'}
-                stroke={selectedParts.includes('Glutes') ? '#8E44AD' : 'transparent'}
-                strokeWidth="2"
-                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => onSelectPart('Glutes')}
-              >
-                <title>Glutes</title>
-              </ellipse>
-
-              {/* Left Tricep */}
-              <ellipse
-                cx="65" cy="75" rx="8" ry="20"
-                fill={selectedParts.includes('Triceps') ? '#8E44AD' : 'transparent'}
-                fillOpacity={selectedParts.includes('Triceps') ? '0.4' : '0'}
-                stroke={selectedParts.includes('Triceps') ? '#8E44AD' : 'transparent'}
-                strokeWidth="2"
-                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => onSelectPart('Triceps')}
-              >
-                <title>Left Tricep</title>
-              </ellipse>
-
-              {/* Right Tricep */}
-              <ellipse
-                cx="135" cy="75" rx="8" ry="20"
-                fill={selectedParts.includes('Triceps') ? '#8E44AD' : 'transparent'}
-                fillOpacity={selectedParts.includes('Triceps') ? '0.4' : '0'}
-                stroke={selectedParts.includes('Triceps') ? '#8E44AD' : 'transparent'}
-                strokeWidth="2"
-                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => onSelectPart('Triceps')}
-              >
-                <title>Right Tricep</title>
-              </ellipse>
-
-              {/* Left Hamstring */}
-              <ellipse
-                cx="85" cy="180" rx="10" ry="25"
-                fill={selectedParts.includes('Hamstrings') ? '#8E44AD' : 'transparent'}
-                fillOpacity={selectedParts.includes('Hamstrings') ? '0.4' : '0'}
-                stroke={selectedParts.includes('Hamstrings') ? '#8E44AD' : 'transparent'}
-                strokeWidth="2"
-                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => onSelectPart('Hamstrings')}
-              >
-                <title>Left Hamstring</title>
-              </ellipse>
-
-              {/* Right Hamstring */}
-              <ellipse
-                cx="115" cy="180" rx="10" ry="25"
-                fill={selectedParts.includes('Hamstrings') ? '#8E44AD' : 'transparent'}
-                fillOpacity={selectedParts.includes('Hamstrings') ? '0.4' : '0'}
-                stroke={selectedParts.includes('Hamstrings') ? '#8E44AD' : 'transparent'}
-                strokeWidth="2"
-                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => onSelectPart('Hamstrings')}
-              >
-                <title>Right Hamstring</title>
-              </ellipse>
-
-              {/* Left Calf */}
-              <ellipse
-                cx="85" cy="230" rx="8" ry="20"
-                fill={selectedParts.includes('Calves') ? '#8E44AD' : 'transparent'}
-                fillOpacity={selectedParts.includes('Calves') ? '0.4' : '0'}
-                stroke={selectedParts.includes('Calves') ? '#8E44AD' : 'transparent'}
-                strokeWidth="2"
-                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => onSelectPart('Calves')}
-              >
-                <title>Left Calf</title>
-              </ellipse>
-
-              {/* Right Calf */}
-              <ellipse
-                cx="115" cy="230" rx="8" ry="20"
-                fill={selectedParts.includes('Calves') ? '#8E44AD' : 'transparent'}
-                fillOpacity={selectedParts.includes('Calves') ? '0.4' : '0'}
-                stroke={selectedParts.includes('Calves') ? '#8E44AD' : 'transparent'}
-                strokeWidth="2"
-                className="cursor-pointer hover:fill-purple-200 hover:fill-opacity-30 transition-all"
-                onClick={() => onSelectPart('Calves')}
-              >
-                <title>Right Calf</title>
-              </ellipse>
-            </svg>
-          </div>
-        )}
+        <div 
+          ref={containerRef}
+          className={`relative w-full h-full ${isEditMode ? 'select-none' : ''}`}
+        >
+          <img 
+            src={currentView === 'front' ? "/lovable-uploads/efd47857-cb5e-412b-822f-68ec94e165cd.png" : "/lovable-uploads/0735d87c-af0c-45a9-a870-bdbf776f4a3b.png"}
+            alt={`${currentView} body view`}
+            className="w-full h-full object-contain"
+            draggable={false}
+          />
+          
+          {/* Grid overlay for edit mode */}
+          {isEditMode && (
+            <div className="absolute inset-0 pointer-events-none">
+              <svg className="w-full h-full" style={{ opacity: 0.2 }}>
+                {Array.from({ length: 10 }, (_, i) => (
+                  <line key={`h-${i}`} x1="0" y1={`${i * 10}%`} x2="100%" y2={`${i * 10}%`} stroke="#666" strokeWidth="1" />
+                ))}
+                {Array.from({ length: 10 }, (_, i) => (
+                  <line key={`v-${i}`} x1={`${i * 10}%`} y1="0" x2={`${i * 10}%`} y2="100%" stroke="#666" strokeWidth="1" />
+                ))}
+              </svg>
+            </div>
+          )}
+          
+          {/* Render body parts based on current view */}
+          {currentView === 'front' ? (
+            <>
+              {renderBodyPart('Chest', 'Chest')}
+              {renderBodyPart('Abs', 'Abs')}
+              {renderBodyPart('Left Shoulder', 'Left Shoulder')}
+              {renderBodyPart('Right Shoulder', 'Right Shoulder')}
+              {renderBodyPart('Left Bicep', 'Left Bicep')}
+              {renderBodyPart('Right Bicep', 'Right Bicep')}
+              {renderBodyPart('Left Quadricep', 'Left Quadricep')}
+              {renderBodyPart('Right Quadricep', 'Right Quadricep')}
+            </>
+          ) : (
+            <>
+              {renderBodyPart('Back', 'Back')}
+              {renderBodyPart('Lower Back', 'Lower Back')}
+              {renderBodyPart('Glutes', 'Glutes')}
+              {renderBodyPart('Left Tricep', 'Left Tricep')}
+              {renderBodyPart('Right Tricep', 'Right Tricep')}
+              {renderBodyPart('Left Hamstring', 'Left Hamstring')}
+              {renderBodyPart('Right Hamstring', 'Right Hamstring')}
+              {renderBodyPart('Left Calf', 'Left Calf')}
+              {renderBodyPart('Right Calf', 'Right Calf')}
+            </>
+          )}
+        </div>
       </div>
 
       {/* Edit Mode Instructions */}
       {isEditMode && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center max-w-md">
           <p className="text-sm text-blue-800 mb-2">
-            <strong>Edit Mode Active</strong>
+            <strong>Edit Mode Active - {currentView.charAt(0).toUpperCase() + currentView.slice(1)} View</strong>
           </p>
           <p className="text-xs text-blue-600">
             <strong>Drag</strong> to move • <strong>Alt + Drag</strong> to rotate • <strong>Ctrl + Drag</strong> to resize
