@@ -6,7 +6,7 @@ interface Position {
   left: number;
   width: number;
   height: number;
-  rotation: number; // Add rotation property
+  rotation: number;
 }
 
 interface BodyPartPositions {
@@ -17,9 +17,11 @@ export const useDragAndDrop = (initialPositions: BodyPartPositions) => {
   const [positions, setPositions] = useState<BodyPartPositions>(initialPositions);
   const [isDragging, setIsDragging] = useState<string | null>(null);
   const [isRotating, setIsRotating] = useState<string | null>(null);
+  const [isResizing, setIsResizing] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [rotationStart, setRotationStart] = useState({ angle: 0, centerX: 0, centerY: 0 });
+  const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = useCallback((bodyPart: string, event: React.MouseEvent) => {
@@ -28,8 +30,18 @@ export const useDragAndDrop = (initialPositions: BodyPartPositions) => {
     event.preventDefault();
     event.stopPropagation();
     
-    // Check if Alt key is pressed for rotation mode
-    if (event.altKey) {
+    // Check modifier keys for different modes
+    if (event.ctrlKey || event.metaKey) {
+      // Resize mode
+      setIsResizing(bodyPart);
+      setResizeStart({
+        x: event.clientX,
+        y: event.clientY,
+        width: positions[bodyPart].width,
+        height: positions[bodyPart].height
+      });
+    } else if (event.altKey) {
+      // Rotation mode
       setIsRotating(bodyPart);
       const rect = event.currentTarget.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
@@ -42,6 +54,7 @@ export const useDragAndDrop = (initialPositions: BodyPartPositions) => {
         centerY
       });
     } else {
+      // Drag mode
       setIsDragging(bodyPart);
       setDragStart({
         x: event.clientX,
@@ -91,12 +104,34 @@ export const useDragAndDrop = (initialPositions: BodyPartPositions) => {
           rotation: rotation % 360
         }
       }));
+    } else if (isResizing) {
+      const container = containerRef.current;
+      const rect = container.getBoundingClientRect();
+      
+      const deltaX = event.clientX - resizeStart.x;
+      const deltaY = event.clientY - resizeStart.y;
+      
+      const deltaWidthPercent = (deltaX / rect.width) * 100;
+      const deltaHeightPercent = (deltaY / rect.height) * 100;
+      
+      const newWidth = Math.max(5, Math.min(50, resizeStart.width + deltaWidthPercent));
+      const newHeight = Math.max(5, Math.min(50, resizeStart.height + deltaHeightPercent));
+      
+      setPositions(prev => ({
+        ...prev,
+        [isResizing]: {
+          ...prev[isResizing],
+          width: newWidth,
+          height: newHeight
+        }
+      }));
     }
-  }, [isDragging, isRotating, dragStart, rotationStart]);
+  }, [isDragging, isRotating, isResizing, dragStart, rotationStart, resizeStart]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(null);
     setIsRotating(null);
+    setIsResizing(null);
   }, []);
 
   const resetPositions = useCallback(() => {
@@ -107,7 +142,7 @@ export const useDragAndDrop = (initialPositions: BodyPartPositions) => {
     let code = "// Updated body part positions:\n";
     Object.entries(positions).forEach(([bodyPart, pos]) => {
       code += `// ${bodyPart}\n`;
-      code += `className="absolute top-[${pos.top.toFixed(1)}%] left-[${pos.left.toFixed(1)}%] w-[${pos.width}%] h-[${pos.height}%]`;
+      code += `className="absolute top-[${pos.top.toFixed(1)}%] left-[${pos.left.toFixed(1)}%] w-[${pos.width.toFixed(1)}%] h-[${pos.height.toFixed(1)}%]`;
       if (pos.rotation !== 0) {
         code += ` transform rotate-[${pos.rotation.toFixed(1)}deg]`;
       }
@@ -124,6 +159,7 @@ export const useDragAndDrop = (initialPositions: BodyPartPositions) => {
     positions,
     isDragging,
     isRotating,
+    isResizing,
     isEditMode,
     containerRef,
     setIsEditMode,

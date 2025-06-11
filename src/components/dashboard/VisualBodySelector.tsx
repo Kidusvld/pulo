@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,6 +35,7 @@ export const VisualBodySelector = ({
     positions,
     isDragging,
     isRotating,
+    isResizing,
     isEditMode,
     containerRef,
     setIsEditMode,
@@ -48,7 +48,7 @@ export const VisualBodySelector = ({
 
   // Add global mouse event listeners
   useEffect(() => {
-    if (isDragging || isRotating) {
+    if (isDragging || isRotating || isResizing) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
       return () => {
@@ -56,7 +56,7 @@ export const VisualBodySelector = ({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, isRotating, handleMouseMove, handleMouseUp]);
+  }, [isDragging, isRotating, isResizing, handleMouseMove, handleMouseUp]);
 
   const handlePartClick = (part: string, event: React.MouseEvent) => {
     if (isEditMode) {
@@ -81,6 +81,7 @@ export const VisualBodySelector = ({
       bodyPart.replace('Left ', '').replace('Right ', '') : bodyPart);
     const isDraggingThis = isDragging === bodyPart;
     const isRotatingThis = isRotating === bodyPart;
+    const isResizingThis = isResizing === bodyPart;
 
     return (
       <div
@@ -93,7 +94,7 @@ export const VisualBodySelector = ({
               : showPositioningMode 
                 ? 'bg-red-300/50 border-2 border-red-500' 
                 : 'hover:bg-purple-200/30'
-        } ${isDraggingThis || isRotatingThis ? 'opacity-70 z-50' : ''} ${isEditMode ? 'cursor-move' : 'cursor-pointer'}`}
+        } ${isDraggingThis || isRotatingThis || isResizingThis ? 'opacity-70 z-50' : ''} ${isEditMode ? 'cursor-move' : 'cursor-pointer'}`}
         style={{
           top: `${position.top}%`,
           left: `${position.left}%`,
@@ -112,7 +113,7 @@ export const VisualBodySelector = ({
               <div className="text-center leading-tight">
                 <div className="font-semibold">{bodyPart}</div>
                 <div className="text-[10px] text-gray-600">
-                  {isRotatingThis ? '🔄 Rotating' : isDraggingThis ? '✋ Dragging' : 'Drag to move'}
+                  {isResizingThis ? '⚡ Resizing' : isRotatingThis ? '🔄 Rotating' : isDraggingThis ? '✋ Dragging' : 'Drag • Alt+Drag • Ctrl+Drag'}
                 </div>
               </div>
             ) : (
@@ -123,6 +124,9 @@ export const VisualBodySelector = ({
         {isEditMode && (
           <div className="absolute -top-8 left-0 text-xs bg-blue-600 text-white px-1 rounded whitespace-nowrap z-10">
             {position.top.toFixed(1)}%, {position.left.toFixed(1)}%
+            <div className="bg-green-600 text-white px-1 rounded mt-1">
+              {position.width.toFixed(1)}% × {position.height.toFixed(1)}%
+            </div>
             {position.rotation !== 0 && (
               <div className="bg-purple-600 text-white px-1 rounded mt-1">
                 ↻ {position.rotation.toFixed(1)}°
@@ -412,9 +416,9 @@ export const VisualBodySelector = ({
             <strong>Edit Mode Active</strong>
           </p>
           <p className="text-xs text-blue-600">
-            <strong>Drag</strong> to move • <strong>Alt + Drag</strong> to rotate
+            <strong>Drag</strong> to move • <strong>Alt + Drag</strong> to rotate • <strong>Ctrl + Drag</strong> to resize
             <br />
-            Body part names and live coordinates shown. Use "Copy Code" when done.
+            Body part names, coordinates, and dimensions shown. Use "Copy Code" when done.
           </p>
         </div>
       )}
@@ -436,7 +440,7 @@ export const VisualBodySelector = ({
             ))
           ) : (
             <p className="text-sm text-[#8E44AD]/60 italic">
-              {isEditMode ? 'Edit mode active - drag to move, Alt+drag to rotate' : 'Click on body areas to select them'}
+              {isEditMode ? 'Edit mode active - drag to move, Alt+drag to rotate, Ctrl+drag to resize' : 'Click on body areas to select them'}
             </p>
           )}
         </div>
