@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +9,7 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { Json } from "@/integrations/supabase/types";
+import { motion } from "framer-motion";
 
 interface Exercise {
   name: string;
@@ -182,132 +182,175 @@ const SavedWorkouts = () => {
       <div className="absolute h-64 w-64 rounded-full bg-purple-600/10 blur-3xl bottom-20 right-20 -z-10"></div>
         
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Saved Workout Plans</h1>
-          <Button 
-            variant="outline"
-            onClick={() => navigate("/dashboard")}
-            className="bg-white/10 hover:bg-white/20 text-white border-purple-300/20"
+        <motion.div 
+          className="flex justify-between items-center mb-12"
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
+          <motion.h1 
+            className="text-display bg-gradient-to-br from-white via-purple-100 to-purple-200 bg-clip-text text-transparent font-montserrat font-black tracking-tighter leading-none"
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
-          </Button>
-        </div>
+            Saved Workout Plans
+          </motion.h1>
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <Button 
+              variant="outline"
+              onClick={() => navigate("/dashboard")}
+              className="bg-white/10 hover:bg-white/20 text-white border-purple-300/20 font-montserrat font-semibold text-base px-6 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+            >
+              <ArrowLeft className="mr-2 h-5 w-5" />
+              Back to Dashboard
+            </Button>
+          </motion.div>
+        </motion.div>
 
         {savedWorkouts.length === 0 ? (
-          <Card className="bg-white/10 backdrop-blur-sm border-purple-300/20">
-            <CardContent className="text-center py-12">
-              <DumbbellIcon className="h-12 w-12 text-purple-200 mx-auto mb-4" />
-              <p className="text-white/80">
-                No saved workout plans yet. Generate and save some plans from the dashboard!
-              </p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <Card className="bg-white/10 backdrop-blur-sm border-purple-300/20 p-8">
+              <CardContent className="text-center py-12">
+                <DumbbellIcon className="h-16 w-16 text-purple-200 mx-auto mb-6" />
+                <h3 className="text-card-title text-white/90 font-montserrat font-bold mb-4 tracking-tight">
+                  No saved workout plans yet
+                </h3>
+                <p className="text-body text-white/70 font-opensans leading-relaxed max-w-md mx-auto">
+                  Generate and save some personalized workout plans from the dashboard to get started on your fitness journey!
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
         ) : (
-          <div className="space-y-6">
-            {savedWorkouts.map((workout) => (
-              <Card key={workout.id} className="bg-white/10 backdrop-blur-sm border-purple-300/20">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-xl font-semibold flex items-center gap-2 text-white">
-                    <DumbbellIcon className="h-5 w-5 text-purple-300" />
-                    {workout.name || "Workout Plan"}
-                  </CardTitle>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-purple-200">
-                      Saved on {format(new Date(workout.saved_at), 'MMM d, yyyy')}
-                    </span>
-                    
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setSelectedWorkoutId(workout.id)}
-                          className="text-white bg-purple-600/40 hover:bg-purple-600/60 border-purple-400/20"
-                        >
-                          <Send className="h-4 w-4 mr-1.5" />
-                          Send to Phone
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="bg-white/95 backdrop-blur-md border-purple-200">
-                        <DialogHeader>
-                          <DialogTitle className="text-purple-900">Send Workout to Phone</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4 py-4">
-                          <div className="flex flex-col space-y-2">
-                            <label htmlFor="phone" className="text-sm font-medium text-gray-700 flex items-center">
-                              <Phone className="h-4 w-4 text-purple-500 mr-2" />
-                              Enter Phone Number
-                            </label>
-                            <Input
-                              id="phone"
-                              placeholder="e.g. +1 555 123 4567"
-                              value={phoneNumber}
-                              onChange={(e) => setPhoneNumber(e.target.value)}
-                              className="border-purple-100 focus:border-purple-300"
-                            />
-                            <p className="text-xs text-gray-500">
-                              Enter your full phone number including country code (e.g. +1 for US)
-                            </p>
-                          </div>
-                          <div className="flex justify-end gap-4">
-                            <DialogClose asChild>
-                              <Button variant="outline" className="border-purple-200">
-                                Cancel
-                              </Button>
-                            </DialogClose>
-                            <Button 
-                              onClick={() => handleSendSMS(workout.id)} 
-                              disabled={sendingSMS}
-                              className="bg-purple-600 hover:bg-purple-700 text-white"
-                            >
-                              {sendingSMS ? "Sending..." : "Send Workout"}
-                            </Button>
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                    
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(workout.id)}
-                      className="text-white/70 hover:bg-red-900/30 hover:text-red-300"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    {workout.plan_data.workouts.map((day, index) => (
-                      <div key={index} className="space-y-4">
-                        <h3 className="font-semibold flex items-center gap-2 text-white">
-                          <Calendar className="h-4 w-4 text-purple-300" />
-                          Day {day.day}
-                        </h3>
-                        <div className="grid gap-4">
-                          {day.exercises.map((exercise, exerciseIndex) => (
-                            <div
-                              key={exerciseIndex}
-                              className="bg-white/5 p-4 rounded-lg border border-purple-300/20"
-                            >
-                              <p className="font-medium text-white flex items-center">
-                                {getExerciseIcon(exercise.name)}
-                                {exercise.name}
-                              </p>
-                              <p className="text-sm text-purple-200 ml-6">
-                                {exercise.sets} sets × {exercise.duration ? `${exercise.duration} sec` : `${exercise.reps} reps`}
-                                (Rest: {exercise.rest}s)
+          <div className="space-y-8">
+            {savedWorkouts.map((workout, index) => (
+              <motion.div
+                key={workout.id}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 + (index * 0.1) }}
+              >
+                <Card className="bg-white/10 backdrop-blur-sm border-purple-300/20 hover:bg-white/15 transition-all duration-300">
+                  <CardHeader className="flex flex-row items-center justify-between pb-4">
+                    <CardTitle className="text-card-title font-montserrat font-bold flex items-center gap-3 text-white tracking-tight">
+                      <DumbbellIcon className="h-6 w-6 text-purple-300" />
+                      {workout.name || "Workout Plan"}
+                    </CardTitle>
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm text-purple-200 font-opensans font-medium">
+                        Saved on {format(new Date(workout.saved_at), 'MMM d, yyyy')}
+                      </span>
+                      
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedWorkoutId(workout.id)}
+                            className="text-white bg-purple-600/40 hover:bg-purple-600/60 border-purple-400/20 font-montserrat font-semibold transition-all duration-200 hover:-translate-y-0.5"
+                          >
+                            <Send className="h-4 w-4 mr-2" />
+                            Send to Phone
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="bg-white/95 backdrop-blur-md border-purple-200">
+                          <DialogHeader>
+                            <DialogTitle className="text-purple-900 font-montserrat font-bold text-xl">Send Workout to Phone</DialogTitle>
+                          </DialogHeader>
+                          <div className="space-y-6 py-4">
+                            <div className="flex flex-col space-y-3">
+                              <label htmlFor="phone" className="text-sm font-montserrat font-semibold text-gray-700 flex items-center tracking-wide">
+                                <Phone className="h-4 w-4 text-purple-500 mr-2" />
+                                Enter Phone Number
+                              </label>
+                              <Input
+                                id="phone"
+                                placeholder="e.g. +1 555 123 4567"
+                                value={phoneNumber}
+                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                className="border-purple-100 focus:border-purple-300 font-opensans"
+                              />
+                              <p className="text-xs text-gray-500 font-opensans leading-relaxed">
+                                Enter your full phone number including country code (e.g. +1 for US)
                               </p>
                             </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                            <div className="flex justify-end gap-4">
+                              <DialogClose asChild>
+                                <Button variant="outline" className="border-purple-200 font-montserrat font-medium">
+                                  Cancel
+                                </Button>
+                              </DialogClose>
+                              <Button 
+                                onClick={() => handleSendSMS(workout.id)} 
+                                disabled={sendingSMS}
+                                className="bg-purple-600 hover:bg-purple-700 text-white font-montserrat font-semibold"
+                              >
+                                {sendingSMS ? "Sending..." : "Send Workout"}
+                              </Button>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                      
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(workout.id)}
+                        className="text-white/70 hover:bg-red-900/30 hover:text-red-300 transition-all duration-200"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-8">
+                      {workout.plan_data.workouts.map((day, dayIndex) => (
+                        <motion.div 
+                          key={dayIndex} 
+                          className="space-y-4"
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.6, delay: 0.6 + (dayIndex * 0.1) }}
+                        >
+                          <h3 className="font-montserrat font-bold text-lg flex items-center gap-3 text-white tracking-tight">
+                            <Calendar className="h-5 w-5 text-purple-300" />
+                            Day {day.day}
+                          </h3>
+                          <div className="grid gap-4">
+                            {day.exercises.map((exercise, exerciseIndex) => (
+                              <motion.div
+                                key={exerciseIndex}
+                                className="bg-white/5 p-5 rounded-xl border border-purple-300/20 hover:bg-white/10 transition-all duration-200"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: 0.8 + (exerciseIndex * 0.05) }}
+                              >
+                                <p className="font-montserrat font-semibold text-white flex items-center tracking-tight">
+                                  {getExerciseIcon(exercise.name)}
+                                  {exercise.name}
+                                </p>
+                                <p className="text-sm text-purple-200 ml-6 font-opensans font-medium leading-relaxed">
+                                  {exercise.sets} sets × {exercise.duration ? `${exercise.duration} sec` : `${exercise.reps} reps`}
+                                  (Rest: {exercise.rest}s)
+                                </p>
+                              </motion.div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
         )}

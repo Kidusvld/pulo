@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +7,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Dumbbell, Timer, Weight, Dices, Smile } from "lucide-react";
 import { z } from "zod";
+import { motion } from "framer-motion";
 
 type MuscleGroup = "chest" | "back" | "legs" | "shoulders" | "arms" | "core" | "full_body" | "cardio";
 
@@ -119,105 +119,133 @@ export const WorkoutForm = ({ onSuccess }: WorkoutFormProps) => {
   };
 
   return (
-    <Card className="bg-white/90 backdrop-blur-sm border-purple-100">
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold text-purple-900 flex items-center gap-2">
-          <Dumbbell className="h-5 w-5 text-purple-600" />
-          Log Workout
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2.5">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Timer className="h-4 w-4 text-purple-500" />
-                Duration (minutes)
-              </label>
-              <Input
-                type="number"
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
-                placeholder="Enter duration"
-                className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200 placeholder:text-gray-400"
-                required
-              />
-            </div>
-            <div className="space-y-2.5">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Weight className="h-4 w-4 text-purple-500" />
-                Total Volume (lbs)
-              </label>
-              <Input
-                type="number"
-                value={volume}
-                onChange={(e) => setVolume(e.target.value)}
-                placeholder="Enter total weight"
-                className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200 placeholder:text-gray-400"
-                required
-              />
-            </div>
-            <div className="space-y-2.5">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Dumbbell className="h-4 w-4 text-purple-500" />
-                Muscle Group
-              </label>
-              <Select value={muscleGroup} onValueChange={(value: MuscleGroup) => setMuscleGroup(value)}>
-                <SelectTrigger className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200">
-                  <SelectValue placeholder="Select muscle group" />
-                </SelectTrigger>
-                <SelectContent className="bg-white/95 backdrop-blur-sm border-purple-100">
-                  <SelectItem value="chest">Chest</SelectItem>
-                  <SelectItem value="back">Back</SelectItem>
-                  <SelectItem value="legs">Legs</SelectItem>
-                  <SelectItem value="shoulders">Shoulders</SelectItem>
-                  <SelectItem value="arms">Arms</SelectItem>
-                  <SelectItem value="core">Core</SelectItem>
-                  <SelectItem value="full_body">Full Body</SelectItem>
-                  <SelectItem value="cardio">Cardio</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2.5">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Dices className="h-4 w-4 text-purple-500" />
-                Energy Level (1-5)
-              </label>
-              <Select value={energyLevel} onValueChange={setEnergyLevel}>
-                <SelectTrigger className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200">
-                  <SelectValue placeholder="Select energy level" />
-                </SelectTrigger>
-                <SelectContent className="bg-white/95 backdrop-blur-sm border-purple-100">
-                  {[1, 2, 3, 4, 5].map((level) => (
-                    <SelectItem key={level} value={level.toString()}>
-                      {level}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="space-y-2.5">
-            <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-              <Smile className="h-4 w-4 text-purple-500" />
-              Mood
-            </label>
-            <Input
-              value={mood}
-              onChange={(e) => setMood(e.target.value)}
-              placeholder="How are you feeling?"
-              className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200 placeholder:text-gray-400"
-            />
-          </div>
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-sm"
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      <Card className="bg-white/90 backdrop-blur-sm border-purple-100 shadow-xl">
+        <CardHeader className="pb-6">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
-            {loading ? "Logging..." : "Log Workout"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+            <CardTitle className="text-card-title text-purple-900 flex items-center gap-3 font-montserrat font-bold tracking-tight">
+              <Dumbbell className="h-6 w-6 text-purple-600" />
+              Log Workout
+            </CardTitle>
+          </motion.div>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-2 gap-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <div className="space-y-3">
+                <label className="text-sm font-montserrat font-semibold text-gray-700 flex items-center gap-2 tracking-wide">
+                  <Timer className="h-4 w-4 text-purple-500" />
+                  Duration (minutes)
+                </label>
+                <Input
+                  type="number"
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  placeholder="Enter duration"
+                  className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200 placeholder:text-gray-400 font-opensans"
+                  required
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-sm font-montserrat font-semibold text-gray-700 flex items-center gap-2 tracking-wide">
+                  <Weight className="h-4 w-4 text-purple-500" />
+                  Total Volume (lbs)
+                </label>
+                <Input
+                  type="number"
+                  value={volume}
+                  onChange={(e) => setVolume(e.target.value)}
+                  placeholder="Enter total weight"
+                  className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200 placeholder:text-gray-400 font-opensans"
+                  required
+                />
+              </div>
+              <div className="space-y-3">
+                <label className="text-sm font-montserrat font-semibold text-gray-700 flex items-center gap-2 tracking-wide">
+                  <Dumbbell className="h-4 w-4 text-purple-500" />
+                  Muscle Group
+                </label>
+                <Select value={muscleGroup} onValueChange={(value: MuscleGroup) => setMuscleGroup(value)}>
+                  <SelectTrigger className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200 font-opensans">
+                    <SelectValue placeholder="Select muscle group" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white/95 backdrop-blur-sm border-purple-100">
+                    <SelectItem value="chest">Chest</SelectItem>
+                    <SelectItem value="back">Back</SelectItem>
+                    <SelectItem value="legs">Legs</SelectItem>
+                    <SelectItem value="shoulders">Shoulders</SelectItem>
+                    <SelectItem value="arms">Arms</SelectItem>
+                    <SelectItem value="core">Core</SelectItem>
+                    <SelectItem value="full_body">Full Body</SelectItem>
+                    <SelectItem value="cardio">Cardio</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-3">
+                <label className="text-sm font-montserrat font-semibold text-gray-700 flex items-center gap-2 tracking-wide">
+                  <Dices className="h-4 w-4 text-purple-500" />
+                  Energy Level (1-5)
+                </label>
+                <Select value={energyLevel} onValueChange={setEnergyLevel}>
+                  <SelectTrigger className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200 font-opensans">
+                    <SelectValue placeholder="Select energy level" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white/95 backdrop-blur-sm border-purple-100">
+                    {[1, 2, 3, 4, 5].map((level) => (
+                      <SelectItem key={level} value={level.toString()}>
+                        {level}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </motion.div>
+            <motion.div 
+              className="space-y-3"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <label className="text-sm font-montserrat font-semibold text-gray-700 flex items-center gap-2 tracking-wide">
+                <Smile className="h-4 w-4 text-purple-500" />
+                Mood
+              </label>
+              <Input
+                value={mood}
+                onChange={(e) => setMood(e.target.value)}
+                placeholder="How are you feeling?"
+                className="bg-white border-purple-100 focus:border-purple-300 focus:ring-purple-200 transition-all duration-200 placeholder:text-gray-400 font-opensans"
+              />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-sm font-montserrat font-semibold text-base py-3 rounded-xl hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+              >
+                {loading ? "Logging..." : "Log Workout"}
+              </Button>
+            </motion.div>
+          </form>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
