@@ -32,16 +32,16 @@ export const Navigation = () => {
             </motion.div>
 
             {/* Actions Section */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
               {/* Coming Soon Badge */}
               <motion.div 
-                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-saas-brand-primary/10 to-saas-brand-secondary/10 border border-saas-brand-primary/20 text-saas-brand-primary font-medium text-sm"
+                className="hidden md:flex items-center gap-3 px-5 py-3 rounded-xl bg-gradient-to-r from-saas-brand-primary/10 to-saas-brand-secondary/10 border border-saas-brand-primary/20 text-saas-brand-primary font-medium"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
                 <Smartphone className="w-4 h-4" />
-                <span>Coming Soon on App Store</span>
+                <span className="font-montserrat font-semibold text-sm tracking-wide">Coming Soon on App Store</span>
               </motion.div>
 
               {/* Sign In Button */}
@@ -49,15 +49,17 @@ export const Navigation = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  className="bg-white border-saas-border text-saas-text-primary hover:bg-saas-bg-primary hover:border-saas-brand-primary hover:text-saas-brand-primary font-semibold rounded-xl shadow-sm hover:shadow-md transition-all duration-300" 
+                  className="bg-white border-2 border-saas-border text-saas-text-primary hover:bg-saas-bg-primary hover:border-saas-brand-primary hover:text-saas-brand-primary font-montserrat font-semibold rounded-xl shadow-sm hover:shadow-md transition-all duration-300 px-6 py-3" 
                   onClick={() => navigate("/auth?mode=signin")}
                 >
                   <LogIn className="mr-2 w-4 h-4" />
-                  Sign In
+                  <span className="tracking-wide">Sign In</span>
                 </Button>
               </motion.div>
             </div>

@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800;900&family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -97,36 +97,107 @@
   }
 
   body {
-    @apply bg-saas-bg-primary text-saas-text-primary font-opensans antialiased;
+    @apply bg-saas-bg-primary text-saas-text-primary font-inter antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
   }
 
+  /* Enhanced Typography Hierarchy */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-montserrat font-semibold tracking-tight;
+    @apply font-montserrat font-extrabold tracking-tight;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
   }
 
   h1 {
-    @apply text-4xl lg:text-5xl font-bold;
+    @apply text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
   }
 
   h2 {
-    @apply text-3xl lg:text-4xl font-bold;
+    @apply text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
   }
 
   h3 {
-    @apply text-2xl lg:text-3xl font-semibold;
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
   }
 
   h4 {
-    @apply text-xl lg:text-2xl font-semibold;
+    @apply text-xl md:text-2xl lg:text-3xl font-bold;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
   }
 
   h5 {
-    @apply text-lg lg:text-xl font-medium;
+    @apply text-lg md:text-xl lg:text-2xl font-semibold;
+    line-height: 1.3;
+    letter-spacing: -0.005em;
   }
 
   h6 {
-    @apply text-base lg:text-lg font-medium;
+    @apply text-base md:text-lg lg:text-xl font-semibold;
+    line-height: 1.4;
+  }
+
+  /* Enhanced Body Text */
+  p {
+    @apply font-opensans leading-relaxed;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+  }
+
+  /* Premium Text Variants */
+  .text-display {
+    @apply font-montserrat font-black text-5xl md:text-6xl lg:text-7xl xl:text-8xl tracking-tighter;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+  }
+
+  .text-hero {
+    @apply font-montserrat font-extrabold text-4xl md:text-5xl lg:text-6xl xl:text-7xl tracking-tight;
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+  }
+
+  .text-section {
+    @apply font-montserrat font-bold text-2xl md:text-3xl lg:text-4xl tracking-tight;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .text-card-title {
+    @apply font-montserrat font-semibold text-lg md:text-xl lg:text-2xl tracking-tight;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .text-body-large {
+    @apply font-opensans text-lg md:text-xl leading-relaxed;
+    line-height: 1.6;
+    letter-spacing: 0.005em;
+  }
+
+  .text-body {
+    @apply font-opensans text-base md:text-lg leading-relaxed;
+    line-height: 1.65;
+    letter-spacing: 0.01em;
+  }
+
+  .text-body-small {
+    @apply font-inter text-sm md:text-base leading-relaxed;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+  }
+
+  .text-label {
+    @apply font-montserrat font-medium text-sm md:text-base tracking-wide uppercase;
+    letter-spacing: 0.05em;
   }
 }
 
@@ -184,6 +255,19 @@
     @apply bg-blue-50 text-blue-700 border border-blue-200;
   }
 
+  /* Typography Utilities */
+  .animate-text-reveal {
+    animation: textReveal 0.8s ease-out forwards;
+  }
+
+  .animate-text-slide-up {
+    animation: textSlideUp 0.6s ease-out forwards;
+  }
+
+  .animate-text-fade-in {
+    animation: textFadeIn 0.5s ease-out forwards;
+  }
+
   /* Grid patterns for backgrounds */
   .bg-grid-slate-100 {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(148 163 184 / 0.05)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
@@ -193,7 +277,7 @@
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.05)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
   }
 
-  /* Custom animations */
+  /* Enhanced animations */
   .animate-fade-in {
     animation: fadeIn 0.6s ease-out forwards;
   }
@@ -208,6 +292,37 @@
 
   .animate-bounce-in {
     animation: bounceIn 0.6s ease-out forwards;
+  }
+
+  @keyframes textReveal {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes textSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes textFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   @keyframes fadeIn {
