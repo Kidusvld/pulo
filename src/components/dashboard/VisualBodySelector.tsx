@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Copy, RotateCcw, Edit, Save } from "lucide-react";
+import { Copy, RotateCcw, Edit, RotateCw } from "lucide-react";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,14 +12,14 @@ interface VisualBodySelectorProps {
 }
 
 const defaultFrontPositions = {
-  Chest: { top: 30, left: 35, width: 30, height: 15 },
-  Abs: { top: 40, left: 40, width: 20, height: 20 },
-  'Left Shoulder': { top: 20, left: 20, width: 15, height: 15 },
-  'Right Shoulder': { top: 20, left: 65, width: 15, height: 15 },
-  'Left Bicep': { top: 35, left: 15, width: 12, height: 20 },
-  'Right Bicep': { top: 35, left: 73, width: 12, height: 20 },
-  'Left Quadricep': { top: 65, left: 25, width: 15, height: 25 },
-  'Right Quadricep': { top: 65, left: 60, width: 15, height: 25 }
+  Chest: { top: 30, left: 35, width: 30, height: 15, rotation: 0 },
+  Abs: { top: 40, left: 40, width: 20, height: 20, rotation: 0 },
+  'Left Shoulder': { top: 20, left: 20, width: 15, height: 15, rotation: 0 },
+  'Right Shoulder': { top: 20, left: 65, width: 15, height: 15, rotation: 0 },
+  'Left Bicep': { top: 35, left: 15, width: 12, height: 20, rotation: 0 },
+  'Right Bicep': { top: 35, left: 73, width: 12, height: 20, rotation: 0 },
+  'Left Quadricep': { top: 65, left: 25, width: 15, height: 25, rotation: 0 },
+  'Right Quadricep': { top: 65, left: 60, width: 15, height: 25, rotation: 0 }
 };
 
 export const VisualBodySelector = ({ 
@@ -34,6 +34,7 @@ export const VisualBodySelector = ({
   const {
     positions,
     isDragging,
+    isRotating,
     isEditMode,
     containerRef,
     setIsEditMode,
@@ -46,7 +47,7 @@ export const VisualBodySelector = ({
 
   // Add global mouse event listeners
   useEffect(() => {
-    if (isDragging) {
+    if (isDragging || isRotating) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
       return () => {
@@ -54,7 +55,7 @@ export const VisualBodySelector = ({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [isDragging, isRotating, handleMouseMove, handleMouseUp]);
 
   const handlePartClick = (part: string, event: React.MouseEvent) => {
     if (isEditMode) {
@@ -78,6 +79,7 @@ export const VisualBodySelector = ({
     const isSelected = selectedParts.includes(bodyPart.includes('Left') || bodyPart.includes('Right') ? 
       bodyPart.replace('Left ', '').replace('Right ', '') : bodyPart);
     const isDraggingThis = isDragging === bodyPart;
+    const isRotatingThis = isRotating === bodyPart;
 
     return (
       <div
@@ -90,12 +92,13 @@ export const VisualBodySelector = ({
               : showPositioningMode 
                 ? 'bg-red-300/50 border-2 border-red-500' 
                 : 'hover:bg-purple-200/30'
-        } ${isDraggingThis ? 'opacity-70 z-50' : ''} ${isEditMode ? 'cursor-move' : 'cursor-pointer'}`}
+        } ${isDraggingThis || isRotatingThis ? 'opacity-70 z-50' : ''} ${isEditMode ? 'cursor-move' : 'cursor-pointer'}`}
         style={{
           top: `${position.top}%`,
           left: `${position.left}%`,
           width: `${position.width}%`,
-          height: `${position.height}%`
+          height: `${position.height}%`,
+          transform: position.rotation !== 0 ? `rotate(${position.rotation}deg)` : undefined
         }}
         onClick={(e) => handlePartClick(bodyPart.includes('Left') || bodyPart.includes('Right') ? 
           bodyPart.replace('Left ', '').replace('Right ', '') : bodyPart, e)}
@@ -104,12 +107,17 @@ export const VisualBodySelector = ({
       >
         {(showPositioningMode || isEditMode) && (
           <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800 bg-white/70 rounded">
-            {isEditMode ? '✋' : bodyPart.toUpperCase()}
+            {isEditMode ? (isRotatingThis ? '🔄' : '✋') : bodyPart.toUpperCase()}
           </div>
         )}
         {isEditMode && (
-          <div className="absolute -top-6 left-0 text-xs bg-blue-600 text-white px-1 rounded">
+          <div className="absolute -top-8 left-0 text-xs bg-blue-600 text-white px-1 rounded whitespace-nowrap">
             {position.top.toFixed(1)}%, {position.left.toFixed(1)}%
+            {position.rotation !== 0 && (
+              <div className="bg-purple-600 text-white px-1 rounded mt-1">
+                ↻ {position.rotation.toFixed(1)}°
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -394,7 +402,9 @@ export const VisualBodySelector = ({
             <strong>Edit Mode Active</strong>
           </p>
           <p className="text-xs text-blue-600">
-            Drag any body part to reposition it. Live coordinates are shown above each area. Use "Copy Code" to get the updated positioning values when you're done.
+            <strong>Drag</strong> to move • <strong>Alt + Drag</strong> to rotate
+            <br />
+            Live coordinates shown above each area. Use "Copy Code" when done.
           </p>
         </div>
       )}
@@ -416,7 +426,7 @@ export const VisualBodySelector = ({
             ))
           ) : (
             <p className="text-sm text-[#8E44AD]/60 italic">
-              {isEditMode ? 'Edit mode active - drag to reposition areas' : 'Click on body areas to select them'}
+              {isEditMode ? 'Edit mode active - drag to move, Alt+drag to rotate' : 'Click on body areas to select them'}
             </p>
           )}
         </div>
