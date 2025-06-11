@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +14,7 @@ export const VisualBodySelector = ({
   showComingSoon = true 
 }: VisualBodySelectorProps) => {
   const [currentView, setCurrentView] = useState<'front' | 'back'>('front');
+  const [showPositioningMode, setShowPositioningMode] = useState(false);
 
   const bodyParts = {
     front: ['Chest', 'Abs', 'Shoulders', 'Biceps', 'Quadriceps'],
@@ -47,6 +47,18 @@ export const VisualBodySelector = ({
         </Button>
       </div>
 
+      {/* Positioning Mode Toggle (only for front view) */}
+      {currentView === 'front' && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowPositioningMode(!showPositioningMode)}
+          className="text-[#8E44AD] border-[#8E44AD]"
+        >
+          {showPositioningMode ? 'Hide' : 'Show'} Positioning Guide
+        </Button>
+      )}
+
       {/* Body Diagram */}
       <div className="relative w-64 h-80 mx-auto">
         {currentView === 'front' ? (
@@ -63,82 +75,152 @@ export const VisualBodySelector = ({
               className={`absolute top-[25%] left-[35%] w-[30%] h-[15%] cursor-pointer rounded-lg transition-all ${
                 selectedParts.includes('Chest') 
                   ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : 'hover:bg-purple-200/30'
+                  : showPositioningMode 
+                    ? 'bg-red-300/50 border-2 border-red-500' 
+                    : 'hover:bg-purple-200/30'
               }`}
               onClick={() => handlePartClick('Chest')}
               title="Chest"
-            />
+            >
+              {showPositioningMode && (
+                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-red-800">
+                  CHEST
+                </div>
+              )}
+            </div>
             
             {/* Abs */}
             <div
               className={`absolute top-[40%] left-[40%] w-[20%] h-[20%] cursor-pointer rounded-lg transition-all ${
                 selectedParts.includes('Abs') 
                   ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : 'hover:bg-purple-200/30'
+                  : showPositioningMode 
+                    ? 'bg-blue-300/50 border-2 border-blue-500' 
+                    : 'hover:bg-purple-200/30'
               }`}
               onClick={() => handlePartClick('Abs')}
               title="Abs"
-            />
+            >
+              {showPositioningMode && (
+                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-blue-800">
+                  ABS
+                </div>
+              )}
+            </div>
             
-            {/* Shoulders */}
+            {/* Left Shoulder */}
             <div
               className={`absolute top-[20%] left-[20%] w-[15%] h-[15%] cursor-pointer rounded-lg transition-all ${
                 selectedParts.includes('Shoulders') 
                   ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : 'hover:bg-purple-200/30'
+                  : showPositioningMode 
+                    ? 'bg-green-300/50 border-2 border-green-500' 
+                    : 'hover:bg-purple-200/30'
               }`}
               onClick={() => handlePartClick('Shoulders')}
               title="Left Shoulder"
-            />
+            >
+              {showPositioningMode && (
+                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-green-800">
+                  L.SHLD
+                </div>
+              )}
+            </div>
+
+            {/* Right Shoulder */}
             <div
               className={`absolute top-[20%] right-[20%] w-[15%] h-[15%] cursor-pointer rounded-lg transition-all ${
                 selectedParts.includes('Shoulders') 
                   ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : 'hover:bg-purple-200/30'
+                  : showPositioningMode 
+                    ? 'bg-green-300/50 border-2 border-green-500' 
+                    : 'hover:bg-purple-200/30'
               }`}
               onClick={() => handlePartClick('Shoulders')}
               title="Right Shoulder"
-            />
+            >
+              {showPositioningMode && (
+                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-green-800">
+                  R.SHLD
+                </div>
+              )}
+            </div>
             
-            {/* Biceps */}
+            {/* Left Bicep */}
             <div
               className={`absolute top-[35%] left-[15%] w-[12%] h-[20%] cursor-pointer rounded-lg transition-all ${
                 selectedParts.includes('Biceps') 
                   ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : 'hover:bg-purple-200/30'
+                  : showPositioningMode 
+                    ? 'bg-yellow-300/50 border-2 border-yellow-500' 
+                    : 'hover:bg-purple-200/30'
               }`}
               onClick={() => handlePartClick('Biceps')}
               title="Left Bicep"
-            />
+            >
+              {showPositioningMode && (
+                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-yellow-800">
+                  L.BIC
+                </div>
+              )}
+            </div>
+
+            {/* Right Bicep */}
             <div
               className={`absolute top-[35%] right-[15%] w-[12%] h-[20%] cursor-pointer rounded-lg transition-all ${
                 selectedParts.includes('Biceps') 
                   ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : 'hover:bg-purple-200/30'
+                  : showPositioningMode 
+                    ? 'bg-yellow-300/50 border-2 border-yellow-500' 
+                    : 'hover:bg-purple-200/30'
               }`}
               onClick={() => handlePartClick('Biceps')}
               title="Right Bicep"
-            />
+            >
+              {showPositioningMode && (
+                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-yellow-800">
+                  R.BIC
+                </div>
+              )}
+            </div>
             
-            {/* Quadriceps */}
+            {/* Left Quadricep */}
             <div
               className={`absolute top-[65%] left-[25%] w-[15%] h-[25%] cursor-pointer rounded-lg transition-all ${
                 selectedParts.includes('Quadriceps') 
                   ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : 'hover:bg-purple-200/30'
+                  : showPositioningMode 
+                    ? 'bg-purple-300/50 border-2 border-purple-500' 
+                    : 'hover:bg-purple-200/30'
               }`}
               onClick={() => handlePartClick('Quadriceps')}
               title="Left Quadricep"
-            />
+            >
+              {showPositioningMode && (
+                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-purple-800">
+                  L.QUAD
+                </div>
+              )}
+            </div>
+
+            {/* Right Quadricep */}
             <div
               className={`absolute top-[65%] right-[25%] w-[15%] h-[25%] cursor-pointer rounded-lg transition-all ${
                 selectedParts.includes('Quadriceps') 
                   ? 'bg-[#8E44AD]/40 border-2 border-[#8E44AD]' 
-                  : 'hover:bg-purple-200/30'
+                  : showPositioningMode 
+                    ? 'bg-purple-300/50 border-2 border-purple-500' 
+                    : 'hover:bg-purple-200/30'
               }`}
               onClick={() => handlePartClick('Quadriceps')}
               title="Right Quadricep"
-            />
+            >
+              {showPositioningMode && (
+                <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-purple-800">
+                  R.QUAD
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <div className="relative w-full h-full">
