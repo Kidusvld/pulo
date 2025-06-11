@@ -1,4 +1,3 @@
-
 import { Activity, Dumbbell, Clock, Target, RotateCcw, BarChart } from "lucide-react";
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -150,8 +149,8 @@ export const ProgressStats = ({
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-          <BarChart className="h-5 w-5 text-purple-300" />
+        <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+          <BarChart className="h-5 w-5 text-indigo-600" />
           Your Progress
         </h2>
         <AlertDialog>
@@ -159,7 +158,7 @@ export const ProgressStats = ({
             <Button
               variant="outline"
               size="sm"
-              className="bg-white/10 hover:bg-red-500/20 hover:text-white border-red-300/20 text-red-100/80 transition-all duration-200"
+              className="bg-red-50 hover:bg-red-100 border-red-200 text-red-600 hover:text-red-700 transition-all duration-200"
             >
               <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
               Reset
