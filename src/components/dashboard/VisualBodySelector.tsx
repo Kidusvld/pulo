@@ -32,7 +32,7 @@ const defaultBackPositions = {
   'Left Hamstring': { top: 88, left: 25, width: 15, height: 25, rotation: 0, shape: 'circle' as const },
   'Right Hamstring': { top: 88, left: 60, width: 15, height: 25, rotation: 0, shape: 'circle' as const },
   'Left Calf': { top: 115, left: 28, width: 12, height: 20, rotation: 0, shape: 'circle' as const },
-  'Right Calf': { top: 115, left: 60, width: 12, height: 20, rotation: 0, shape: 'circle' as const }
+  'Right Calf': { top: 115, left: 60, width: 12, height: 20, shape: 'circle' as const }
 };
 
 // Load saved positions from localStorage or use defaults
@@ -394,7 +394,7 @@ export const VisualBodySelector = ({
           className={`relative w-full h-full ${isEditMode ? 'select-none' : ''}`}
         >
           <img 
-            src={currentView === 'front' ? "/lovable-uploads/efd47857-cb5e-412b-822f-68ec94e165cd.png" : "/lovable-uploads/0735d87c-af0c-45a9-a870-bdbf776f4a3b.png"}
+            src={currentView === 'front' ? "/lovable-uploads/da63655a-8306-4ca1-92e6-aa2337e22915.png" : "/lovable-uploads/0735d87c-af0c-45a9-a870-bdbf776f4a3b.png"}
             alt={`${currentView} body view`}
             className="w-full h-full object-contain"
             draggable={false}
