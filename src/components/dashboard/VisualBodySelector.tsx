@@ -11,16 +11,16 @@ interface VisualBodySelectorProps {
   showComingSoon?: boolean;
 }
 
-// Finalized front view positions - DO NOT MODIFY
+// Corrected front view positions to properly align with the body image
 const finalizedFrontPositions = {
-  Chest: { top: 30, left: 35, width: 30, height: 15, rotation: 0, shape: 'circle' as const },
-  Abs: { top: 40, left: 40, width: 20, height: 20, rotation: 0, shape: 'circle' as const },
-  'Left Shoulder': { top: 20, left: 20, width: 8, height: 8, rotation: 0, shape: 'circle' as const },
-  'Right Shoulder': { top: 20, left: 72, width: 8, height: 8, rotation: 0, shape: 'circle' as const },
-  'Left Bicep': { top: 35, left: 15, width: 12, height: 20, rotation: 0, shape: 'circle' as const },
-  'Right Bicep': { top: 73, left: 73, width: 12, height: 20, rotation: 0, shape: 'circle' as const },
-  'Left Quadricep': { top: 65, left: 25, width: 15, height: 25, rotation: 0, shape: 'circle' as const },
-  'Right Quadricep': { top: 65, left: 60, width: 15, height: 25, rotation: 0, shape: 'circle' as const }
+  Chest: { top: 25, left: 42, width: 16, height: 12, rotation: 0, shape: 'circle' as const },
+  Abs: { top: 37, left: 45, width: 10, height: 15, rotation: 0, shape: 'circle' as const },
+  'Left Shoulder': { top: 18, left: 28, width: 10, height: 8, rotation: 0, shape: 'circle' as const },
+  'Right Shoulder': { top: 18, left: 62, width: 10, height: 8, rotation: 0, shape: 'circle' as const },
+  'Left Bicep': { top: 28, left: 22, width: 8, height: 15, rotation: 0, shape: 'circle' as const },
+  'Right Bicep': { top: 28, left: 70, width: 8, height: 15, rotation: 0, shape: 'circle' as const },
+  'Left Quadricep': { top: 55, left: 38, width: 8, height: 20, rotation: 0, shape: 'circle' as const },
+  'Right Quadricep': { top: 55, left: 54, width: 8, height: 20, rotation: 0, shape: 'circle' as const }
 };
 
 const defaultBackPositions = {
@@ -189,7 +189,6 @@ export const VisualBodySelector = ({
     setIsEditMode(!isEditMode);
   };
 
-  // ... keep existing code (renderPolygonPath function)
   const renderPolygonPath = (points: { x: number; y: number }[]) => {
     return points.map((point, index) => 
       `${index === 0 ? 'M' : 'L'} ${point.x * 100} ${point.y * 100}`
