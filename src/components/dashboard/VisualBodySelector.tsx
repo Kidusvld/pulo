@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +11,8 @@ interface VisualBodySelectorProps {
   showComingSoon?: boolean;
 }
 
-const defaultFrontPositions = {
+// Finalized front view positions - DO NOT MODIFY
+const finalizedFrontPositions = {
   Chest: { top: 30, left: 35, width: 30, height: 15, rotation: 0, shape: 'circle' as const },
   Abs: { top: 40, left: 40, width: 20, height: 20, rotation: 0, shape: 'circle' as const },
   'Left Shoulder': { top: 20, left: 20, width: 8, height: 8, rotation: 0, shape: 'circle' as const },
@@ -38,17 +38,23 @@ const defaultBackPositions = {
 // Load saved positions from localStorage or use defaults
 const loadSavedPositions = (view: 'front' | 'back') => {
   try {
+    // For front view, always use finalized positions
+    if (view === 'front') {
+      return finalizedFrontPositions;
+    }
+    
+    // For back view, still allow custom positions
     const saved = localStorage.getItem(`bodyPartPositions_${view}`);
     if (saved) {
       const parsed = JSON.parse(saved);
       // Ensure all required body parts have positions
-      const defaults = view === 'front' ? defaultFrontPositions : defaultBackPositions;
+      const defaults = defaultBackPositions;
       return { ...defaults, ...parsed };
     }
   } catch (error) {
     console.error('Error loading saved positions:', error);
   }
-  return view === 'front' ? defaultFrontPositions : defaultBackPositions;
+  return view === 'front' ? finalizedFrontPositions : defaultBackPositions;
 };
 
 export const VisualBodySelector = ({ 
@@ -116,6 +122,16 @@ export const VisualBodySelector = ({
 
   const savePositions = () => {
     try {
+      // Prevent saving front view positions - they are finalized
+      if (currentView === 'front') {
+        toast({
+          title: "Front view positions are finalized",
+          description: "The front view positions are locked and cannot be modified.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       localStorage.setItem(`bodyPartPositions_${currentView}`, JSON.stringify(positions));
       toast({
         title: "Positions saved!",
@@ -141,8 +157,18 @@ export const VisualBodySelector = ({
   };
 
   const resetToDefaults = () => {
+    // Prevent resetting front view positions - they are finalized
+    if (currentView === 'front') {
+      toast({
+        title: "Front view positions are finalized",
+        description: "The front view positions are locked and cannot be reset.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     localStorage.removeItem(`bodyPartPositions_${currentView}`);
-    const defaultPositions = currentView === 'front' ? defaultFrontPositions : defaultBackPositions;
+    const defaultPositions = defaultBackPositions;
     setPositions(defaultPositions);
     toast({
       title: "Reset complete",
@@ -150,6 +176,20 @@ export const VisualBodySelector = ({
     });
   };
 
+  const handleEditModeToggle = () => {
+    // Prevent edit mode for front view - positions are finalized
+    if (currentView === 'front' && !isEditMode) {
+      toast({
+        title: "Front view positions are finalized",
+        description: "The front view positions are locked and cannot be edited. Switch to back view to customize positions.",
+        variant: "destructive"
+      });
+      return;
+    }
+    setIsEditMode(!isEditMode);
+  };
+
+  // ... keep existing code (renderPolygonPath function)
   const renderPolygonPath = (points: { x: number; y: number }[]) => {
     return points.map((point, index) => 
       `${index === 0 ? 'M' : 'L'} ${point.x * 100} ${point.y * 100}`
@@ -300,17 +340,20 @@ export const VisualBodySelector = ({
           {showPositioningMode ? 'Hide' : 'Show'} Positioning Guide
         </Button>
         
-        <Button
-          variant={isEditMode ? "default" : "outline"}
-          size="sm"
-          onClick={() => setIsEditMode(!isEditMode)}
-          className={isEditMode ? "bg-blue-600 text-white" : "text-blue-600 border-blue-600"}
-        >
-          <Edit className="w-4 h-4 mr-1" />
-          {isEditMode ? 'Exit Edit' : 'Edit Positions'}
-        </Button>
+        {/* Only show edit button for back view */}
+        {currentView === 'back' && (
+          <Button
+            variant={isEditMode ? "default" : "outline"}
+            size="sm"
+            onClick={handleEditModeToggle}
+            className={isEditMode ? "bg-blue-600 text-white" : "text-blue-600 border-blue-600"}
+          >
+            <Edit className="w-4 h-4 mr-1" />
+            {isEditMode ? 'Exit Edit' : 'Edit Positions'}
+          </Button>
+        )}
 
-        {isEditMode && (
+        {isEditMode && currentView === 'back' && (
           <>
             <Button
               variant="outline"
@@ -412,6 +455,17 @@ export const VisualBodySelector = ({
             <strong>Shift + Drag</strong> to create custom shapes • <strong>Double-click</strong> polygon to add points
             <br />
             <strong>Double-click point</strong> to remove • Click <strong>Save Positions</strong> to store your layout
+          </p>
+        </div>
+      )}
+
+      {/* Front view locked notice */}
+      {currentView === 'front' && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-center max-w-md">
+          <p className="text-sm text-amber-800">
+            <strong>🔒 Front view positions are finalized</strong>
+            <br />
+            <span className="text-xs text-amber-600">These positions are locked and optimized for targeting. Switch to back view to customize positions.</span>
           </p>
         </div>
       )}
