@@ -32,7 +32,7 @@ const defaultBackPositions = {
   'Left Hamstring': { top: 88, left: 25, width: 15, height: 25, rotation: 0, shape: 'circle' as const },
   'Right Hamstring': { top: 88, left: 60, width: 15, height: 25, rotation: 0, shape: 'circle' as const },
   'Left Calf': { top: 115, left: 28, width: 12, height: 20, rotation: 0, shape: 'circle' as const },
-  'Right Calf': { top: 115, left: 60, width: 12, height: 20, shape: 'circle' as const }
+  'Right Calf': { top: 115, left: 60, width: 12, height: 20, rotation: 0, shape: 'circle' as const }
 };
 
 // Load saved positions from localStorage or use defaults
